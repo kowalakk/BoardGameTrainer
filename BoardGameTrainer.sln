@@ -5,11 +5,17 @@ VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameTrainer", "BoardGameTrainer\BoardGameTrainer.csproj", "{49A2DC67-4FC9-4989-903C-D4518F87E814}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.IGame", "Game.IGame\Game.IGame.csproj", "{59E61FB8-E4D0-4C03-A9C1-F9B025470A54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.IGame", "Game.IGame\Game.IGame.csproj", "{59E61FB8-E4D0-4C03-A9C1-F9B025470A54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Checkers", "Game.Checkers\Game.Checkers.csproj", "{212E697A-164A-4388-969D-ACD6AA42625F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Checkers", "Game.Checkers\Game.Checkers.csproj", "{212E697A-164A-4388-969D-ACD6AA42625F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Othello", "Game.Othello\Game.Othello.csproj", "{09A9C62E-CAA1-436F-AB76-2371DF7353B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Othello", "Game.Othello\Game.Othello.csproj", "{09A9C62E-CAA1-436F-AB76-2371DF7353B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoardGameTrainerTests", "BoardGameTrainerTests\BoardGameTrainerTests.csproj", "{31AA4FE0-59A4-4BC4-B905-38DE852B6525}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.CheckersTest", "Game.CheckersTest\Game.CheckersTest.csproj", "{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.OthelloTests", "Game.OthelloTests\Game.OthelloTests.csproj", "{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +39,18 @@ Global
 		{09A9C62E-CAA1-436F-AB76-2371DF7353B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A9C62E-CAA1-436F-AB76-2371DF7353B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A9C62E-CAA1-436F-AB76-2371DF7353B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
