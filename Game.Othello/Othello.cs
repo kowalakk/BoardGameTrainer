@@ -2,7 +2,7 @@
 using Gdk;
 using Gtk;
 
-namespace Game.Checkers
+namespace Game.Othello
 {
     public class Othello : IGame<OthelloAction, OthelloState, OthelloInputState>
     {

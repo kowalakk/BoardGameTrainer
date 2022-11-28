@@ -1,4 +1,4 @@
-﻿namespace Game.Checkers
+﻿namespace Game.Othello
 {
     public class OthelloState : IEquatable<OthelloState>
     {
