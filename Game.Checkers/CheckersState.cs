@@ -3,8 +3,8 @@
     public enum Piece
     {
         None = 0,
-        WhiteMan = 1,
-        BlackMan = 2,
+        WhitePawn = 1,
+        BlackPawn = 2,
         WhiteCrowned = 3,
         BlackCrowned = 4,
     }

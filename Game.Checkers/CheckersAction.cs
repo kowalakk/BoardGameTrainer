@@ -1,9 +1,21 @@
 ﻿namespace Game.Checkers
 {
+    public struct Field
+    {
+        public int X { get; }
+        public int Y { get; }
+        public Piece OccupiedBy { get; set; }
+        public Field(int x, int y, Piece piece) 
+        {
+            X = x;
+            Y = y;
+            OccupiedBy= piece;
+        }
+    }
     public class CheckersAction : IEquatable<CheckersAction>
     {
-        public List<(int, int, Piece)> ConsecutiveFields { get; private set; }
-        public CheckersAction(List<(int, int, Piece)> consecutiveFields)
+        public List<Field> ConsecutiveFields { get; private set; }
+        public CheckersAction(List<Field> consecutiveFields)
         {
             ConsecutiveFields = consecutiveFields;
         }
