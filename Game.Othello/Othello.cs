@@ -8,6 +8,7 @@ namespace Game.Othello
 {
     public class Othello : IGame<OthelloAction, OthelloState, LanguageExt.Unit>
     {
+        private const int boardSize = 8;
         public void DrawBoard(Widget widget, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             throw new NotImplementedException();
@@ -20,7 +21,17 @@ namespace Game.Othello
 
         public GameResults GameResult(OthelloState state)
         {
-            throw new NotImplementedException();
+            if(PossibleActions(state) == null)
+            {
+                if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)) == null)
+                {
+                    int hasBlackWon = HasBlackWon(state);
+                    if (hasBlackWon == 0)
+                        return GameResults.Draw;
+                    return (hasBlackWon == 1) ? GameResults.PlayerOneWins : GameResults.PlayerTwoWins;
+                }
+            }
+            return GameResults.InProgress;
         }
 
         public (OthelloAction, LanguageExt.Unit) HandleInput(Event @event, LanguageExt.Unit u, OthelloState state)
@@ -51,7 +62,7 @@ namespace Game.Othello
                     break;
             }
             i = x++;
-            while (i < 8)   // 8 do zmiany
+            while (i < boardSize)
             {
                 if (board[i, y] == oponentsColor)
                 {
@@ -73,7 +84,7 @@ namespace Game.Othello
                     break;
             }
             j = y++;
-            while(j < 8)
+            while(j < boardSize)
             {
                 if (board[x, j] == oponentsColor)
                 {
@@ -91,10 +102,32 @@ namespace Game.Othello
         public IEnumerable<OthelloAction> PossibleActions(OthelloState state)
         {
             List<OthelloAction> actions = new List<OthelloAction>();
+            for(int i = 0; i < boardSize; i++)
+                for(int j = 0; j < boardSize; j++)
+                    if (state.board[i, j] == Field.Empty)
+                    {
 
+                    }
 
 
             return actions;
+        }
+
+        private int HasBlackWon(OthelloState state)
+        {
+            int whiteCount = 0;
+            int blackCount = 0;
+            for (int i = 0; i < boardSize; i++)
+                for (int j = 0; j < boardSize; j++)
+                {
+                    if (state.board[i, j] == Field.White)
+                        whiteCount++;
+                    if (state.board[i, j] == Field.Black)
+                        blackCount++;
+                }
+            if (whiteCount == blackCount)
+                return 0;
+            return (blackCount > whiteCount) ? 1 : -1;
         }
     }
 }
