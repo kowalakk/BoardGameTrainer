@@ -24,6 +24,22 @@
         //};
         private Piece[,] board;
         public Player CurrentPlayer { get; private set; }
+        public CheckersState()
+        {
+            board = new Piece[,]
+            {
+                { Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None },
+                { Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn },
+                { Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None },
+                { Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None },
+                { Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None },
+                { Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn },
+                { Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None},
+                { Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn },
+            };
+
+            CurrentPlayer = Player.White;
+        }
         public CheckersState(Piece[,] board, Player currentPlayer)
         {
             this.board = board;
