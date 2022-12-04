@@ -2,6 +2,7 @@
 using Gdk;
 using Gtk;
 using LanguageExt;
+using static Game.Othello.OthelloState;
 
 namespace Game.Othello
 {
@@ -14,7 +15,7 @@ namespace Game.Othello
 
         public IEnumerable<OthelloAction> FilterByInputState(IEnumerable<OthelloAction> actions, LanguageExt.Unit u)
         {
-            throw new NotImplementedException();
+            return actions;
         }
 
         public GameResults GameResult(OthelloState state)
@@ -29,7 +30,62 @@ namespace Game.Othello
 
         public OthelloState PerformAction(OthelloAction action, OthelloState state)
         {
-            throw new NotImplementedException();
+            if (action == null)
+                return new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn);
+
+            var playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
+            var oponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
+            Field[,] board = state.board;
+            int x = action.Position.Item1;
+            int y = action.Position.Item2;
+            board[x, y] = action.FieldContent;
+            int i = x--;
+            while(i > 0)
+            {
+                if (board[i, y] == oponentsColor)
+                {
+                    board[i, y] = playersColor;
+                    i--;
+                }
+                else
+                    break;
+            }
+            i = x++;
+            while (i < 8)   // 8 do zmiany
+            {
+                if (board[i, y] == oponentsColor)
+                {
+                    board[i, y] = playersColor;
+                    i++;
+                }
+                else
+                    break;
+            }
+            int j = y--;
+            while(j > 0) 
+            {
+                if (board[x, j] == oponentsColor)
+                {
+                    board[x, j] = playersColor;
+                    j--;
+                }
+                else
+                    break;
+            }
+            j = y++;
+            while(j < 8)
+            {
+                if (board[x, j] == oponentsColor)
+                {
+                    board[x, j] = playersColor;
+                    j++;
+                }
+                else
+                    break;
+            }
+            int whiteCount = (state.BlacksTurn) ? state.WhiteHandCount : state.WhiteHandCount - 1;
+            int blackCount = (state.BlacksTurn) ? state.BlackHandCount - 1 : state.BlackHandCount;
+            return new OthelloState(board, whiteCount, blackCount, !state.BlacksTurn);
         }
 
         public IEnumerable<OthelloAction> PossibleActions(OthelloState state)
