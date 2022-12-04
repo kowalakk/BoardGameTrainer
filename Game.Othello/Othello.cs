@@ -1,17 +1,18 @@
 ﻿using Game.IGame;
 using Gdk;
 using Gtk;
+using LanguageExt;
 
-namespace Game.Checkers
+namespace Game.Othello
 {
-    public class Othello : IGame<OthelloAction, OthelloState, OthelloInputState>
+    public class Othello : IGame<OthelloAction, OthelloState, LanguageExt.Unit>
     {
-        public void DrawBoard(Widget widget, OthelloInputState inputState, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
+        public void DrawBoard(Widget widget, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<OthelloAction> FilterByInputState(IEnumerable<OthelloAction> actions, OthelloInputState inputState)
+        public IEnumerable<OthelloAction> FilterByInputState(IEnumerable<OthelloAction> actions, LanguageExt.Unit u)
         {
             throw new NotImplementedException();
         }
@@ -21,7 +22,7 @@ namespace Game.Checkers
             throw new NotImplementedException();
         }
 
-        public (OthelloAction, OthelloInputState) HandleInput(Event @event, OthelloInputState inputState, OthelloState state)
+        public (OthelloAction, LanguageExt.Unit) HandleInput(Event @event, LanguageExt.Unit u, OthelloState state)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +34,11 @@ namespace Game.Checkers
 
         public IEnumerable<OthelloAction> PossibleActions(OthelloState state)
         {
-            throw new NotImplementedException();
+            List<OthelloAction> actions = new List<OthelloAction>();
+
+
+
+            return actions;
         }
     }
 }
