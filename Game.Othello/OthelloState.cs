@@ -3,6 +3,7 @@
     public class OthelloState : IEquatable<OthelloState>
     {
         private const int boardSize = 8;
+        private const int maxHandSize = 30;
         public enum Field {White, Black, Empty}
         public Field[,] board { get; set; }
         public int WhiteHandCount { get; set; }
@@ -10,7 +11,12 @@
         public bool BlacksTurn { get; set; }
         public OthelloState(Field[,] board, int whiteHandCount, int blackHandCount, bool blacksTurn)
         {
-            //TODO: sprawdzić czy board jest 8x8
+            if (board.GetLength(0) != boardSize || board.GetLength(1) != boardSize) 
+                throw new ArgumentException("wrong size of the board");
+            if(blackHandCount < 0 || blackHandCount > maxHandSize)
+                throw new ArgumentException("incorrect black hand size");
+            if (whiteHandCount < 0 || whiteHandCount > maxHandSize)
+                throw new ArgumentException("incorrect white hand size");
             this.board = board;
             WhiteHandCount = whiteHandCount;
             BlackHandCount = blackHandCount;
