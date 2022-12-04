@@ -6,11 +6,6 @@ namespace Game.Checkers
 {
     public class Checkers : IGame<CheckersAction, CheckersState, CheckersInputState>
     {
-        public int BOARD_ROWS = 8;
-        public int BOARD_COLS = 8;
-        //private Dictionary<(int, int), List<(int, int)>> Neighbours = new Dictionary<(int, int), List<(int, int)>> {
-        //    new KeyValuePair<(int, int),List<(int, int)>>((0,0), new List<(int, int)> { (1,1) }),
-        //};
         public void DrawBoard(Widget widget, CheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
             throw new NotImplementedException();
@@ -40,7 +35,12 @@ namespace Game.Checkers
 
         public CheckersState PerformAction(CheckersAction action, CheckersState state)
         {
-            throw new NotImplementedException();
+            CheckersState newState = new CheckersState(state);
+            foreach(Field field in action.ConsecutiveFields)
+            {
+                newState.SetPieceAt(field.X, field.Y, field.OccupiedBy);
+            }
+            return newState;
         }
 
         public IEnumerable<CheckersAction> PossibleActions(CheckersState state)
@@ -48,9 +48,9 @@ namespace Game.Checkers
             List<CheckersAction> possibleActions = new List<CheckersAction>();
             if (state.CurrentPlayer == Player.White)
             {
-                for (int x = 0; x < BOARD_ROWS; x++)
+                for (int x = 0; x < CheckersState.BOARD_ROWS; x++)
                 {
-                    for (int y = 0; y < BOARD_COLS; y++)
+                    for (int y = 0; y < CheckersState.BOARD_COLS; y++)
                     {
                         if (state.GetPieceAt((x, y)) == Piece.WhitePawn)
                             possibleActions.AddRange(PossibleWhitePawnActions(state, (x, y)));
@@ -61,9 +61,9 @@ namespace Game.Checkers
             }
             else //state.CurrentPlayer == Player.Black
             {
-                for (int x = 0; x < BOARD_ROWS; x++)
+                for (int x = 0; x < CheckersState.BOARD_ROWS; x++)
                 {
-                    for (int y = 0; y < BOARD_COLS; y++)
+                    for (int y = 0; y < CheckersState.BOARD_COLS; y++)
                     {
                         if (state.GetPieceAt((x, y)) == Piece.BlackPawn)
                             possibleActions.AddRange(PossibleBlackPownActions(state, (x, y)));
@@ -104,7 +104,7 @@ namespace Game.Checkers
             int y = start.y;
             if (y == 0) // finnished action on the last line - crowning
             {
-                if (x < BOARD_COLS - 1)
+                if (x < CheckersState.BOARD_COLS - 1)
                     possibleActions.Add(new CheckersAction(new List<Field> {
                             new Field(x, y, Piece.None), new Field(x + 1, y + 1, Piece.BlackCrowned) }));
                 if (x > 0)
@@ -113,7 +113,7 @@ namespace Game.Checkers
             }
             else if (y > 0)
             {
-                if (x < BOARD_COLS - 1)
+                if (x < CheckersState.BOARD_COLS - 1)
                     possibleActions.Add(new CheckersAction(new List<Field> {
                             new Field(x, y, Piece.None), new Field(x + 1, y + 1, Piece.BlackPawn) }));
                 if (x > 0)
@@ -136,7 +136,7 @@ namespace Game.Checkers
             {
                 foreach (var capture in possibleCaptures)
                 {
-                    if (capture.Last().Y == BOARD_ROWS - 1) // finnished action on the last line - crowning
+                    if (capture.Last().Y == CheckersState.BOARD_ROWS - 1) // finnished action on the last line - crowning
                     {
                         Field lastField = capture.Last();
                         capture.Remove(lastField);
@@ -150,21 +150,21 @@ namespace Game.Checkers
             //no captures - simple move forward
             int x = start.x;
             int y = start.y;
-            if (x < BOARD_COLS - 1 && state.GetPieceAt((x + 1, y + 1)) == Piece.None)
+            if (x < CheckersState.BOARD_COLS - 1 && state.GetPieceAt((x + 1, y + 1)) == Piece.None)
             {
-                if (y == BOARD_ROWS - 1) // finnished action on the last line - crowning
+                if (y == CheckersState.BOARD_ROWS - 1) // finnished action on the last line - crowning
                     possibleActions.Add(new CheckersAction(new List<Field> {
                             new Field(x, y, Piece.None), new Field(x + 1, y + 1, Piece.WhiteCrowned) }));
-                else if (y < BOARD_ROWS - 2)
+                else if (y < CheckersState.BOARD_ROWS - 2)
                     possibleActions.Add(new CheckersAction(new List<Field> {
                             new Field(x, y, Piece.None), new Field(x + 1, y + 1, Piece.WhitePawn) }));
             }
             if (x > 0 && state.GetPieceAt((x - 1, y + 1)) == Piece.None)
             {
-                if (y == BOARD_ROWS - 1) // finnished action on the last line - crowning
+                if (y == CheckersState.BOARD_ROWS - 1) // finnished action on the last line - crowning
                     possibleActions.Add(new CheckersAction(new List<Field> {
                             new Field(x, y, Piece.None), new Field(x - 1, y + 1, Piece.WhiteCrowned) }));
-                else if (y < BOARD_ROWS - 2)
+                else if (y < CheckersState.BOARD_ROWS - 2)
                     possibleActions.Add(new CheckersAction(new List<Field> {
                             new Field(x, y, Piece.None), new Field(x - 1, y + 1, Piece.WhitePawn) }));
             }
@@ -172,7 +172,7 @@ namespace Game.Checkers
             return possibleActions;
         }
 
-        private IEnumerable<List<Field>> PossiblePawnCaptures(CheckersState state, (int x, int y) start)
+        private List<List<Field>> PossiblePawnCaptures(CheckersState state, (int x, int y) start)
         {
             List<List<Field>> possibleCaptures = new List<List<Field>>();
             IEnumerable<(int x, int y)> neighbours = GetNeighbours(start);
@@ -184,8 +184,8 @@ namespace Game.Checkers
                 {
                     (int x, int y) vector = (neighbour.x - start.x, neighbour.y - start.y);
                     (int x, int y) endPosition = (neighbour.x + vector.x, neighbour.y + vector.y);
-                    if (endPosition.x < BOARD_COLS && endPosition.x >= 0
-                        && endPosition.y < BOARD_ROWS && endPosition.y >= 0
+                    if (endPosition.x < CheckersState.BOARD_COLS && endPosition.x >= 0
+                        && endPosition.y < CheckersState.BOARD_ROWS && endPosition.y >= 0
                         && state.GetPieceAt(endPosition) == Piece.None)
                     {
                         List<Field> fieldsAfterCapture = new List<Field> {
@@ -193,11 +193,17 @@ namespace Game.Checkers
                             new Field(neighbour.x, neighbour.y, Piece.None),
                             new Field(endPosition.x, endPosition.y, capturer),
                         };
-                        IEnumerable<List<Field>> furtherCaptures = PossiblePawnCaptures(state, endPosition);
+                        Field[] tmpFieldsAfterCapture = new Field[] {
+                            fieldsAfterCapture[0],
+                            new Field(neighbour.x, neighbour.y, Piece.Captured),
+                            fieldsAfterCapture[2],
+                        };
+                        CheckersState newState = PerformAction(new CheckersAction(tmpFieldsAfterCapture), state);
+                        IEnumerable<List<Field>> furtherCaptures = PossiblePawnCaptures(newState, endPosition);
                         if (furtherCaptures.Any())
                         {
                             List<List<Field>> combinedCaptures = CombineCaptures(fieldsAfterCapture[0],
-                                fieldsAfterCapture[1], furtherCaptures);
+                                fieldsAfterCapture[0], furtherCaptures);
                             possibleCaptures.AddRange(combinedCaptures);
                         }
                         else possibleCaptures.Add(fieldsAfterCapture);
@@ -228,16 +234,16 @@ namespace Game.Checkers
             int x = position.x;
             int y = position.y;
             List<(int x, int y)> neighbours = new List<(int x, int y)>();
-            if (y < BOARD_ROWS - 1)
+            if (y < CheckersState.BOARD_ROWS - 1)
             {
-                if (x < BOARD_COLS - 1)
+                if (x < CheckersState.BOARD_COLS - 1)
                     neighbours.Add((x + 1, y + 1));
                 if (x > 0)
                     neighbours.Add((x - 1, y + 1));
             }
             if (y > 0)
             {
-                if (x < BOARD_COLS - 1)
+                if (x < CheckersState.BOARD_COLS - 1)
                     neighbours.Add((x + 1, y - 1));
                 if (x > 0)
                     neighbours.Add((x - 1, y - 1));
@@ -248,6 +254,7 @@ namespace Game.Checkers
         private bool HaveOppositeColors(Piece capturer, Piece target)
         {
             if (capturer == Piece.None || target == Piece.None) return false;
+            if (capturer == Piece.Captured || target == Piece.Captured) return false;
             bool isCapturerWhite = capturer == Piece.WhitePawn || capturer == Piece.None;
             bool isTargetBlack = target == Piece.WhitePawn || target == Piece.None;
             return (isCapturerWhite && isTargetBlack) || (!isCapturerWhite && !isTargetBlack);

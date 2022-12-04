@@ -14,8 +14,8 @@
     }
     public class CheckersAction : IEquatable<CheckersAction>
     {
-        public List<Field> ConsecutiveFields { get; private set; }
-        public CheckersAction(List<Field> consecutiveFields)
+        public IEnumerable<Field> ConsecutiveFields { get; private set; }
+        public CheckersAction(IEnumerable<Field> consecutiveFields)
         {
             ConsecutiveFields = consecutiveFields;
         }

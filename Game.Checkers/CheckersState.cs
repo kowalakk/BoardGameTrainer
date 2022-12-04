@@ -7,6 +7,7 @@
         BlackPawn = 2,
         WhiteCrowned = 3,
         BlackCrowned = 4,
+        Captured = 5,
     }
     public enum Player
     {
@@ -16,9 +17,11 @@
 
     public class CheckersState : IEquatable<CheckersState>
     {
-        public int BOARD_COLS = 8;
-        public int BOARD_ROWS = 8;
-
+        public static int BOARD_ROWS = 8;
+        public static int BOARD_COLS = 8;
+        //private static Dictionary<(int, int), List<(int, int)>> Neighbours = new Dictionary<(int, int), List<(int, int)>> {
+        //    new KeyValuePair<(int, int),List<(int, int)>>((0,0), new List<(int, int)> { (1,1) }),
+        //};
         private Piece[,] board;
         public Player CurrentPlayer { get; private set; }
         public CheckersState(Piece[,] board, Player currentPlayer)
