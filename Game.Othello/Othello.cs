@@ -101,17 +101,85 @@ namespace Game.Othello
 
         public IEnumerable<OthelloAction> PossibleActions(OthelloState state)
         {
-            List<OthelloAction> actions = new List<OthelloAction>();
-            for(int i = 0; i < boardSize; i++)
-                for(int j = 0; j < boardSize; j++)
-                    if (state.board[i, j] == Field.Empty)
+            Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
+            Field opponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
+
+            bool CheckIfActionPossible(int x, int y)
+            {
+                int i = x - 1;
+                int j = y - 1;
+                int oponentsPiecesCount = 0;
+                while(i >= 0)
+                {
+                    if (state.board[i, y] == Field.Empty)
+                        break;
+                    if (state.board[i, y] == opponentsColor)
+                        oponentsPiecesCount++;
+                    if (state.board[i, y] == playersColor)
                     {
-
+                        if (oponentsPiecesCount > 0)
+                            return true;
+                        break;
                     }
-
-
+                    i--;
+                }
+                oponentsPiecesCount = 0;
+                while (i < boardSize)
+                {
+                    if (state.board[i, y] == Field.Empty)
+                        break;
+                    if (state.board[i, y] == opponentsColor)
+                        oponentsPiecesCount++;
+                    if (state.board[i, y] == playersColor)
+                    {
+                        if (oponentsPiecesCount > 0)
+                            return true;
+                        break;
+                    }
+                    i++;
+                }
+                oponentsPiecesCount = 0;
+                while (j >= 0)
+                {
+                    if (state.board[x, j] == Field.Empty)
+                        break;
+                    if (state.board[x, j] == opponentsColor)
+                        oponentsPiecesCount++;
+                    if (state.board[x, j] == playersColor)
+                    {
+                        if (oponentsPiecesCount > 0)
+                            return true;
+                        break;
+                    }
+                    j--;
+                }
+                oponentsPiecesCount = 0;
+                while (j < boardSize)
+                {
+                    if (state.board[x, j] == Field.Empty)
+                        break;
+                    if (state.board[x, j] == opponentsColor)
+                        oponentsPiecesCount++;
+                    if (state.board[x, j] == playersColor)
+                    {
+                        if (oponentsPiecesCount > 0)
+                            return true;
+                        break;
+                    }
+                    j++;
+                }
+                return false;
+            }
+            List<OthelloAction> actions = new List<OthelloAction>();
+            for (int i = 0; i < boardSize; i++)
+                for (int j = 0; j < boardSize; j++)
+                    if (state.board[i, j] == Field.Empty)
+                        if (CheckIfActionPossible(i, j))
+                            actions.Add(new OthelloAction((i, j), playersColor));
             return actions;
         }
+
+
 
         private int HasBlackWon(OthelloState state)
         {
