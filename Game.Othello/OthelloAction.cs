@@ -16,7 +16,7 @@
 
         public bool Equals(OthelloAction? other)
         {
-            if (this == null || other == null) 
+            if (other == null) 
                 return false; 
             if (this.Position != other.Position)
                 return false;

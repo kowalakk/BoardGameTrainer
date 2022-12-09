@@ -25,7 +25,7 @@
 
         public bool Equals(OthelloState? other)
         {
-            if (this == null || other == null)
+            if (other == null)
                 return false;
             if (this.WhiteHandCount != other.WhiteHandCount)
                 return false;

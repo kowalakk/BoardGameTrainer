@@ -22,15 +22,8 @@ namespace Game.Othello
         public GameResults GameResult(OthelloState state)
         {
             if(PossibleActions(state) == null)
-            {
                 if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)) == null)
-                {
-                    int hasBlackWon = HasBlackWon(state);
-                    if (hasBlackWon == 0)
-                        return GameResults.Draw;
-                    return (hasBlackWon == 1) ? GameResults.PlayerOneWins : GameResults.PlayerTwoWins;
-                }
-            }
+                    return HasBlackWon(state);
             return GameResults.InProgress;
         }
 
@@ -50,7 +43,7 @@ namespace Game.Othello
             int x = action.Position.Item1;
             int y = action.Position.Item2;
             board[x, y] = action.FieldContent;
-            int i = x--;
+            int i = x - 1;
             while(i > 0)
             {
                 if (board[i, y] == oponentsColor)
@@ -61,7 +54,7 @@ namespace Game.Othello
                 else
                     break;
             }
-            i = x++;
+            i = x + 1;
             while (i < boardSize)
             {
                 if (board[i, y] == oponentsColor)
@@ -72,7 +65,7 @@ namespace Game.Othello
                 else
                     break;
             }
-            int j = y--;
+            int j = y - 1;
             while(j > 0) 
             {
                 if (board[x, j] == oponentsColor)
@@ -83,7 +76,7 @@ namespace Game.Othello
                 else
                     break;
             }
-            j = y++;
+            j = y + 1;
             while(j < boardSize)
             {
                 if (board[x, j] == oponentsColor)
@@ -106,10 +99,8 @@ namespace Game.Othello
 
             bool CheckIfActionPossible(int x, int y)
             {
-                int i = x - 1;
-                int j = y - 1;
                 int oponentsPiecesCount = 0;
-                while(i >= 0)
+                for(int i = x - 1; i >= 0; i--)
                 {
                     if (state.board[i, y] == Field.Empty)
                         break;
@@ -121,10 +112,11 @@ namespace Game.Othello
                             return true;
                         break;
                     }
-                    i--;
+                    
                 }
                 oponentsPiecesCount = 0;
-                while (i < boardSize)
+                
+                for (int i = x + 1; i < boardSize; i++)
                 {
                     if (state.board[i, y] == Field.Empty)
                         break;
@@ -136,10 +128,9 @@ namespace Game.Othello
                             return true;
                         break;
                     }
-                    i++;
                 }
                 oponentsPiecesCount = 0;
-                while (j >= 0)
+                for (int j = y - 1; j >= 0; j--)
                 {
                     if (state.board[x, j] == Field.Empty)
                         break;
@@ -151,10 +142,9 @@ namespace Game.Othello
                             return true;
                         break;
                     }
-                    j--;
                 }
                 oponentsPiecesCount = 0;
-                while (j < boardSize)
+                for (int j = y + 1;  j < boardSize; j++)
                 {
                     if (state.board[x, j] == Field.Empty)
                         break;
@@ -166,7 +156,6 @@ namespace Game.Othello
                             return true;
                         break;
                     }
-                    j++;
                 }
                 return false;
             }
@@ -179,9 +168,7 @@ namespace Game.Othello
             return actions;
         }
 
-
-
-        private int HasBlackWon(OthelloState state)
+        private GameResults HasBlackWon(OthelloState state)
         {
             int whiteCount = 0;
             int blackCount = 0;
@@ -194,8 +181,8 @@ namespace Game.Othello
                         blackCount++;
                 }
             if (whiteCount == blackCount)
-                return 0;
-            return (blackCount > whiteCount) ? 1 : -1;
+                return GameResults.Draw;
+            return (blackCount > whiteCount) ? GameResults.PlayerOneWins : GameResults.PlayerTwoWins;
         }
     }
 }
