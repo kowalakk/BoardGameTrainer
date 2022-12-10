@@ -1,10 +1,8 @@
-﻿using Game.Checkers;
-
-namespace Game.CheckersTest
+﻿namespace Game.Checkers.Test
 {
     public class PossibleActionsTests
     {
-        readonly Checkers.Checkers checkers = new();
+        readonly Checkers checkers = new();
         [Fact]
         public void PossibleActionsForEmptyBoardShouldBeEmpty()
         {
@@ -19,7 +17,7 @@ namespace Game.CheckersTest
             state.SetPieceAt(0, 0, Piece.WhitePawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            CheckersAction action = new( new Field(0, 0, Piece.None), new Field(1, 1, Piece.WhitePawn) );
+            MoveAction action = new( new Field(0, 0), new Field(1, 1) );
             Assert.Equal(possibleActions.First(), action);
         }
         [Fact]
@@ -39,9 +37,9 @@ namespace Game.CheckersTest
             state.SetPieceAt(2, 0, Piece.WhitePawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Equal(2, possibleActions.Count());
-            CheckersAction action = new(new Field(2, 0, Piece.None), new Field(1, 1, Piece.WhitePawn));
+            MoveAction action = new(new Field(2, 0), new Field(1, 1));
             Assert.Contains(action ,possibleActions);
-            action = new(new Field(2, 0, Piece.None), new Field(3, 1, Piece.WhitePawn));
+            action = new(new Field(2, 0), new Field(3, 1));
             Assert.Contains(action, possibleActions);
         }
         [Fact]
@@ -52,7 +50,7 @@ namespace Game.CheckersTest
             state.SetPieceAt(1, 1, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            CheckersAction action = new(new Field(0, 0, Piece.None), new Field(1, 1, Piece.None), new Field(2, 2, Piece.WhitePawn));
+            CaptureAction action = new(new Field(0, 0), new Field(1, 1), new Field(2, 2));
             Assert.Contains(action, possibleActions);
         }
         [Fact]
@@ -63,7 +61,7 @@ namespace Game.CheckersTest
             state.SetPieceAt(2, 4, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            CheckersAction action = new(new Field(3, 3, Piece.None), new Field(2, 4, Piece.None), new Field(1, 5, Piece.WhitePawn));
+            CaptureAction action = new(new Field(3, 3), new Field(2, 4), new Field(1, 5));
             Assert.Contains(action, possibleActions);
         }
         [Fact]
@@ -75,9 +73,9 @@ namespace Game.CheckersTest
             state.SetPieceAt(4, 2, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Equal(2, possibleActions.Count());
-            CheckersAction action = new(new Field(3, 3, Piece.None), new Field(2, 4, Piece.None), new Field(1, 5, Piece.WhitePawn));
+            CaptureAction action = new(new Field(3, 3), new Field(2, 4), new Field(1, 5));
             Assert.Contains(action, possibleActions);
-            action = new(new Field(3, 3, Piece.None), new Field(4, 2, Piece.None), new Field(5, 1, Piece.WhitePawn));
+            action = new(new Field(3, 3), new Field(4, 2), new Field(5, 1));
             Assert.Contains(action, possibleActions);
         }
         [Fact]
@@ -90,8 +88,8 @@ namespace Game.CheckersTest
             state.SetPieceAt(6, 4, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            CheckersAction action = new(new Field(3, 3, Piece.None), new Field(4, 4, Piece.None), 
-                new Field(5, 5, Piece.None), new Field(6, 4, Piece.None), new Field(7, 3, Piece.WhitePawn));
+            CaptureAction action = new( new Field(5, 5), new Field(6, 4), new Field(7, 3));
+            action.CombineCapture(new Field(3, 3), new Field(4, 4));
             Assert.Contains(action, possibleActions);
         }
     }

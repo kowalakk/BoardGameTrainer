@@ -1,6 +1,4 @@
-using Game.Checkers;
-
-namespace Game.CheckersTest
+namespace Game.Checkers.Test
 {
     public class CheckersStateTests
     {

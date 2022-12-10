@@ -24,7 +24,7 @@
         //};
         private Piece[,] board;
         public Player CurrentPlayer { get; private set; }
-        public CheckersState(Piece[,] board, Player currentPlayer)
+        private CheckersState(Piece[,] board, Player currentPlayer)
         {
             this.board = new Piece[BOARD_COLS, BOARD_ROWS];
             Array.Copy(board, this.board, board.Length);
@@ -44,35 +44,71 @@
             {
                 for (int y = 0; y < BOARD_COLS; y++)
                 {
-                    if (GetPieceAt((x, y)) != other.GetPieceAt((x, y))) return false;
+                    if (GetPieceAt(x, y) != other.GetPieceAt(x, y)) return false;
                 }
             }
             return true;
         }
         public IEnumerable<Field> GetFields()
         {
-            for (int x = 0; x < BOARD_ROWS; x++)
+            for (int col = 0; col < BOARD_ROWS; col++)
             {
-                for (int y = 0; y < BOARD_COLS; y++)
+                for (int row = col % 2; row < BOARD_COLS; row += 2)
                 {
-                    yield return new Field(x, y, board[x,y]);
+                    yield return new Field(col, row);
                 }
             }
         }
-
-        public Piece GetPieceAt(int x, int y)
+        public IEnumerable<Field> GetNeighbours(Field field)
         {
-            return GetPieceAt((x, y));
+            int x = field.Col;
+            int y = field.Row;
+            List<Field> neighbours = new();
+            if (y < BOARD_ROWS - 1)
+            {
+                if (x < BOARD_COLS - 1)
+                    neighbours.Add(new Field(x + 1, y + 1));
+                if (x > 0)
+                    neighbours.Add(new Field(x - 1, y + 1));
+            }
+            if (y > 0)
+            {
+                if (x < BOARD_COLS - 1)
+                    neighbours.Add(new Field(x + 1, y - 1));
+                if (x > 0)
+                    neighbours.Add(new Field(x - 1, y - 1));
+            }
+            return neighbours;
         }
 
-        public Piece GetPieceAt((int x, int y) position)
+        public Piece GetPieceAt(int col, int row)
         {
-            return board[position.x, position.y];
+            return board[col, row];
         }
 
-        public void SetPieceAt(int x, int y, Piece piece)
+        public Piece GetPieceAt(Field field)
         {
-            board[x, y] = piece;
+            return GetPieceAt(field.Col, field.Row);
+        }
+
+        public void SetPieceAt(int col, int row, Piece piece)
+        {
+            board[col, row] = piece;
+        }
+        public void SetPieceAt(Field field, Piece piece)
+        {
+            SetPieceAt(field.Col, field.Row, piece);
+        }
+        public void SetPieceAt(Field field, Piece piece, bool possiblePromotion)
+        {
+            if (possiblePromotion)
+            {
+                if (piece == Piece.WhitePawn && field.Row == BOARD_ROWS - 1)
+                    SetPieceAt(field.Col, field.Row, Piece.WhiteCrowned);
+                else if (piece == Piece.BlackPawn && field.Row == 0)
+                    SetPieceAt(field.Col, field.Row, Piece.BlackCrowned);
+            }
+            else SetPieceAt(field.Col, field.Row, piece);
         }
 
         public static CheckersState GetInitialState()
