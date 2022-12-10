@@ -19,11 +19,11 @@ namespace ArtificialIntelligence
             throw new NotImplementedException();
         }
 
-        void NMCSearch(Node root, int level, int timeInterval)
+        void NMCSearch(Node<State> root, int level, int timeInterval)
         {
             throw new NotImplementedException();
         }
-        List<Action> Nested(Node node, int level)
+        List<Action> Nested(Node<State> node, int level)
         {
             throw new NotImplementedException();
         }

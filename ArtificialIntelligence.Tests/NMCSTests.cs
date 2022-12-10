@@ -1,6 +1,6 @@
-namespace ArtificialIntelligence.Tests
+﻿namespace ArtificialIntelligence.Tests
 {
-    public class UnitTest1
+    public class NMCSTests
     {
         [Fact]
         public void Test1()

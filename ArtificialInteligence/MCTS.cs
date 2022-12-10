@@ -20,15 +20,15 @@ namespace ArtificialIntelligence
             throw new NotImplementedException();
         }
 
-        void MCTSearch(Node root, int timeInterval)
+        void MCTSearch(Node<State> root, int timeInterval)
         {
             throw new NotImplementedException();
         }
-        Node TreePolicy(Node node)
+        Node<State> TreePolicy(Node<State> node)
         {
             throw new NotImplementedException();
         }
-        Node Expand(Node node, Game game)
+        Node<State> Expand(Node<State> node, Game game)
         {
             throw new NotImplementedException();
         }
@@ -36,11 +36,11 @@ namespace ArtificialIntelligence
         {
             throw new NotImplementedException();
         }
-        void Backup(Node node, int delta)
+        void Backup(Node<State> node, int delta)
         {
             throw new NotImplementedException();
         }
-        Node BestChild(Node node)
+        Node<State> BestChild(Node<State> node)
         {
             throw  new NotImplementedException();
         }
