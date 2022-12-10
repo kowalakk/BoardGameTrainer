@@ -21,8 +21,8 @@ namespace Game.Othello
 
         public GameResults GameResult(OthelloState state)
         {
-            if(PossibleActions(state) == null)
-                if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)) == null)
+            if(PossibleActions(state).Count() == 0)
+                if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Count() == 0)
                     return HasBlackWon(state);
             return GameResults.InProgress;
         }
