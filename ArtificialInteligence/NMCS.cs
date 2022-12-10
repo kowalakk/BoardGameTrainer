@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace ArtificialIntelligence
 {
-    internal class NMCS<Game, State> : IArtificialIntelligence<Game, State, NMCSModuleData>
+    internal class NMCS<State> : IArtificialIntelligence<State, Action, NMCSModuleData>
     {
-        public Action ChooseMove(Game game, State state)
+        public Action ChooseMove(IGame game, State state)
         {
             throw new NotImplementedException();
         }
 
-        public List<(Action, double)> MoveAssessment(Game game, State state, NMCSModuleData moduleData)
+        public List<(Action, double)> MoveAssessment(IGame game, State state, NMCSModuleData moduleData)
         {
             throw new NotImplementedException();
         }

@@ -8,14 +8,14 @@ using System.Xml.Linq;
 
 namespace ArtificialIntelligence
 {
-    internal class MCTS<Game, State> : IArtificialIntelligence<Game, State, MCTSModuleData>
+    internal class MCTS<State> : IArtificialIntelligence<State, Action, MCTSModuleData>
     {
-        public Action ChooseMove(Game game, State state)
+        public Action ChooseMove(IGame game, State state)
         {
             throw new NotImplementedException();
         }
 
-        public List<(Action, double)> MoveAssessment(Game game, State state, MCTSModuleData moduleData)
+        public List<(Action, double)> MoveAssessment(IGame game, State state, MCTSModuleData moduleData)
         {
             throw new NotImplementedException();
         }
@@ -28,11 +28,11 @@ namespace ArtificialIntelligence
         {
             throw new NotImplementedException();
         }
-        Node<State> Expand(Node<State> node, Game game)
+        Node<State> Expand(Node<State> node, IGame game)
         {
             throw new NotImplementedException();
         }
-        int DefaultPolicy(State state, Game game)
+        int DefaultPolicy(State state, IGame game)
         {
             throw new NotImplementedException();
         }
