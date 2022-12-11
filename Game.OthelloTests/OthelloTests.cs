@@ -27,7 +27,7 @@ namespace Game.Othello.Tests
         {
             OthelloState state = OthelloState.GenerateInitialOthelloState();
             state.BlacksTurn = false;
-            Assert.Equal(state, othello.PerformAction(null, OthelloState.GenerateInitialOthelloState()));
+            Assert.Equal(state, othello.PerformAction(new OthelloEmptyAction(), OthelloState.GenerateInitialOthelloState()));
         }
     }
 }

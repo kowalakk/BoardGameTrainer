@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game.Othello
 {
-    internal class OthelloEmptyAction
+    public class OthelloEmptyAction : OthelloAction
     {
     }
 }

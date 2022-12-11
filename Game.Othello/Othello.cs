@@ -34,15 +34,15 @@ namespace Game.Othello
 
         public OthelloState PerformAction(OthelloAction action, OthelloState state)
         {
-            if (action == null)
+            if (action.GetType() == typeof(OthelloEmptyAction))
                 return new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn);
 
             var playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             var oponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
             Field[,] board = state.board;
-            int x = action.Position.Item1;
-            int y = action.Position.Item2;
-            board[x, y] = action.FieldContent;
+            int x = ((OthelloFullAction)action).Position.Item1;
+            int y = ((OthelloFullAction)action).Position.Item2;
+            board[x, y] = ((OthelloFullAction)action).FieldContent;
             int i = x - 1;
             while(i > 0)
             {
@@ -164,7 +164,7 @@ namespace Game.Othello
                 for (int j = 0; j < boardSize; j++)
                     if (state.board[i, j] == Field.Empty)
                         if (CheckIfActionPossible(i, j))
-                            actions.Add(new OthelloAction((i, j), playersColor));
+                            actions.Add(new OthelloFullAction((i, j), playersColor));
             return actions;
         }
 

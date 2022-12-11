@@ -1,7 +1,7 @@
 using Game.Othello;
 using static Game.Othello.OthelloState;
 
-namespace Game.OthelloTests
+namespace Game.Othello.Tests
 {
     public class OthelloStateTests
     {

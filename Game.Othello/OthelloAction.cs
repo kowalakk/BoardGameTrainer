@@ -2,7 +2,7 @@
 {
     public abstract class OthelloAction : IEquatable<OthelloAction>
     {
-        public bool Equals(OthelloAction? other)
+        public virtual bool Equals(OthelloAction? other)
         {
             return false;
         }
