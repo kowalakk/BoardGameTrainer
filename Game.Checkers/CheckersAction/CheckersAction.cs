@@ -12,6 +12,10 @@ namespace Game.Checkers
             Col = col;
             Row = row;
         }
+        /// <summary>
+        /// Constructor for writing tests only
+        /// </summary>
+        /// <param name="field">Field is described by two-letter string (A-H)(1-8)</param>
         public Field(string field)
         {
             Col = field[0] - 'A';
@@ -29,7 +33,7 @@ namespace Game.Checkers
     public abstract class CheckersAction : IEquatable<CheckersAction>
     {
         public Field Start { get; protected set; }
-        public abstract Field Finnish { get; }
+        public abstract Field Finish { get; }
 
         public CheckersAction(Field start)
         {
@@ -38,7 +42,7 @@ namespace Game.Checkers
 
         public abstract bool Equals(CheckersAction? other);
 
-        public abstract CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith = Piece.None);
+        public abstract CheckersState PerformOn(CheckersState state);
 
         public override bool Equals(object? obj)
         {
@@ -47,7 +51,7 @@ namespace Game.Checkers
 
         public override int GetHashCode()
         {
-            return Start.GetHashCode() ^ Finnish.GetHashCode();
+            return Start.GetHashCode() ^ Finish.GetHashCode();
         }
     }
 }

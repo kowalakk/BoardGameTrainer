@@ -75,5 +75,27 @@
             action.CombineCapture(new Field("D4"), new Field("E5"));
             Assert.Contains(action, possibleActions);
         }
+        [Fact]
+        public void AlreadyCapturedPieceShouldBeUncapturableButNotRemovedTillEndOfMove()
+        {
+            CheckersState state = CheckersState.GetEmptyBoardState(Player.Black);
+            state.SetPieceAt("B2", Piece.WhitePawn);
+            state.SetPieceAt("B4", Piece.WhitePawn);
+            state.SetPieceAt("D2", Piece.WhitePawn);
+            state.SetPieceAt("D4", Piece.WhitePawn);
+            state.SetPieceAt("E3", Piece.BlackPawn);
+            var possibleActions = checkers.PossibleActions(state);
+            Assert.Equal(2, possibleActions.Count());
+            CaptureAction action = new(new Field("C1"), new Field("D2"), new Field("E3"));
+            action.CombineCapture(new Field("A3"), new Field("B2"));
+            action.CombineCapture(new Field("C5"), new Field("B4"));
+            action.CombineCapture(new Field("E3"), new Field("D4"));
+            Assert.Contains(action, possibleActions);
+            action = new(new Field("C5"), new Field("D4"), new Field("E3"));
+            action.CombineCapture(new Field("A3"), new Field("B4"));
+            action.CombineCapture(new Field("C1"), new Field("B2"));
+            action.CombineCapture(new Field("E3"), new Field("D2"));
+            Assert.Contains(action, possibleActions);
+        }
     }
 }

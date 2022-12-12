@@ -5,8 +5,8 @@
         [Fact]
         public void EqualsShouldBeTrue()
         {
-            Field start = new Field(0, 0);
-            Field end = new Field(1, 1);
+            Field start = new(0, 0);
+            Field end = new(1, 1);
             MoveAction action1 = new(start, end);
             MoveAction action2 = new(start, end);
             Assert.Equal(action1, action2);

@@ -4,11 +4,11 @@ namespace Game.Checkers
 {
     public class MoveAction : CheckersAction
     {
-        public override Field Finnish { get; }
+        public override Field Finish { get; }
 
-        public MoveAction(Field start, Field finnish) : base(start)
+        public MoveAction(Field start, Field finish) : base(start)
         {
-            Finnish = finnish;
+            Finish = finish;
         }
 
         public override bool Equals(CheckersAction? other)
@@ -17,16 +17,16 @@ namespace Game.Checkers
             if (other is not MoveAction) return false;
             MoveAction moveAction = (MoveAction)other;
             if (!moveAction.Start.Equals(Start)) return false;
-            if (!moveAction.Finnish.Equals(Finnish)) return false;
+            if (!moveAction.Finish.Equals(Finish)) return false;
             return true;
         }
 
-        public override CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith = Piece.None)
+        public override CheckersState PerformOn(CheckersState state)
         {
             Piece movedPiece = state.GetPieceAt(Start);
             CheckersState newState = new(state);
             newState.SetPieceAt(Start, Piece.None);
-            newState.SetPieceAt(Finnish, movedPiece, true);
+            newState.SetPieceAtWithPossiblePromotion(Finish, movedPiece);
             return newState;
         }
     }

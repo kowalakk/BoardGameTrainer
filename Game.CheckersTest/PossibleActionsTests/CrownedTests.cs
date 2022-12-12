@@ -81,5 +81,34 @@
             Assert.Contains(new CaptureAction(new Field("B6"), new Field("E3"), new Field("F2")), possibleActions);
             Assert.Contains(new CaptureAction(new Field("B6"), new Field("E3"), new Field("G1")), possibleActions);
         }
+        [Fact]
+        public void PossibleActionsShouldBeLongestCaptureOnly()
+        {
+            CheckersState state = CheckersState.GetEmptyBoardState();
+            state.SetPieceAt("B6", Piece.WhiteCrowned);
+            state.SetPieceAt("E3", Piece.BlackPawn);
+            state.SetPieceAt("G3", Piece.BlackPawn);
+            var possibleActions = checkers.PossibleActions(state);
+            Assert.Single(possibleActions);
+            CaptureAction action = new(new Field("F2"), new Field("G3"), new Field("H4"));
+            action.CombineCapture(new Field("B6"), new Field("E3"));
+            Assert.Contains(action, possibleActions);
+        }
+        [Fact]
+        public void AlreadyCapturedPieceShouldBeUncapturableButNotRemovedTillEndOfMove()
+        {
+            CheckersState state = CheckersState.GetEmptyBoardState();
+            state.SetPieceAt("F2", Piece.WhiteCrowned);
+            state.SetPieceAt("E3", Piece.BlackPawn);
+            state.SetPieceAt("B4", Piece.BlackCrowned);
+            state.SetPieceAt("B2", Piece.BlackCrowned);
+            state.SetPieceAt("G5", Piece.BlackPawn);
+            var possibleActions = checkers.PossibleActions(state);
+            Assert.Single(possibleActions);
+            CaptureAction action = new(new Field("A3"), new Field("B2"), new Field("C1"));
+            action.CombineCapture(new Field("C5"), new Field("B4"));
+            action.CombineCapture(new Field("F2"), new Field("E3"));
+            Assert.Contains(action, possibleActions);
+        }
     }
 }

@@ -3,27 +3,27 @@
     public struct SimpleCapture
     {
         public Field Captured { get; private set; }
-        public Field Finnish { get; private set; }
+        public Field Finish { get; private set; }
 
-        public SimpleCapture(Field captured, Field finnish)
+        public SimpleCapture(Field captured, Field finish)
         {
             Captured = captured;
-            Finnish = finnish;
+            Finish = finish;
         }
     }
 
     public class CaptureAction : CheckersAction
     {
-        public override Field Finnish { get => Captures.Last!.Value.Finnish; }
-        
+        public override Field Finish { get => Captures.Last!.Value.Finish; }
+
         public LinkedList<SimpleCapture> Captures { get; private set; }
         public int CapturesCount { get; private set; }
 
-        public CaptureAction(Field start, Field capture, Field finnish) : base(start)
+        public CaptureAction(Field start, Field capture, Field finish) : base(start)
         {
             CapturesCount = 1;
             Captures = new LinkedList<SimpleCapture>();
-            Captures.AddFirst(new SimpleCapture(capture, finnish));
+            Captures.AddFirst(new SimpleCapture(capture, finish));
         }
         public void CombineCapture(Field start, Field firstCapture)
         {
@@ -43,7 +43,12 @@
             return true;
         }
 
-        public override CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith = Piece.None)
+        public override CheckersState PerformOn(CheckersState state)
+        {
+            return PerformOn(state);
+        }
+
+        public CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith = Piece.None)
         {
             Piece capturer = state.GetPieceAt(Start);
             CheckersState newState = new(state);
@@ -52,7 +57,7 @@
             {
                 newState.SetPieceAt(capture.Captured, substituteCapturedWith);
             }
-            newState.SetPieceAt(Finnish, capturer, true);
+            newState.SetPieceAtWithPossiblePromotion(Finish, capturer);
             return newState;
         }
     }
