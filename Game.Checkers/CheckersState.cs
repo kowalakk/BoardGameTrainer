@@ -116,7 +116,12 @@
             }
             SetPieceAt(field.Col, field.Row, piece);
         }
-
+        public void SetPieceAt(string field, Piece piece)
+        {
+            int col = field[0] - 'A';
+            int row = field[1] - '1';
+            SetPieceAt(col, row, piece);
+        }
         public static CheckersState GetInitialState()
         {
             Piece[,] board = new Piece[,]

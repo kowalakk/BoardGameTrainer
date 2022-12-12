@@ -129,7 +129,7 @@ namespace Game.Checkers
                 while (fieldsToCheck > 1 && state.GetPieceAt(col, row) == Piece.None)
                 {
                     col += dCol;
-                    row += dCol;
+                    row += dRow;
                     fieldsToCheck--;
                 }
                 if (fieldsToCheck > 1)
@@ -140,7 +140,7 @@ namespace Game.Checkers
                     {
                         Field target = new(col, row);
                         col += dCol;
-                        row += dCol;
+                        row += dRow;
                         fieldsToCheck--;
                         while (fieldsToCheck > 0 && state.GetPieceAt(col, row) == Piece.None)
                         {
@@ -152,7 +152,7 @@ namespace Game.Checkers
                             AddNewActions(ref possibleCaptures, furtherCaptures);
 
                             col += dCol;
-                            row += dCol;
+                            row += dRow;
                             fieldsToCheck--;
                         }
                     }

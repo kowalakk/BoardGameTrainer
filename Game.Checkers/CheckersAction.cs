@@ -3,7 +3,28 @@ using System.Text.RegularExpressions;
 
 namespace Game.Checkers
 {
-    public record Field(int Col, int Row);
+    public readonly struct Field : IEquatable<Field>
+    {
+        public int Col { get; }
+        public int Row { get; }
+        public Field(int col, int row)
+        {
+            Col = col;
+            Row = row;
+        }
+        public Field(string field)
+        {
+            Col = field[0] - 'A';
+            Row = field[1] - '1';
+        }
+
+        public bool Equals(Field other)
+        {
+            if (Col != other.Col) return false;
+            if (Row != other.Row) return false;
+            return true;
+        }
+    }
 
     public abstract class CheckersAction : IEquatable<CheckersAction>
     {
