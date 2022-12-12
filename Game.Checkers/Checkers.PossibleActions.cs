@@ -1,6 +1,4 @@
 ﻿using Game.IGame;
-using Gdk;
-using Gtk;
 
 namespace Game.Checkers
 {
@@ -8,16 +6,16 @@ namespace Game.Checkers
     {
         public IEnumerable<CheckersAction> PossibleActions(CheckersState state)
         {
-            List<CheckersAction> possibleActions = new();
+            (List<CheckersAction> list, int maxCapturesCount) possibleActions = (new(), 0);
             if (state.CurrentPlayer == Player.White)
             {
                 foreach (Field field in state.GetFields())
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.WhitePawn)
-                        possibleActions.AddRange(PossibleWhitePawnActions(state, field));
+                        AddNewActions(ref possibleActions, PossibleWhitePawnActions(state, field));
                     else if (piece == Piece.WhiteCrowned)
-                        possibleActions.AddRange(PossibleCrownedActions(state, field));
+                        AddNewActions(ref possibleActions, PossibleCrownedActions(state, field));
                 }
             }
             else //state.CurrentPlayer == Player.Black
@@ -26,18 +24,19 @@ namespace Game.Checkers
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.BlackPawn)
-                        possibleActions.AddRange(PossibleBlackPownActions(state, field));
+                        AddNewActions(ref possibleActions, PossibleBlackPownActions(state, field));
                     else if (piece == Piece.BlackCrowned)
-                        possibleActions.AddRange(PossibleCrownedActions(state, field));
+                        AddNewActions(ref possibleActions, PossibleCrownedActions(state, field));
+
                 }
             }
-            return possibleActions;
+            return possibleActions.list;
         }
 
-        private IEnumerable<CheckersAction> PossibleWhitePawnActions(CheckersState state, Field start)
+        private (IEnumerable<CheckersAction>, int) PossibleWhitePawnActions(CheckersState state, Field start)
         {
-            IEnumerable<CaptureAction> possibleCaptures = PossiblePawnCaptures(state, start);
-            if (possibleCaptures.Any())
+            (IEnumerable<CheckersAction> list, int maxCapturesCount) possibleCaptures = PossiblePawnCaptures(state, start);
+            if (possibleCaptures.list.Any())
                 return possibleCaptures;
             //no captures - simple move north-east/north-west
             List<MoveAction> possibleMoves = new();
@@ -55,13 +54,13 @@ namespace Game.Checkers
                     possibleMoves.Add(new MoveAction(start, new Field(newCol, newRow)));
                 }
             }
-            return possibleMoves;
+            return (possibleMoves, 0);
         }
 
-        private IEnumerable<CheckersAction> PossibleBlackPownActions(CheckersState state, Field start)
+        private (IEnumerable<CheckersAction>, int) PossibleBlackPownActions(CheckersState state, Field start)
         {
-            IEnumerable<CaptureAction> possibleCaptures = PossiblePawnCaptures(state, start);
-            if (possibleCaptures.Any())
+            (IEnumerable<CheckersAction> list, int maxCapturesCount) possibleCaptures = PossiblePawnCaptures(state, start);
+            if (possibleCaptures.list.Any())
                 return possibleCaptures;
             //no captures - simple move south-east/south-west
             List<MoveAction> possibleMoves = new();
@@ -79,56 +78,141 @@ namespace Game.Checkers
                     possibleMoves.Add(new MoveAction(start, new Field(newCol, newRow)));
                 }
             }
-            return possibleMoves;
+            return (possibleMoves, 0);
         }
 
-        private IEnumerable<CaptureAction> PossiblePawnCaptures(CheckersState state, Field start)
+        private (IEnumerable<CheckersAction>, int) PossiblePawnCaptures(CheckersState state, Field start)
         {
-            List<CaptureAction> possibleCaptures = new();
-            IEnumerable<Field> neighbours = state.GetNeighbours(start);
+            (List<CheckersAction>, int) possibleCaptures = (new(), 0);
+
             Piece capturer = state.GetPieceAt(start);
+            IEnumerable<Field> neighbours = state.GetNeighbours(start);
             foreach (Field neighbour in neighbours)
             {
                 Piece target = state.GetPieceAt(neighbour);
                 if (HaveOppositeColors(capturer, target))
                 {
                     (int x, int y) = (neighbour.Col - start.Col, neighbour.Row - start.Row);
-                    Field end = new(neighbour.Col + x, neighbour.Row + y);
-                    if (end.Col < CheckersState.BOARD_COLS && end.Col >= 0
-                        && end.Row < CheckersState.BOARD_ROWS && end.Row >= 0
-                        && state.GetPieceAt(end) == Piece.None)
+                    Field finnish = new(neighbour.Col + x, neighbour.Row + y);
+                    if (finnish.Col < CheckersState.BOARD_COLS && finnish.Col >= 0
+                        && finnish.Row < CheckersState.BOARD_ROWS && finnish.Row >= 0
+                        && state.GetPieceAt(finnish) == Piece.None)
                     {
-                        CaptureAction action = new(start, neighbour, end);
+                        CaptureAction action = new(start, neighbour, finnish);
                         CheckersState tmpState = PerformTemporaryCapture(action, state);
-                        IEnumerable<CaptureAction> furtherCaptures = PossiblePawnCaptures(tmpState, end);
-                        if (furtherCaptures.Any())
-                        {
-                            CombineCaptures(start, neighbour, furtherCaptures);
-                            possibleCaptures.AddRange(furtherCaptures);
-                        }
-                        else possibleCaptures.Add(action);
+                        (IEnumerable<CheckersAction>, int) furtherCaptures = PossiblePawnCaptures(tmpState, finnish);
+                        CombineCaptures(action, ref furtherCaptures);
+                        AddNewActions(ref possibleCaptures, furtherCaptures);
                     }
                 }
             }
-            // trim to longest captures only
-            int? longestCapture = possibleCaptures.MaxBy(capture => capture.CapturesCount)?.CapturesCount;
-            if (longestCapture != null)
-                possibleCaptures = possibleCaptures.FindAll(capture => capture.CapturesCount == longestCapture);
             return possibleCaptures;
         }
 
-        private IEnumerable<CheckersAction> PossibleCrownedActions(CheckersState state, Field start)
+        private static (IEnumerable<CheckersAction>, int) PossibleCrownedActions(CheckersState state, Field start)
         {
-            throw new NotImplementedException();
+            (IEnumerable<CheckersAction> list, int maxCapturesCount) possibleCaptures = PossibleCrownedCaptures(state, start);
+            if (possibleCaptures.list.Any())
+                return possibleCaptures;
+            //no captures - simple moves through diagonals
+            return (PossibleCrownedMoves(state, start), 0);
         }
 
-        private static IEnumerable<CaptureAction> CombineCaptures(Field start, Field firstCapture, IEnumerable<CaptureAction> furtherCaptures)
+        private static (IEnumerable<CheckersAction>, int) PossibleCrownedCaptures(CheckersState state, Field start)
         {
-            foreach (CaptureAction furtherCapture in furtherCaptures)
+            (List<CheckersAction>, int) possibleCaptures = (new(), 0);
+            foreach ((int dCol, int dRow, int fields) in GetDiagsData(start))
             {
-                furtherCapture.CombineCapture(start, firstCapture);
+                int col = start.Col + dCol;
+                int row = start.Row + dRow;
+                int fieldsToCheck = fields;
+                while (fieldsToCheck > 1 && state.GetPieceAt(col, row) == Piece.None)
+                {
+                    col += dCol;
+                    row += dCol;
+                    fieldsToCheck--;
+                }
+                if (fieldsToCheck > 1)
+                {
+                    Piece capturer = state.GetPieceAt(start);
+                    Piece captured = state.GetPieceAt(col, row);
+                    if (HaveOppositeColors(capturer, captured))
+                    {
+                        Field target = new(col, row);
+                        col += dCol;
+                        row += dCol;
+                        fieldsToCheck--;
+                        while (fieldsToCheck > 0 && state.GetPieceAt(col, row) == Piece.None)
+                        {
+                            Field finnish = new(col, row);
+                            CaptureAction action = new(start, target, finnish);
+                            CheckersState tmpState = PerformTemporaryCapture(action, state);
+                            (IEnumerable<CheckersAction>, int) furtherCaptures = PossibleCrownedCaptures(tmpState, finnish);
+                            CombineCaptures(action, ref furtherCaptures);
+                            AddNewActions(ref possibleCaptures, furtherCaptures);
+
+                            col += dCol;
+                            row += dCol;
+                            fieldsToCheck--;
+                        }
+                    }
+                }
             }
-            return furtherCaptures;
+            return possibleCaptures;
+        }
+
+        private static IEnumerable<CheckersAction> PossibleCrownedMoves(CheckersState state, Field start)
+        {
+            List<CheckersAction> possibleMoves = new();
+            foreach ((int dCol, int dRow, int fields) in GetDiagsData(start))
+            {
+                int col = start.Col + dCol;
+                int row = start.Row + dRow;
+                int fieldsToCheck = fields;
+                while (fieldsToCheck > 0 && state.GetPieceAt(col, row) == Piece.None)
+                {
+                    possibleMoves.Add(new MoveAction(start, new(col, row)));
+                    col += dCol;
+                    row += dRow;
+                    fieldsToCheck--;
+                }
+            }
+            return possibleMoves;
+        }
+
+        private static bool CombineCaptures(CaptureAction action,
+            ref (IEnumerable<CheckersAction> list, int maxCapturesCount) furtherCaptures)
+        {
+            if (furtherCaptures.list.Any())
+            {
+                foreach (CaptureAction furtherCapture in furtherCaptures.list.Cast<CaptureAction>())
+                {
+                    furtherCapture.CombineCapture(action.Start, action.Captures.First!.Value.Captured);
+                }
+                furtherCaptures.maxCapturesCount++;
+                return true;
+            }
+            furtherCaptures = (new List<CaptureAction>() { action }, 1);
+            return false;
+        }
+
+        private static bool AddNewActions(
+            ref (List<CheckersAction> list, int maxCapturesCount) possibleActions,
+            (IEnumerable<CheckersAction> list, int maxCapturesCount) newActions)
+        {
+            if (newActions.maxCapturesCount == possibleActions.maxCapturesCount) // add actions of same length
+            {
+                possibleActions.list.AddRange(newActions.list);
+                return true;
+            }
+            if (newActions.maxCapturesCount > possibleActions.maxCapturesCount) // trim to longest actions only
+            {
+                possibleActions.maxCapturesCount = newActions.maxCapturesCount;
+                possibleActions.list.Clear();
+                possibleActions.list.AddRange(newActions.list);
+                return true;
+            }
+            return false;
         }
 
         private static bool HaveOppositeColors(Piece capturer, Piece target)
@@ -138,6 +222,14 @@ namespace Game.Checkers
             bool isCapturerWhite = capturer == Piece.WhitePawn || capturer == Piece.WhiteCrowned;
             bool isTargetBlack = target == Piece.BlackPawn || target == Piece.BlackCrowned;
             return (isCapturerWhite && isTargetBlack) || (!isCapturerWhite && !isTargetBlack);
+        }
+
+        private static IEnumerable<(int, int, int)> GetDiagsData(Field field)
+        {
+            yield return (1, 1, Math.Min(CheckersState.BOARD_COLS - 1 - field.Col, CheckersState.BOARD_ROWS - 1 - field.Row));
+            yield return (-1, 1, Math.Min(field.Col, CheckersState.BOARD_ROWS - 1 - field.Row));
+            yield return (1, -1, Math.Min(CheckersState.BOARD_COLS - 1 - field.Col, field.Row));
+            yield return (-1, -1, Math.Min(field.Col, field.Row));
         }
     }
 }

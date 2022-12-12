@@ -104,11 +104,17 @@
             if (possiblePromotion)
             {
                 if (piece == Piece.WhitePawn && field.Row == BOARD_ROWS - 1)
+                {
                     SetPieceAt(field.Col, field.Row, Piece.WhiteCrowned);
-                else if (piece == Piece.BlackPawn && field.Row == 0)
+                    return;
+                }
+                if (piece == Piece.BlackPawn && field.Row == 0)
+                {
                     SetPieceAt(field.Col, field.Row, Piece.BlackCrowned);
+                    return;
+                }
             }
-            else SetPieceAt(field.Col, field.Row, piece);
+            SetPieceAt(field.Col, field.Row, piece);
         }
 
         public static CheckersState GetInitialState()

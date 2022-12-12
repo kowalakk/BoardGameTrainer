@@ -1,32 +1,29 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Game.Checkers
+﻿namespace Game.Checkers
 {
     public struct SimpleCapture
     {
         public Field Captured { get; private set; }
-        public Field End { get; private set; }
+        public Field Finnish { get; private set; }
 
-        public SimpleCapture(Field captured, Field end)
+        public SimpleCapture(Field captured, Field finnish)
         {
             Captured = captured;
-            End = end;
+            Finnish = finnish;
         }
     }
 
     public class CaptureAction : CheckersAction
     {
-        public override Field End { get => Captures.Last.Value.End; }
+        public override Field Finnish { get => Captures.Last!.Value.Finnish; }
         
         public LinkedList<SimpleCapture> Captures { get; private set; }
         public int CapturesCount { get; private set; }
 
-        public CaptureAction(Field start, Field capture, Field end) : base(start)
+        public CaptureAction(Field start, Field capture, Field finnish) : base(start)
         {
-            Start = start;
             CapturesCount = 1;
             Captures = new LinkedList<SimpleCapture>();
-            Captures.AddFirst(new SimpleCapture(capture, end));
+            Captures.AddFirst(new SimpleCapture(capture, finnish));
         }
         public void CombineCapture(Field start, Field firstCapture)
         {
@@ -48,14 +45,14 @@ namespace Game.Checkers
 
         public override CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith = Piece.None)
         {
-            Piece performer = state.GetPieceAt(Start);
+            Piece capturer = state.GetPieceAt(Start);
             CheckersState newState = new(state);
             newState.SetPieceAt(Start, Piece.None);
             foreach (SimpleCapture capture in Captures)
             {
                 newState.SetPieceAt(capture.Captured, substituteCapturedWith);
             }
-            newState.SetPieceAt(End, performer, true);
+            newState.SetPieceAt(Finnish, capturer, true);
             return newState;
         }
     }
