@@ -7,7 +7,7 @@ namespace ArtificialIntelligence
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
-        private double C { get; }
+        private double UCTConstant { get; }
 
         public List<(Action, double)> MoveAssessment<InputState>(IGame<Action, State, InputState> game, State state, UCTModuleData moduleData)
         {
@@ -36,12 +36,12 @@ namespace ArtificialIntelligence
         }
         private void Backup(Node<State> node, int delta)
         {
-            Node<State>? backer = node;
-            while (backer != null)
+            Node<State>? predecessor = node;
+            while (predecessor != null)
             {
-                backer.VisitCount++;
-                backer.SuccessCount += delta;
-                backer = backer.Parent;
+                predecessor.VisitCount++;
+                predecessor.SuccessCount += delta;
+                predecessor = predecessor.Parent;
             }
         }
         private Node<State>? BestChild(Node<State> node)
@@ -50,7 +50,7 @@ namespace ArtificialIntelligence
             double argMax = 0;
             foreach(Node<State> child in node.Children)
             {
-                double newArgMax = (double)child.SuccessCount / child.VisitCount + C * Math.Sqrt(2 * Math.Log(node.VisitCount) / child.VisitCount);
+                double newArgMax = (double)child.SuccessCount / child.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.VisitCount) / child.VisitCount);
                 if (newArgMax > argMax)
                 {
                     bestChild = child;
