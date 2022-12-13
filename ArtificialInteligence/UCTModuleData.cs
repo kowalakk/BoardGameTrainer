@@ -1,6 +1,6 @@
 ﻿namespace ArtificialIntelligence
 {
-    public class MCTSModuleData
+    public class UCTModuleData
     {
     }
 }
