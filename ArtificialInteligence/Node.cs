@@ -1,16 +1,21 @@
 ﻿namespace ArtificialIntelligence
 {
-    internal class Node<State>
+    internal record Node<State>
     {
-        public Node()
+        public Node(State state, Node<State>? parent = null)
         {
+            CorespondingState = state;
+            Children = new List<Node<State>>();
+            Parent = parent;
+            VisitCount = 0;
+            SuccessCount = 0;
         }
 
-        public long visitCtr { get; set; }
-        public long successCtr { get; set; }
-        public State state { get; set; }
-        public Node<State> parent { get; set; }
-        public List<Node<State>> children { get; set; }
+        public State CorespondingState { get; set; }
+        public Node<State>? Parent { get; set; }
+        public List<Node<State>> Children { get; set; }
+        public long VisitCount { get; set; }
+        public long SuccessCount { get; set; }
 
     }
 }
