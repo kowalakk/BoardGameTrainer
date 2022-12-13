@@ -9,7 +9,7 @@ namespace Game.Othello.Tests
         public void EqualsWithNullShouldBeFalse()
         {
             OthelloState othelloState = OthelloState.GenerateInitialOthelloState();
-            Assert.False(othelloState.Equals(null));
+            Assert.NotNull(othelloState);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Game.Othello.Tests
             int hand = 10;
             OthelloState state1 = new OthelloState(board1, hand, hand, true);
             OthelloState state2 = new OthelloState(board2, hand, hand, true);
-            Assert.True(state1.Equals(state2));
+            Assert.Equal(state1, state2);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Game.Othello.Tests
             int hand = 10;
             OthelloState state1 = new OthelloState(board1, hand, hand, true);
             OthelloState state2 = new OthelloState(board2, hand, hand, true);
-            Assert.False(state1.Equals(state2));
+            Assert.NotEqual(state1, state2);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace Game.Othello.Tests
             int hand = 10;
             OthelloState state1 = new OthelloState(board, hand, hand, true);
             OthelloState state2 = new OthelloState(board, hand, hand + 1, true);
-            Assert.False(state1.Equals(state2));
+            Assert.NotEqual(state1, state2);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Game.Othello.Tests
             int hand = 10;
             OthelloState state1 = new OthelloState(board, hand, hand, true);
             OthelloState state2 = new OthelloState(board, hand, hand, false);
-            Assert.False(state1.Equals(state2));
+            Assert.NotEqual(state1, state2);
         }
 
         [Fact]

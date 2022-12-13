@@ -13,7 +13,7 @@ namespace Game.Othello.Tests
         void EqualsWithEmptyActionShouldBeFalse()
         {
             OthelloAction action = new OthelloFullAction((0, 1), OthelloState.Field.White);
-            Assert.False(action.Equals(new OthelloEmptyAction()));
+            Assert.NotEqual(action, new OthelloEmptyAction());
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace Game.Othello.Tests
         {
             OthelloAction action1 = new OthelloFullAction((0, 1), OthelloState.Field.White);
             OthelloAction action2 = new OthelloFullAction((0, 1), OthelloState.Field.White);
-            Assert.True(action1.Equals(action2));
+            Assert.Equal(action1, action2);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace Game.Othello.Tests
         {
             OthelloAction action1 = new OthelloFullAction((1, 3), OthelloState.Field.White);
             OthelloAction action2 = new OthelloFullAction((1, 3), OthelloState.Field.Black);
-            Assert.False(action1.Equals(action2));
+            Assert.NotEqual(action1, action2);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace Game.Othello.Tests
         {
             OthelloAction action1 = new OthelloFullAction((0, 1), OthelloState.Field.White);
             OthelloAction action2 = new OthelloFullAction((0, 4), OthelloState.Field.White);
-            Assert.False(action1.Equals(action2));
+            Assert.NotEqual(action1, action2);
         }
 
         [Fact]

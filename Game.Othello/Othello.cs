@@ -94,11 +94,16 @@ namespace Game.Othello
 
         public IEnumerable<OthelloAction> PossibleActions(OthelloState state)
         {
+            if (state.BlacksTurn && state.BlackHandCount == 0)
+                return new List<OthelloAction>();
+            if(!state.BlacksTurn && state.WhiteHandCount == 0)
+                return new List<OthelloAction>();
             Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             Field opponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
 
             bool CheckIfActionPossible(int x, int y)
             {
+                // sprawdzenie w każdym z 4 kierunków czy sąsiaduje z szeregiem pionków przeciwnika, zakończonym własnym pionkiem
                 int oponentsPiecesCount = 0;
                 for(int i = x - 1; i >= 0; i--)
                 {
