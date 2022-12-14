@@ -22,7 +22,7 @@ namespace Game.Checkers
             IEnumerable<CheckersAction> possibleActions = PossibleActions(state);
             if (possibleActions.Count() == 0)
             {
-                if (state.CurrentPlayer == Player.White) return GameResults.PlayerTwoWins;
+                if (state.CurrentPlayer == Player.White) return GameResults.CurrentOpponentWins;
                 return GameResults.PlayerOneWins;
             }
             return GameResults.InProgress;

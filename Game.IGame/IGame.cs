@@ -6,8 +6,8 @@ namespace Game.IGame
     public enum GameResults
     {
         InProgress = 0,
-        PlayerOneWins = 1,
-        PlayerTwoWins = 2,
+        CurrentPlayerWins = 1,
+        CurrentOpponentWins = 2,
         Draw = 3,
     }
 
