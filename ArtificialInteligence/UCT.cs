@@ -1,65 +1,82 @@
 ﻿using ArtificialInteligence;
 using Game.IGame;
+using Gtk;
+using System.Collections.Generic;
 
 namespace ArtificialIntelligence
 {
-    public class UCT<Action, State> : IArtificialIntelligence<Action, State, UCTModuleData>
+    public class UCT<Action, State, InputState> : IArtificialIntelligence<Action, State, InputState, UCTModuleData<Action, State>>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
         private double UCTConstant { get; }
-
-        public List<(Action, double)> MoveAssessment<InputState>(IGame<Action, State, InputState> game, State state, UCTModuleData moduleData)
+        private IGame<Action, State, InputState> Game { get; }
+        public UCT(double uCTConstant, IGame<Action, State, InputState> game)
         {
-            throw new NotImplementedException();
+            UCTConstant = uCTConstant;
+            Game = game;
         }
 
-        public Action ChooseMove<InputState>(IGame<Action, State, InputState> game, State state)
+        public List<(Action, double)> MoveAssessment(IGame<Action, State, InputState> game, State state, UCTModuleData<Action, State> moduleData, IStopCondition condition)
+        {
+            Node<Action, State> root = new(state);
+            UCTSearch(root, condition);
+            return root.Children.Select(child => (child.CorespondingAction!, ArgMax(child))).ToList();
+        }
+
+        public Action ChooseMove(IGame<Action, State, InputState> game, State state)
         {
             throw new NotImplementedException();
         }
-        private void UCTSearch(Node<State> root, IStopCondition condition)
+        private void UCTSearch(Node<Action, State> root, IStopCondition condition)
         {
-            throw new NotImplementedException();
+            IEnumerator<Node<Action, State>> enumerator = TreePolicy(root).GetEnumerator();
+            while (!condition.StopConditionOccured())
+            {
+                Node<Action, State> node = enumerator.Current;
+                int delta = DefaultPolicy(node.CorespondingState);
+                Backup(node, delta);
+                enumerator.MoveNext();
+            }
         }
-        private IEnumerable<Node<State>> TreePolicy<InputState>(Node<State> node, IGame<Action, State, InputState> game)
+        private IEnumerable<Node<Action, State>> TreePolicy(Node<Action, State> node)
         {
-            GameResults gameResult = game.GameResult(node.CorespondingState);
+            GameResults gameResult = Game.GameResult(node.CorespondingState);
             while (gameResult == GameResults.InProgress)
             {
-                IEnumerable<Action> possibleActions = game.PossibleActions(node.CorespondingState);
+                IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
                 foreach (Action action in possibleActions)
                 {
-                    State childState = game.PerformAction(action, node.CorespondingState);
-                    Node<State> childNode = new(childState, node);
+                    State childState = Game.PerformAction(action, node.CorespondingState);
+                    Node<Action, State> childNode = new(action, childState, node);
                     node.Children.Add(childNode);
                     yield return childNode;
                 }
                 node = BestChild(node)!; // game is InProgress so a child exists
-                gameResult = game.GameResult(node.CorespondingState);
+                gameResult = Game.GameResult(node.CorespondingState);
             }
         }
         // obsolete?
-        private IEnumerable<Node<State>> Expand<InputState>(Node<State> node, IGame<Action, State, InputState> game)
+        private IEnumerable<Node<Action, State>> Expand(Node<Action, State> node)
         {
-            IEnumerable<Action> possibleActions = game.PossibleActions(node.CorespondingState);
+            IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
             foreach (Action action in possibleActions)
             {
-                State childState = game.PerformAction(action, node.CorespondingState);
-                Node<State> childNode = new(childState, node);
+                State childState = Game.PerformAction(action, node.CorespondingState);
+                Node<Action, State> childNode = new(action, childState, node);
                 node.Children.Add(childNode);
                 yield return childNode;
             }
         }
-        private int DefaultPolicy<InputState>(State state, IGame<Action, State, InputState> game)
+        private int DefaultPolicy(State state)
         {
-            GameResults gameResult = game.GameResult(state);
+            GameResults gameResult = Game.GameResult(state);
             while (gameResult == GameResults.InProgress)
             {
-                IEnumerable<Action> possibleActions = game.PossibleActions(state);
+                IEnumerable<Action> possibleActions = Game.PossibleActions(state);
                 Action randomAction = possibleActions.RandomElement();
-                state = game.PerformAction(randomAction, state);
-                gameResult = game.GameResult(state);
+                state = Game.PerformAction(randomAction, state);
+                gameResult = Game.GameResult(state);
             }
             if (gameResult == GameResults.CurrentPlayerWins)
                 return 1;
@@ -67,9 +84,9 @@ namespace ArtificialIntelligence
                 return -1;
             return 0;
         }
-        private void Backup(Node<State> node, int delta)
+        private void Backup(Node<Action, State> node, int delta)
         {
-            Node<State>? predecessor = node;
+            Node<Action, State>? predecessor = node;
             while (predecessor != null)
             {
                 predecessor.VisitCount++;
@@ -78,13 +95,13 @@ namespace ArtificialIntelligence
                 predecessor = predecessor.Parent;
             }
         }
-        private Node<State>? BestChild(Node<State> node)
+        private Node<Action, State>? BestChild(Node<Action, State> node)
         {
-            Node<State>? bestChild = null;
+            Node<Action, State>? bestChild = null;
             double argMax = 0;
-            foreach (Node<State> child in node.Children)
+            foreach (Node<Action, State> child in node.Children)
             {
-                double newArgMax = (double)child.SuccessCount / child.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.VisitCount) / child.VisitCount);
+                double newArgMax = ArgMax(child);
                 if (newArgMax > argMax)
                 {
                     bestChild = child;
@@ -92,6 +109,10 @@ namespace ArtificialIntelligence
                 }
             }
             return bestChild;
+        }
+        private double ArgMax(Node<Action, State> node)
+        {
+            return (double)node.SuccessCount / node.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
         }
     }
 }
