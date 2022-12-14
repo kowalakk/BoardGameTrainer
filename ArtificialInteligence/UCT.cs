@@ -32,7 +32,19 @@ namespace ArtificialIntelligence
         }
         private int DefaultPolicy<InputState>(State state, IGame<Action, State, InputState> game)
         {
-            throw new NotImplementedException();
+            GameResults gameResult = game.GameResult(state);
+            while (gameResult == GameResults.InProgress)
+            {
+                IEnumerable<Action> possibleActions = game.PossibleActions(state);
+                Action randomAction = possibleActions.RandomElement();
+                state = game.PerformAction(randomAction, state);
+                gameResult = game.GameResult(state);
+            }
+            if (gameResult == GameResults.PlayerOneWins)
+                return 1;
+            if (gameResult == GameResults.PlayerTwoWins)
+                return -1;
+            return 0;
         }
         private void Backup(Node<State> node, int delta)
         {
