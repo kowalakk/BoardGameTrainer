@@ -4,7 +4,7 @@ using Gtk;
 
 namespace Game.Checkers
 {
-    public class Checkers : IGame<CheckersAction, CheckersState, CheckersInputState>
+    public partial class Checkers : IGame<CheckersAction, CheckersState, CheckersInputState>
     {
         public void DrawBoard(Widget widget, CheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
@@ -16,9 +16,16 @@ namespace Game.Checkers
             throw new NotImplementedException();
         }
 
+        //needs optimization
         public GameResults GameResult(CheckersState state)
         {
-            throw new NotImplementedException();
+            IEnumerable<CheckersAction> possibleActions = PossibleActions(state);
+            if (possibleActions.Count() == 0)
+            {
+                if (state.CurrentPlayer == Player.White) return GameResults.PlayerTwoWins;
+                return GameResults.PlayerOneWins;
+            }
+            return GameResults.InProgress;
         }
 
         public (CheckersAction, CheckersInputState) HandleInput(Event @event, CheckersInputState inputState, CheckersState state)
@@ -26,14 +33,5 @@ namespace Game.Checkers
             throw new NotImplementedException();
         }
 
-        public CheckersState PerformAction(CheckersAction action, CheckersState state)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<CheckersAction> PossibleActions(CheckersState state)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

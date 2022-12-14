@@ -2,9 +2,17 @@
 {
     public class CheckersInputState : IEquatable<CheckersInputState>
     {
+        public List<(int, int)> Fields { get; private set; }
+
+        public CheckersInputState(List<(int, int)> fields)
+        {
+            Fields = fields;
+        }
         public bool Equals(CheckersInputState? other)
         {
-            throw new NotImplementedException();
+            if (other == null) return false;
+            if (Enumerable.SequenceEqual(Fields, other.Fields)) return true;
+            return false;
         }
     }
 }
