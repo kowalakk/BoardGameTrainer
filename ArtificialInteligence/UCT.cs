@@ -2,6 +2,7 @@
 using Game.IGame;
 using Gtk;
 using System.Collections.Generic;
+using static System.Diagnostics.Activity;
 
 namespace ArtificialIntelligence
 {
@@ -30,34 +31,36 @@ namespace ArtificialIntelligence
         }
         private void UCTSearch(Node<Action, State> root, IStopCondition condition)
         {
-            IEnumerator<Node<Action, State>> enumerator = TreePolicy(root).GetEnumerator();
+            IEnumerator<Node<Action, State>> treePolicyEnumerator = TreePolicy(root);
             while (!condition.StopConditionOccured())
             {
-                Node<Action, State> node = enumerator.Current;
-                int delta = DefaultPolicy(node.CorespondingState);
-                Backup(node, delta);
-                enumerator.MoveNext();
+                SingleUCTIteration(treePolicyEnumerator);
+                treePolicyEnumerator.MoveNext();
             }
         }
-        private IEnumerable<Node<Action, State>> TreePolicy(Node<Action, State> node)
+        private void SingleUCTIteration(IEnumerator<Node<Action, State>> treePolicyEnumerator)
         {
+            Node<Action, State> node = treePolicyEnumerator.Current;
+            int delta = DefaultPolicy(node.CorespondingState);
+            Backup(node, delta);
+        }
+        private IEnumerator<Node<Action, State>> TreePolicy(Node<Action, State> node)
+        {
+            IEnumerator<Node<Action, State>> expandEnumerator = Expand(node);
             GameResults gameResult = Game.GameResult(node.CorespondingState);
             while (gameResult == GameResults.InProgress)
             {
-                IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
-                foreach (Action action in possibleActions)
+                yield return expandEnumerator.Current;
+                while (expandEnumerator.MoveNext()) // node not fully expanded
                 {
-                    State childState = Game.PerformAction(action, node.CorespondingState);
-                    Node<Action, State> childNode = new(action, childState, node);
-                    node.Children.Add(childNode);
-                    yield return childNode;
+                    yield return expandEnumerator.Current;
                 }
                 node = BestChild(node)!; // game is InProgress so a child exists
                 gameResult = Game.GameResult(node.CorespondingState);
             }
         }
-        // obsolete?
-        private IEnumerable<Node<Action, State>> Expand(Node<Action, State> node)
+
+        private IEnumerator<Node<Action, State>> Expand(Node<Action, State> node)
         {
             IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
             foreach (Action action in possibleActions)
