@@ -44,48 +44,112 @@ namespace Game.Othello
             int y = ((OthelloFullAction)action).Position.Item2;
             board[x, y] = ((OthelloFullAction)action).FieldContent;
             int i = x - 1;
+            int oponentsCtr = 0;
+            bool isToBeTurned = true;
             while(i > 0)
             {
                 if (board[i, y] == oponentsColor)
                 {
+                    oponentsCtr++;
+                    i--;
+                    continue;
+                }
+                if(board[i, y] == playersColor && oponentsCtr > 0)
+                    break;
+                isToBeTurned = false;
+                break;
+            }
+            if (isToBeTurned)
+            {
+                i = x - 1;
+                while(i > 0 )
+                {
+                    if (board[i, y] != oponentsColor)
+                        break;
                     board[i, y] = playersColor;
                     i--;
                 }
-                else
-                    break;
             }
             i = x + 1;
+            oponentsCtr = 0;
+            isToBeTurned = true;
             while (i < boardSize)
             {
                 if (board[i, y] == oponentsColor)
                 {
                     board[i, y] = playersColor;
                     i++;
+                    continue;
                 }
-                else
+                if (board[i, y] == playersColor && oponentsCtr > 0)
                     break;
+                isToBeTurned = false;
+                break;
+            }
+            if(isToBeTurned)
+            {
+                i = x + 1;
+                while(i < boardSize )
+                {
+                    if (board[i, y] != oponentsColor)
+                        break;
+                    board[i, y] = playersColor;
+                    i++;
+                }
             }
             int j = y - 1;
-            while(j > 0) 
+            oponentsCtr = 0;
+            isToBeTurned = true;
+            while (j > 0) 
             {
                 if (board[x, j] == oponentsColor)
                 {
                     board[x, j] = playersColor;
                     j--;
+                    continue;
                 }
-                else
+                if (board[i, y] == playersColor && oponentsCtr > 0)
                     break;
+                isToBeTurned = false;
+                break;
+            }
+            if(isToBeTurned)
+            {
+                j = y - 1;
+                while (j > 0)
+                {
+                    if (board[x, j] != oponentsColor)
+                        break;
+                    board[x, j] = playersColor;
+                    j--;
+                }
             }
             j = y + 1;
-            while(j < boardSize)
+            oponentsCtr = 0;
+            isToBeTurned = true;
+            while (j < boardSize)
             {
                 if (board[x, j] == oponentsColor)
                 {
                     board[x, j] = playersColor;
                     j++;
+                    continue;
                 }
-                else
+                if (board[i, y] == playersColor && oponentsCtr > 0)
                     break;
+                isToBeTurned = false;
+                break;
+            }
+            if (isToBeTurned)
+            {
+                j = y + 1;
+                while (j < boardSize)
+                {
+                    if (board[x, j] != oponentsColor)
+                        break;
+                    board[x, j] = playersColor;
+                    j++;
+                }
             }
             int whiteCount = (state.BlacksTurn) ? state.WhiteHandCount : state.WhiteHandCount - 1;
             int blackCount = (state.BlacksTurn) ? state.BlackHandCount - 1 : state.BlackHandCount;
