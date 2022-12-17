@@ -2,11 +2,10 @@
 {
     public abstract class OthelloAction : IEquatable<OthelloAction>
     {
-        public virtual bool Equals(OthelloAction? other)
+        public abstract bool Equals(OthelloAction? other);
+        public override bool Equals(object? obj)
         {
-            if (this is OthelloEmptyAction && other is OthelloEmptyAction)
-                return true;
-            return false;
+            return Equals(obj as OthelloAction);
         }
     }
 }
