@@ -21,8 +21,8 @@ namespace Game.Othello
 
         public GameResults GameResult(OthelloState state)
         {
-            if(PossibleActions(state).Count() == 0)
-                if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Count() == 0)
+            if (PossibleActions(state).Where(action => action is OthelloEmptyAction).Count() > 0)
+                if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)
                     return HasBlackWon(state);
             return GameResults.InProgress;
         }
@@ -40,116 +40,33 @@ namespace Game.Othello
             var playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             var oponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
             Field[,] board = state.board;
-            int x = ((OthelloFullAction)action).Position.Item1;
-            int y = ((OthelloFullAction)action).Position.Item2;
-            board[x, y] = ((OthelloFullAction)action).FieldContent;
+            OthelloFullAction fullAction = (OthelloFullAction)action;
+            int x = fullAction.Position.Item1;
+            int y = fullAction.Position.Item2;
+            board[x, y] = fullAction.FieldContent;
             int i = x - 1;
-            int oponentsCtr = 0;
-            bool isToBeTurned = true;
-            while(i > 0)
+            while(i >= x - fullAction.up)
             {
-                if (board[i, y] == oponentsColor)
-                {
-                    oponentsCtr++;
-                    i--;
-                    continue;
-                }
-                if(board[i, y] == playersColor && oponentsCtr > 0)
-                    break;
-                isToBeTurned = false;
-                break;
-            }
-            if (isToBeTurned)
-            {
-                i = x - 1;
-                while(i > 0 )
-                {
-                    if (board[i, y] != oponentsColor)
-                        break;
-                    board[i, y] = playersColor;
-                    i--;
-                }
+                board[i, y] = playersColor;
+                i--;
             }
             i = x + 1;
-            oponentsCtr = 0;
-            isToBeTurned = true;
-            while (i < boardSize)
+            while (i <= x + fullAction.down)
             {
-                if (board[i, y] == oponentsColor)
-                {
-                    board[i, y] = playersColor;
-                    i++;
-                    continue;
-                }
-                if (board[i, y] == playersColor && oponentsCtr > 0)
-                    break;
-                isToBeTurned = false;
-                break;
-            }
-            if(isToBeTurned)
-            {
-                i = x + 1;
-                while(i < boardSize )
-                {
-                    if (board[i, y] != oponentsColor)
-                        break;
-                    board[i, y] = playersColor;
-                    i++;
-                }
+                board[i, y] = playersColor;
+                i++;
             }
             int j = y - 1;
-            oponentsCtr = 0;
-            isToBeTurned = true;
-            while (j > 0) 
+            while (j >= y - fullAction.left) 
             {
-                if (board[x, j] == oponentsColor)
-                {
-                    board[x, j] = playersColor;
-                    j--;
-                    continue;
-                }
-                if (board[i, y] == playersColor && oponentsCtr > 0)
-                    break;
-                isToBeTurned = false;
-                break;
-            }
-            if(isToBeTurned)
-            {
-                j = y - 1;
-                while (j > 0)
-                {
-                    if (board[x, j] != oponentsColor)
-                        break;
-                    board[x, j] = playersColor;
-                    j--;
-                }
+                board[j, y] = playersColor;
+                j--;
             }
             j = y + 1;
-            oponentsCtr = 0;
-            isToBeTurned = true;
-            while (j < boardSize)
+            while (j <= y + fullAction.right)
             {
-                if (board[x, j] == oponentsColor)
-                {
-                    board[x, j] = playersColor;
-                    j++;
-                    continue;
-                }
-                if (board[i, y] == playersColor && oponentsCtr > 0)
-                    break;
-                isToBeTurned = false;
-                break;
-            }
-            if (isToBeTurned)
-            {
-                j = y + 1;
-                while (j < boardSize)
-                {
-                    if (board[x, j] != oponentsColor)
-                        break;
-                    board[x, j] = playersColor;
-                    j++;
-                }
+                board[j, y] = playersColor;
+                j++;
             }
             int whiteCount = (state.BlacksTurn) ? state.WhiteHandCount : state.WhiteHandCount - 1;
             int blackCount = (state.BlacksTurn) ? state.BlackHandCount - 1 : state.BlackHandCount;
@@ -158,15 +75,21 @@ namespace Game.Othello
 
         public IEnumerable<OthelloAction> PossibleActions(OthelloState state)
         {
-            if (state.BlacksTurn && state.BlackHandCount == 0)
-                return new List<OthelloAction>();
-            if(!state.BlacksTurn && state.WhiteHandCount == 0)
-                return new List<OthelloAction>();
+            List<OthelloAction> actions = new List<OthelloAction>();
+            if ((state.BlacksTurn && state.BlackHandCount == 0) || (!state.BlacksTurn && state.WhiteHandCount == 0))
+            {
+                actions.Add(new OthelloEmptyAction());
+                return actions;
+            }
             Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             Field opponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
 
-            bool CheckIfActionPossible(int x, int y)
+            (int, int, int, int) GetPotentialAction(int x, int y)
             {
+                int up = 0;
+                int down = 0;
+                int left = 0;
+                int right = 0;
                 // sprawdzenie w każdym z 4 kierunków czy sąsiaduje z szeregiem pionków przeciwnika, zakończonym własnym pionkiem
                 int oponentsPiecesCount = 0;
                 for(int i = x - 1; i >= 0; i--)
@@ -178,7 +101,7 @@ namespace Game.Othello
                     if (state.board[i, y] == playersColor)
                     {
                         if (oponentsPiecesCount > 0)
-                            return true;
+                            up = oponentsPiecesCount;
                         break;
                     }
                     
@@ -194,7 +117,7 @@ namespace Game.Othello
                     if (state.board[i, y] == playersColor)
                     {
                         if (oponentsPiecesCount > 0)
-                            return true;
+                            down = oponentsPiecesCount;
                         break;
                     }
                 }
@@ -208,7 +131,7 @@ namespace Game.Othello
                     if (state.board[x, j] == playersColor)
                     {
                         if (oponentsPiecesCount > 0)
-                            return true;
+                            left = oponentsPiecesCount;
                         break;
                     }
                 }
@@ -222,18 +145,22 @@ namespace Game.Othello
                     if (state.board[x, j] == playersColor)
                     {
                         if (oponentsPiecesCount > 0)
-                            return true;
+                            right = oponentsPiecesCount;
                         break;
                     }
                 }
-                return false;
-            }
-            List<OthelloAction> actions = new List<OthelloAction>();
+                return (up, down, left, right);
+            }    
             for (int i = 0; i < boardSize; i++)
                 for (int j = 0; j < boardSize; j++)
                     if (state.board[i, j] == Field.Empty)
-                        if (CheckIfActionPossible(i, j))
-                            actions.Add(new OthelloFullAction((i, j), playersColor));
+                    {
+                        (int up, int down, int left, int right) potentialAction = GetPotentialAction(i, j);
+                        if (potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
+                            continue;
+                        actions.Add(new OthelloFullAction((i, j), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
+                    }
+                        
             return actions;
         }
 

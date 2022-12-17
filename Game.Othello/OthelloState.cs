@@ -11,12 +11,6 @@
         public bool BlacksTurn { get; set; }
         public OthelloState(Field[,] board, int whiteHandCount, int blackHandCount, bool blacksTurn)
         {
-            if (board.GetLength(0) != boardSize || board.GetLength(1) != boardSize) 
-                throw new ArgumentException("wrong size of the board");
-            if(blackHandCount < 0 || blackHandCount > maxHandSize)
-                throw new ArgumentException("incorrect black hand size");
-            if (whiteHandCount < 0 || whiteHandCount > maxHandSize)
-                throw new ArgumentException("incorrect white hand size");
             this.board = board;
             WhiteHandCount = whiteHandCount;
             BlackHandCount = blackHandCount;

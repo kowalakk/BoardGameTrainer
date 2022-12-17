@@ -73,12 +73,5 @@ namespace Game.Othello.Tests
             OthelloState state2 = new OthelloState(board, hand, hand, false);
             Assert.NotEqual(state1, state2);
         }
-
-        [Fact]
-        void CreationOfStateWithInvalidParametersShouldThrowAnException()
-        {
-            Assert.Throws<ArgumentException>(() => new OthelloState(new Field[8, 8], -1, 0, true));
-            Assert.Throws<ArgumentException>(() => new OthelloState(new Field[1, 8], 30, 30, true));
-        }
     }
 }
