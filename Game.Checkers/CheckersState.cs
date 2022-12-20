@@ -9,11 +9,6 @@
         BlackCrowned = 4,
         Captured = 5,
     }
-    public enum Player
-    {
-        White = 0,
-        Black = 1,
-    }
 
     public class CheckersState : IEquatable<CheckersState>
     {
@@ -22,8 +17,8 @@
         //    new KeyValuePair<(int, int),List<(int, int)>>((0,0), new List<(int, int)> { (1,1) }),
         //};
         private Piece[,] board;
-        public Player CurrentPlayer { get; private set; }
-        private CheckersState(Piece[,] board, Player currentPlayer)
+        public IGame.Player CurrentPlayer { get; private set; }
+        private CheckersState(Piece[,] board, IGame.Player currentPlayer)
         {
             this.board = new Piece[BOARD_SIZE, BOARD_SIZE];
             Array.Copy(board, this.board, board.Length);
@@ -138,9 +133,9 @@
                 { Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn },
             };
 
-            return new CheckersState(board, Player.White);
+            return new CheckersState(board, IGame.Player.PlayerOne);
         }
-        public static CheckersState GetEmptyBoardState(Player player = Player.White)
+        public static CheckersState GetEmptyBoardState(IGame.Player player = IGame.Player.PlayerOne)
         {
             Piece[,] emptyBoard = new Piece[,]
             {

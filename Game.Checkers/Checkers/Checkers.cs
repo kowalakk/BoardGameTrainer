@@ -16,13 +16,18 @@ namespace Game.Checkers
             throw new NotImplementedException();
         }
 
+        public Player CurrentPlayer(CheckersState state) 
+        {
+            return state.CurrentPlayer;
+        }
+
         //needs optimization
         public GameResults GameResult(CheckersState state)
         {
             IEnumerable<CheckersAction> possibleActions = PossibleActions(state);
             if (possibleActions.Count() == 0)
             {
-                if (state.CurrentPlayer == Player.White) return GameResults.CurrentOpponentWins;
+                if (state.CurrentPlayer == Player.PlayerOne) return GameResults.PlayerTwoWins;
                 return GameResults.PlayerOneWins;
             }
             return GameResults.InProgress;

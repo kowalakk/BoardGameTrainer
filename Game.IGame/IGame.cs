@@ -6,9 +6,14 @@ namespace Game.IGame
     public enum GameResults
     {
         InProgress = 0,
-        CurrentPlayerWins = 1,
-        CurrentOpponentWins = 2,
+        PlayerOneWins = 1,
+        PlayerTwoWins = 2,
         Draw = 3,
+    }
+    public enum Player
+    {
+        PlayerOne = 1,
+        PlayerTwo = 0,
     }
 
     public interface IGame<Action, State, InputState> 
@@ -20,6 +25,8 @@ namespace Game.IGame
         public IEnumerable<Action> PossibleActions(State state);
 
         public GameResults GameResult(State state);
+
+        public Player CurrentPlayer(State state);
 
         public void DrawBoard(Widget widget, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 

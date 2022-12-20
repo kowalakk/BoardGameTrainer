@@ -81,11 +81,11 @@ namespace ArtificialIntelligence
                 state = Game.PerformAction(randomAction, state);
                 gameResult = Game.GameResult(state);
             }
-            if (gameResult == GameResults.CurrentPlayerWins)
+            if (gameResult == GameResults.Draw)
+                return 0;
+            if (gameResult == (GameResults)Game.CurrentPlayer(state))
                 return 1;
-            if (gameResult == GameResults.CurrentOpponentWins)
-                return -1;
-            return 0;
+            return -1;
         }
         private void Backup(Node<Action, State> node, int delta)
         {

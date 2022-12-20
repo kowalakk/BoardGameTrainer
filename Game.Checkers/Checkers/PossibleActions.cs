@@ -7,7 +7,7 @@ namespace Game.Checkers
         public IEnumerable<CheckersAction> PossibleActions(CheckersState state)
         {
             (List<CheckersAction> list, int maxCapturesCount) possibleActions = (new(), 0);
-            if (state.CurrentPlayer == Player.White)
+            if (state.CurrentPlayer == Player.PlayerOne)
             {
                 foreach (Field field in state.GetFields())
                 {

@@ -15,6 +15,7 @@
                 if(action!.Equals(child.CorespondingAction))
                 {
                     Root = child;
+                    break;
                 }
             }
         }
