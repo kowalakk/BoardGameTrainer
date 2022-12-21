@@ -10,6 +10,11 @@ namespace Game.IGame
         PlayerTwoWins = 2,
         Draw = 3,
     }
+    public enum Player
+    {
+        PlayerOne = 1,
+        PlayerTwo = 0,
+    }
 
     public interface IGame<Action, State, InputState> 
         where Action: IEquatable<Action>
@@ -20,6 +25,8 @@ namespace Game.IGame
         public IEnumerable<Action> PossibleActions(State state);
 
         public GameResults GameResult(State state);
+
+        public Player CurrentPlayer(State state);
 
         public void DrawBoard(Widget widget, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 
