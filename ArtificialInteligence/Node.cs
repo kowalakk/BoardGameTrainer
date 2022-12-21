@@ -1,6 +1,6 @@
 ﻿namespace ArtificialIntelligence
 {
-    internal record Node<Action, State>
+    public record Node<Action, State>
     {
         public Action? CorespondingAction { get; set; }
         public State CorespondingState { get; set; }
