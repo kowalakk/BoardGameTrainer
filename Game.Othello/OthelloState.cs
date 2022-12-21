@@ -3,6 +3,7 @@
     public class OthelloState : IEquatable<OthelloState>
     {
         private const int boardSize = 8;
+        private const int maxHandSize = 30;
         public enum Field {White, Black, Empty}
         public Field[,] board { get; set; }
         public int WhiteHandCount { get; set; }
@@ -10,7 +11,6 @@
         public bool BlacksTurn { get; set; }
         public OthelloState(Field[,] board, int whiteHandCount, int blackHandCount, bool blacksTurn)
         {
-            //TODO: sprawdzić czy board jest 8x8
             this.board = board;
             WhiteHandCount = whiteHandCount;
             BlackHandCount = blackHandCount;
@@ -19,11 +19,13 @@
 
         public bool Equals(OthelloState? other)
         {
-            if (this == null || other == null)
+            if (other == null)
                 return false;
             if (this.WhiteHandCount != other.WhiteHandCount)
                 return false;
             if (this.BlackHandCount != other.BlackHandCount)
+                return false;
+            if (this.BlacksTurn != other.BlacksTurn)
                 return false;
             for (int i = 0; i < boardSize; i++)
                 for(int j= 0; j < boardSize; j++)
