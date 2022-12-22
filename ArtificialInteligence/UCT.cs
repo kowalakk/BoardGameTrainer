@@ -1,8 +1,5 @@
 ﻿using ArtificialInteligence;
 using Game.IGame;
-using Gtk;
-using System.Collections.Generic;
-using static System.Diagnostics.Activity;
 
 namespace ArtificialIntelligence
 {
@@ -10,32 +7,34 @@ namespace ArtificialIntelligence
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
+        private IStopCondition StopCondition { get; set; }
         private double UCTConstant { get; }
         private IGame<Action, State, InputState> Game { get; }
-        public UCT(double uCTConstant, IGame<Action, State, InputState> game)
+        public UCT(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
         {
             UCTConstant = uCTConstant;
             Game = game;
+            StopCondition = condition;
         }
 
-        public List<(Action, double)> MoveAssessment(IGame<Action, State, InputState> game, State state, UCTModuleData<Action, State> moduleData, IStopCondition condition)
+        public List<(Action, double)> MoveAssessment(State state)
         {
             Node<Action, State> root = new(state);
-            UCTSearch(root, condition);
+            UCTSearch(root, StopCondition);
             return root.Children.Select(child => (child.CorespondingAction!, ArgMax(child))).ToList();
         }
 
-        public Action ChooseMove(IGame<Action, State, InputState> game, State state)
+        public Action ChooseMove(State state)
         {
-            throw new NotImplementedException();
+            return MoveAssessment(state).MaxBy(action => { return action.Item2; }).Item1;
         }
         private void UCTSearch(Node<Action, State> root, IStopCondition condition)
         {
             IEnumerator<Node<Action, State>> treePolicyEnumerator = TreePolicy(root);
             while (!condition.StopConditionOccured())
             {
-                SingleUCTIteration(treePolicyEnumerator);
                 treePolicyEnumerator.MoveNext();
+                SingleUCTIteration(treePolicyEnumerator);
             }
         }
         private void SingleUCTIteration(IEnumerator<Node<Action, State>> treePolicyEnumerator)
@@ -47,6 +46,7 @@ namespace ArtificialIntelligence
         private IEnumerator<Node<Action, State>> TreePolicy(Node<Action, State> node)
         {
             IEnumerator<Node<Action, State>> expandEnumerator = Expand(node);
+            expandEnumerator.MoveNext();
             GameResults gameResult = Game.GameResult(node.CorespondingState);
             while (gameResult == GameResults.InProgress)
             {

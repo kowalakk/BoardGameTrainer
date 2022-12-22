@@ -11,7 +11,7 @@
         public Node(State state)
         {
             CorespondingState = state;
-            CorespondingAction = default(Action);
+            CorespondingAction = default;
             Children = new List<Node<Action, State>>();
             Parent = null;
             VisitCount = 0;

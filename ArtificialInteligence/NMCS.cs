@@ -12,12 +12,12 @@ namespace ArtificialIntelligence
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
-        public Action ChooseMove(IGame<Action, State, InputState> game, State state)
+        public Action ChooseMove( State state)
         {
             throw new NotImplementedException();
         }
 
-        public List<(Action, double)> MoveAssessment(IGame<Action, State, InputState> game, State state, ArtificialIntelligence.NMCSModuleData<Action, State> moduleData, IStopCondition condition)
+        public List<(Action, double)> MoveAssessment(State state)
         {
             throw new NotImplementedException();
         }
