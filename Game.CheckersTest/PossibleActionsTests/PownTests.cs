@@ -78,7 +78,7 @@
         [Fact]
         public void AlreadyCapturedPieceShouldBeUncapturableButNotRemovedTillEndOfMove()
         {
-            CheckersState state = CheckersState.GetEmptyBoardState(Player.PlayerTwo);
+            CheckersState state = CheckersState.GetEmptyBoardState(IGame.Player.PlayerTwo);
             state.SetPieceAt("B2", Piece.WhitePawn);
             state.SetPieceAt("B4", Piece.WhitePawn);
             state.SetPieceAt("D2", Piece.WhitePawn);

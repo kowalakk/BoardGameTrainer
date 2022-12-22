@@ -9,6 +9,12 @@ namespace Game.Othello
     public class Othello : IGame<OthelloAction, OthelloState, LanguageExt.Unit>
     {
         private const int boardSize = 8;
+
+        public Player CurrentPlayer(OthelloState state)
+        {
+            return (state.BlacksTurn) ? Player.PlayerOne : Player.PlayerTwo;
+        }
+
         public void DrawBoard(Widget widget, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             throw new NotImplementedException();
