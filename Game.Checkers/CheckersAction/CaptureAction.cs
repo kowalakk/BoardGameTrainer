@@ -1,4 +1,6 @@
-﻿namespace Game.Checkers
+﻿using Game.IGame;
+
+namespace Game.Checkers
 {
     public struct SimpleCapture
     {
@@ -58,6 +60,7 @@
                 newState.SetPieceAt(capture.Captured, substituteCapturedWith);
             }
             newState.SetPieceAtWithPossiblePromotion(Finish, capturer);
+            newState.CurrentPlayer = state.CurrentPlayer == Player.PlayerOne ? Player.PlayerTwo : Player.PlayerOne;
             return newState;
         }
     }

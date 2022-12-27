@@ -1,4 +1,6 @@
-﻿namespace Game.Checkers
+﻿using Game.IGame;
+
+namespace Game.Checkers
 {
     public enum Piece
     {
@@ -16,20 +18,23 @@
         //private static Dictionary<(int, int), (int, int)[] Neighbours = new Dictionary<(int, int), List<(int, int)>> {
         //    new KeyValuePair<(int, int),List<(int, int)>>((0,0), new List<(int, int)> { (1,1) }),
         //};
-        private Piece[,] board;
-        public IGame.Player CurrentPlayer { get; private set; }
-        private CheckersState(Piece[,] board, IGame.Player currentPlayer)
+        private readonly Piece[,] board;
+        public Player CurrentPlayer { get; set; }
+
+        private CheckersState(Piece[,] board, Player currentPlayer)
         {
             this.board = new Piece[BOARD_SIZE, BOARD_SIZE];
             Array.Copy(board, this.board, board.Length);
             CurrentPlayer = currentPlayer;
         }
+
         public CheckersState(CheckersState state)
         {
             board = new Piece[BOARD_SIZE, BOARD_SIZE];
             Array.Copy(state.board, board, state.board.Length);
             CurrentPlayer = state.CurrentPlayer;
         }
+
         public bool Equals(CheckersState? other)
         {
             if (other == null) return false;
@@ -135,7 +140,7 @@
 
             return new CheckersState(board, IGame.Player.PlayerOne);
         }
-        public static CheckersState GetEmptyBoardState(IGame.Player player = IGame.Player.PlayerOne)
+        public static CheckersState GetEmptyBoardState(Player player = Player.PlayerOne)
         {
             Piece[,] emptyBoard = new Piece[,]
             {

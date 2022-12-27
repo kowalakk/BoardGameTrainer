@@ -1,9 +1,8 @@
 using Game.Othello;
-using Gtk;
 
 namespace ArtificialIntelligence.Tests
 {
-    public class UCTTests
+    public class MoveAssessmentForOthello
     {
         private UCT<OthelloAction, OthelloState, LanguageExt.Unit> uct = new UCT<OthelloAction, OthelloState, LanguageExt.Unit>(1.414, new Othello(), new IterationStopCondition(10));
 
