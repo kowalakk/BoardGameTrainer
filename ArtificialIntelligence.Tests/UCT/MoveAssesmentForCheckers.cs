@@ -5,7 +5,7 @@ namespace ArtificialIntelligence.Tests.UCT
 {
     public class MoveAssesmentForCheckers
     {
-        private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
+        private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(2));
         [Fact]
         public void MoveAssessmentReturns2WinningMoves()
         {

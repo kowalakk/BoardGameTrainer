@@ -33,20 +33,20 @@ namespace ArtificialIntelligence
             IEnumerator<Node<Action, State>> treePolicyEnumerator = TreePolicy(root);
             while (!StopCondition.StopConditionOccured())
             {
-                treePolicyEnumerator.MoveNext();
                 SingleUCTIteration(treePolicyEnumerator);
             }
         }
         private void SingleUCTIteration(IEnumerator<Node<Action, State>> treePolicyEnumerator)
         {
+            treePolicyEnumerator.MoveNext();
             Node<Action, State> node = treePolicyEnumerator.Current;
-            int delta = DefaultPolicy(node.CorespondingState);
-            Backup(node, delta);
+            GameResult gameResult = DefaultPolicy(node.CorespondingState);
+            Backup(node, gameResult);
         }
         private IEnumerator<Node<Action, State>> TreePolicy(Node<Action, State> node)
         {
-            GameResults gameResult = Game.GameResult(node.CorespondingState);
-            while (gameResult == GameResults.InProgress)
+            GameResult gameResult = Game.GameResult(node.CorespondingState);
+            while (gameResult == GameResult.InProgress)
             {
                 yield return Expand(node);
                 while (node.UnexpandedChildren!.Any()) // node not fully expanded
@@ -63,7 +63,7 @@ namespace ArtificialIntelligence
             if (node.UnexpandedChildren == null)
             {
                 IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
-                List<Node<Action,State>> unexpandedChildren = new();
+                List<Node<Action, State>> unexpandedChildren = new();
                 foreach (Action action in possibleActions)
                 {
                     State childState = Game.PerformAction(action, node.CorespondingState);
@@ -77,24 +77,25 @@ namespace ArtificialIntelligence
             node.ExpandedChildren.Add(unexpandedChild);
             return unexpandedChild;
         }
-        private int DefaultPolicy(State state)
+        private GameResult DefaultPolicy(State state)
         {
-            GameResults gameResult = Game.GameResult(state);
-            while (gameResult == GameResults.InProgress)
+            GameResult gameResult = Game.GameResult(state);
+            while (gameResult == GameResult.InProgress)
             {
                 IEnumerable<Action> possibleActions = Game.PossibleActions(state);
                 Action randomAction = possibleActions.RandomElement();
                 state = Game.PerformAction(randomAction, state);
                 gameResult = Game.GameResult(state);
             }
-            if (gameResult == GameResults.Draw)
-                return 0;
-            if (gameResult == (GameResults)Game.CurrentPlayer(state))
-                return 1;
-            return -1;
+            return gameResult;
         }
-        private void Backup(Node<Action, State> node, int delta)
+        private void Backup(Node<Action, State> node, GameResult gameResult)
         {
+            int delta = -1;
+            if (gameResult == GameResult.Draw)
+                delta = 0;
+            if (gameResult == (GameResult)Game.CurrentPlayer(node.CorespondingState))
+                delta = 1;
             Node<Action, State>? predecessor = node;
             while (predecessor != null)
             {

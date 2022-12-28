@@ -25,12 +25,12 @@ namespace Game.Othello
             return actions;
         }
 
-        public GameResults GameResult(OthelloState state)
+        public GameResult GameResult(OthelloState state)
         {
             if (PossibleActions(state).Where(action => action is OthelloEmptyAction).Count() > 0)
                 if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)
                     return HasBlackWon(state);
-            return GameResults.InProgress;
+            return IGame.GameResult.InProgress;
         }
 
         public (OthelloAction, LanguageExt.Unit) HandleInput(Event @event, LanguageExt.Unit u, OthelloState state)
@@ -170,7 +170,7 @@ namespace Game.Othello
             return actions;
         }
 
-        private GameResults HasBlackWon(OthelloState state)
+        private GameResult HasBlackWon(OthelloState state)
         {
             int whiteCount = 0;
             int blackCount = 0;
@@ -183,8 +183,8 @@ namespace Game.Othello
                         blackCount++;
                 }
             if (whiteCount == blackCount)
-                return GameResults.Draw;
-            return (blackCount > whiteCount) ? GameResults.PlayerOneWins : GameResults.PlayerTwoWins;
+                return IGame.GameResult.Draw;
+            return (blackCount > whiteCount) ? IGame.GameResult.PlayerOneWins : IGame.GameResult.PlayerTwoWins;
         }
     }
 }
