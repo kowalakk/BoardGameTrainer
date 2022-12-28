@@ -5,7 +5,7 @@ namespace ArtificialIntelligence.Tests.UCT
 {
     public class MoveAssesmentForCheckers
     {
-        private UCT<CheckersAction, CheckersState, CheckersInputState> uct = new UCT<CheckersAction, CheckersState, CheckersInputState>(1.414, new Checkers(), new IterationStopCondition(10));
+        private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]
         public void MoveAssessmentReturns2WinningMoves()
         {
@@ -15,9 +15,9 @@ namespace ArtificialIntelligence.Tests.UCT
             state.SetPieceAt("C5", Piece.BlackPawn);
             var assesments = uct.MoveAssessment(state);
             Assert.Equal(2, assesments.Count);
-            CheckersAction expected = new CaptureAction(new("B4"),new("C5"),new("D6"));
+            CaptureAction expected = new(new("B4"),new("C5"),new("D6"));
             Assert.Contains((expected, 1), assesments);
-            expected = new CaptureAction(new("D4"), new("C5"), new("B6"));
+            expected = new(new("D4"), new("C5"), new("B6"));
             Assert.Contains((expected, 1), assesments);
         }
         [Fact]
@@ -30,9 +30,9 @@ namespace ArtificialIntelligence.Tests.UCT
             state.SetPieceAt("F6", Piece.BlackCrowned);
             var assesments = uct.MoveAssessment(state);
             Assert.Equal(2, assesments.Count);
-            CaptureAction expected = new CaptureAction(new("E5"), new("D4"), new("C3"));
+            CaptureAction expected = new(new("E5"), new("D4"), new("C3"));
             Assert.Contains((expected, 1), assesments);
-            expected = new CaptureAction(new("E5"), new("F6"), new("G7"));
+            expected = new(new("E5"), new("F6"), new("G7"));
             Assert.Contains((expected, -1), assesments);
         }
     }

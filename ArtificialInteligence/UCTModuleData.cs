@@ -10,7 +10,7 @@
         }
         public void ChangeRootAfterAction(Action action) 
         { 
-            foreach(Node<Action, State> child in Root.Children)
+            foreach(Node<Action, State> child in Root.ExpandedChildren)
             {
                 if(action!.Equals(child.CorespondingAction))
                 {
