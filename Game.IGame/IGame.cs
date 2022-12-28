@@ -12,8 +12,8 @@ namespace Game.IGame
     }
     public enum Player
     {
-        PlayerOne = 1,
-        PlayerTwo = 2,
+        PlayerOne = GameResult.PlayerOneWins,
+        PlayerTwo = GameResult.PlayerTwoWins,
     }
 
     public interface IGame<Action, State, InputState> 
