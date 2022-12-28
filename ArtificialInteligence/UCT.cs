@@ -20,18 +20,18 @@ namespace ArtificialIntelligence
         public List<(Action, double)> MoveAssessment(State state)
         {
             Node<Action, State> root = new(state);
-            UCTSearch(root, StopCondition);
-            return root.Children.Select(child => (child.CorespondingAction!, ArgMax(child))).ToList();
+            UCTSearch(root);
+            return root.Children.Select(child => (child.CorespondingAction!, -(double)child.SuccessCount/child.VisitCount)).ToList();
         }
 
         public Action ChooseMove(State state)
         {
             return MoveAssessment(state).MaxBy(action => { return action.Item2; }).Item1;
         }
-        private void UCTSearch(Node<Action, State> root, IStopCondition condition)
+        private void UCTSearch(Node<Action, State> root)
         {
             IEnumerator<Node<Action, State>> treePolicyEnumerator = TreePolicy(root);
-            while (!condition.StopConditionOccured())
+            while (!StopCondition.StopConditionOccured())
             {
                 treePolicyEnumerator.MoveNext();
                 SingleUCTIteration(treePolicyEnumerator);

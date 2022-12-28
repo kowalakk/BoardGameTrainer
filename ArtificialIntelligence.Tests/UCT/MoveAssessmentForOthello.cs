@@ -1,6 +1,6 @@
 using Game.Othello;
 
-namespace ArtificialIntelligence.Tests
+namespace ArtificialIntelligence.Tests.UCT
 {
     public class MoveAssessmentForOthello
     {
