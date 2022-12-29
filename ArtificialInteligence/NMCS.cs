@@ -1,4 +1,4 @@
-﻿using ArtificialInteligence;
+﻿using AI;
 using Game.IGame;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArtificialIntelligence
+namespace AI
 {
     internal class NMCS<Action, State, InputState> : IArtificialIntelligence<Action, State, InputState, NMCSModuleData<Action, State>>
         where Action : IEquatable<Action>

@@ -1,11 +1,11 @@
 ﻿using Game.Checkers;
 
 
-namespace ArtificialIntelligence.Tests.UCT
+namespace AI.Tests.UCT
 {
     public class MoveAssesmentForCheckers
     {
-        private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(2));
+        private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]
         public void MoveAssessmentReturns2WinningMoves()
         {

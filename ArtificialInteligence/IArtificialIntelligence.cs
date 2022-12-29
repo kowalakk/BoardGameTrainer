@@ -1,7 +1,4 @@
-﻿using ArtificialIntelligence;
-using Game.IGame;
-
-namespace ArtificialInteligence
+﻿namespace AI
 {
     public interface IArtificialIntelligence<Action, State, InputState, ModuleData>
         where Action : IEquatable<Action>

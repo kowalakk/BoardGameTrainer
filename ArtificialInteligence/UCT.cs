@@ -1,7 +1,6 @@
-﻿using ArtificialInteligence;
-using Game.IGame;
+﻿using Game.IGame;
 
-namespace ArtificialIntelligence
+namespace AI
 {
     public class UCT<Action, State, InputState> : IArtificialIntelligence<Action, State, InputState, UCTModuleData<Action, State>>
         where Action : IEquatable<Action>

@@ -1,4 +1,4 @@
-﻿namespace ArtificialIntelligence.Tests
+﻿namespace AI.Tests
 {
     public class NMCSTests
     {

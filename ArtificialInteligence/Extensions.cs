@@ -1,7 +1,7 @@
-﻿using ArtificialInteligence;
+﻿using AI;
 using Game.IGame;
 
-namespace ArtificialIntelligence
+namespace AI
 {
     internal static class RandomElementFromIEnumerableExtension
     {
