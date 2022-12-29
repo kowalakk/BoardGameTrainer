@@ -2,7 +2,7 @@ using Game.Othello;
 
 namespace AI.Tests.UCT
 {
-    public class MoveAssessmentForOthello
+    public class UCTTestsForOthello
     {
         private UCT<OthelloAction, OthelloState, LanguageExt.Unit> uct = new UCT<OthelloAction, OthelloState, LanguageExt.Unit>(1.414, new Othello(), new IterationStopCondition(10));
 

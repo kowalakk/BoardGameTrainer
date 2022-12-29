@@ -1,11 +1,8 @@
-﻿using AI;
-using Game.IGame;
-
-namespace AI
+﻿namespace AI
 {
-    internal static class RandomElementFromIEnumerableExtension
+    internal static class RandomWalkExtension
     {
-        private static Random rng = new Random();
+        private static readonly Random rand = new(); // TODO: add seed
 
         public static void Shuffle<T>(this IList<T> list)
         {
@@ -13,16 +10,11 @@ namespace AI
             while (n > 1)
             {
                 n--;
-                int k = rng.Next(n + 1);
+                int k = rand.Next(n + 1);
                 (list[n], list[k]) = (list[k], list[n]);
             }
         }
         public static T RandomElement<T>(this IEnumerable<T> enumerable)
-        {
-            return enumerable.RandomElementUsing<T>(new Random());
-        }
-
-        public static T RandomElementUsing<T>(this IEnumerable<T> enumerable, Random rand)
         {
             int index = rand.Next(0, enumerable.Count());
             return enumerable.ElementAt(index);

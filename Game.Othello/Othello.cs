@@ -25,7 +25,7 @@ namespace Game.Othello
             return actions;
         }
 
-        public GameResult GameResult(OthelloState state)
+        public GameResult Result(OthelloState state)
         {
             if (PossibleActions(state).Where(action => action is OthelloEmptyAction).Count() > 0)
                 if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)

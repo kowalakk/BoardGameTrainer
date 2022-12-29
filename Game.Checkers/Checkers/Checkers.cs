@@ -22,7 +22,7 @@ namespace Game.Checkers
         }
 
         //needs optimization
-        public GameResult GameResult(CheckersState state)
+        public GameResult Result(CheckersState state)
         {
             IEnumerable<CheckersAction> possibleActions = PossibleActions(state);
             if (possibleActions.Count() == 0)

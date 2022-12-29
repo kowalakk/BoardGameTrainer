@@ -24,7 +24,7 @@ namespace Game.IGame
 
         public IEnumerable<Action> PossibleActions(State state);
 
-        public GameResult GameResult(State state);
+        public GameResult Result(State state);
 
         public Player CurrentPlayer(State state);
 

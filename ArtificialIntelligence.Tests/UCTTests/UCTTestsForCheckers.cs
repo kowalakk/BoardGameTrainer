@@ -3,7 +3,7 @@
 
 namespace AI.Tests.UCT
 {
-    public class MoveAssesmentForCheckers
+    public class UCTTestsForCheckers
     {
         private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]

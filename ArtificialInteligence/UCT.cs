@@ -27,24 +27,22 @@ namespace AI
         {
             return MoveAssessment(state).MaxBy(action => { return action.Item2; }).Item1;
         }
+
         private void UCTSearch(Node<Action, State> root)
         {
             IEnumerator<Node<Action, State>> treePolicyEnumerator = TreePolicy(root);
             while (!StopCondition.StopConditionOccured())
             {
-                SingleUCTIteration(treePolicyEnumerator);
+                treePolicyEnumerator.MoveNext();
+                Node<Action, State> node = treePolicyEnumerator.Current;
+                GameResult gameResult = DefaultPolicy(node.CorespondingState);
+                Backup(node, gameResult);
             }
         }
-        private void SingleUCTIteration(IEnumerator<Node<Action, State>> treePolicyEnumerator)
-        {
-            treePolicyEnumerator.MoveNext();
-            Node<Action, State> node = treePolicyEnumerator.Current;
-            GameResult gameResult = DefaultPolicy(node.CorespondingState);
-            Backup(node, gameResult);
-        }
+
         private IEnumerator<Node<Action, State>> TreePolicy(Node<Action, State> node)
         {
-            GameResult gameResult = Game.GameResult(node.CorespondingState);
+            GameResult gameResult = Game.Result(node.CorespondingState);
             while (gameResult == GameResult.InProgress)
             {
                 yield return Expand(node);
@@ -53,7 +51,7 @@ namespace AI
                     yield return Expand(node);
                 }
                 node = BestChild(node)!; // game is InProgress so a child exists
-                gameResult = Game.GameResult(node.CorespondingState);
+                gameResult = Game.Result(node.CorespondingState);
             }
         }
 
@@ -78,13 +76,13 @@ namespace AI
         }
         private GameResult DefaultPolicy(State state)
         {
-            GameResult gameResult = Game.GameResult(state);
+            GameResult gameResult = Game.Result(state);
             while (gameResult == GameResult.InProgress)
             {
                 IEnumerable<Action> possibleActions = Game.PossibleActions(state);
                 Action randomAction = possibleActions.RandomElement();
                 state = Game.PerformAction(randomAction, state);
-                gameResult = Game.GameResult(state);
+                gameResult = Game.Result(state);
             }
             return gameResult;
         }
