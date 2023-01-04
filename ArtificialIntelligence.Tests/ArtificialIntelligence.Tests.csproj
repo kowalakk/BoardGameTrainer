@@ -23,6 +23,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ArtificialInteligence\ArtificialIntelligence.csproj" />
+    <ProjectReference Include="..\Game.Checkers\Game.Checkers.csproj" />
+    <ProjectReference Include="..\Game.Othello\Game.Othello.csproj" />
   </ItemGroup>
 
 </Project>

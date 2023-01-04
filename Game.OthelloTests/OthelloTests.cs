@@ -16,7 +16,7 @@ namespace Game.Othello.Tests
         [Fact]
         void GameResultShouldBeInProgressForInitialState()
         {
-            Assert.Equal(GameResults.InProgress, othello.GameResult(OthelloState.GenerateInitialOthelloState()));
+            Assert.Equal(GameResult.InProgress, othello.Result(OthelloState.GenerateInitialOthelloState()));
         }
 
         [Fact]
@@ -37,9 +37,9 @@ namespace Game.Othello.Tests
             for (int i = boardSize / 2; i < boardSize; i++)
                 for (int j = 0; j < boardSize; j++)
                     half[i, j] = Field.Black;
-            Assert.Equal(GameResults.PlayerTwoWins, othello.GameResult(new OthelloState(white, 0, 0, true)));
-            Assert.Equal(GameResults.PlayerOneWins, othello.GameResult(new OthelloState(black, 0, 0, true)));
-            Assert.Equal(GameResults.Draw, othello.GameResult(new OthelloState(half, 0, 0, true)));
+            Assert.Equal(GameResult.PlayerTwoWins, othello.Result(new OthelloState(white, 0, 0, true)));
+            Assert.Equal(GameResult.PlayerOneWins, othello.Result(new OthelloState(black, 0, 0, true)));
+            Assert.Equal(GameResult.Draw, othello.Result(new OthelloState(half, 0, 0, true)));
         }
 
         [Fact]

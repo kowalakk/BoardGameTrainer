@@ -1,4 +1,4 @@
-﻿namespace ArtificialIntelligence
+﻿namespace AI
 {
     public interface IStopCondition
     {

@@ -22,15 +22,15 @@ namespace Game.Checkers
         }
 
         //needs optimization
-        public GameResults GameResult(CheckersState state)
+        public GameResult Result(CheckersState state)
         {
             IEnumerable<CheckersAction> possibleActions = PossibleActions(state);
             if (possibleActions.Count() == 0)
             {
-                if (state.CurrentPlayer == Player.PlayerOne) return GameResults.PlayerTwoWins;
-                return GameResults.PlayerOneWins;
+                if (state.CurrentPlayer == Player.PlayerOne) return IGame.GameResult.PlayerTwoWins;
+                return IGame.GameResult.PlayerOneWins;
             }
-            return GameResults.InProgress;
+            return IGame.GameResult.InProgress;
         }
 
         public (CheckersAction, CheckersInputState) HandleInput(Event @event, CheckersInputState inputState, CheckersState state)

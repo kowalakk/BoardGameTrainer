@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Game.IGame;
+using System.Text.RegularExpressions;
 
 namespace Game.Checkers
 {
@@ -27,6 +28,7 @@ namespace Game.Checkers
             CheckersState newState = new(state);
             newState.SetPieceAt(Start, Piece.None);
             newState.SetPieceAtWithPossiblePromotion(Finish, movedPiece);
+            newState.CurrentPlayer = state.CurrentPlayer == Player.PlayerOne? Player.PlayerTwo: Player.PlayerOne;
             return newState;
         }
     }

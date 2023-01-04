@@ -9,6 +9,12 @@ namespace Game.Othello
     public class Othello : IGame<OthelloAction, OthelloState, LanguageExt.Unit>
     {
         private const int boardSize = 8;
+
+        public Player CurrentPlayer(OthelloState state)
+        {
+            return (state.BlacksTurn) ? Player.PlayerOne : Player.PlayerTwo;
+        }
+
         public void DrawBoard(Widget widget, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             throw new NotImplementedException();
@@ -19,12 +25,12 @@ namespace Game.Othello
             return actions;
         }
 
-        public GameResults GameResult(OthelloState state)
+        public GameResult Result(OthelloState state)
         {
             if (PossibleActions(state).Where(action => action is OthelloEmptyAction).Count() > 0)
                 if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)
                     return HasBlackWon(state);
-            return GameResults.InProgress;
+            return IGame.GameResult.InProgress;
         }
 
         public (OthelloAction, LanguageExt.Unit) HandleInput(Event @event, LanguageExt.Unit u, OthelloState state)
@@ -164,7 +170,7 @@ namespace Game.Othello
             return actions;
         }
 
-        private GameResults HasBlackWon(OthelloState state)
+        private GameResult HasBlackWon(OthelloState state)
         {
             int whiteCount = 0;
             int blackCount = 0;
@@ -177,8 +183,8 @@ namespace Game.Othello
                         blackCount++;
                 }
             if (whiteCount == blackCount)
-                return GameResults.Draw;
-            return (blackCount > whiteCount) ? GameResults.PlayerOneWins : GameResults.PlayerTwoWins;
+                return IGame.GameResult.Draw;
+            return (blackCount > whiteCount) ? IGame.GameResult.PlayerOneWins : IGame.GameResult.PlayerTwoWins;
         }
     }
 }

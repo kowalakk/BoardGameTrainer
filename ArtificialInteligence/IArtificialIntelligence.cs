@@ -1,13 +1,10 @@
-﻿using ArtificialIntelligence;
-using Game.IGame;
-
-namespace ArtificialInteligence
+﻿namespace AI
 {
     public interface IArtificialIntelligence<Action, State, InputState, ModuleData>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
-        List<(Action, double)> MoveAssessment(IGame<Action, State, InputState> game, State state, ModuleData moduleData, IStopCondition condition);
-        Action ChooseMove(IGame<Action, State, InputState> game, State state);
+        List<(Action, double)> MoveAssessment(State state);
+        Action ChooseMove(State state);
     }
 }

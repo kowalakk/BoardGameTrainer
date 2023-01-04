@@ -1,6 +1,7 @@
-﻿namespace ArtificialIntelligence
+﻿namespace AI
 {
-    public class NMCSModuleData
+    public class NMCSModuleData<Action, State>
+        where State : IEquatable<State>
     {
     }
 }

@@ -3,7 +3,7 @@ using Gtk;
 
 namespace Game.IGame
 {
-    public enum GameResults
+    public enum GameResult
     {
         InProgress = 0,
         PlayerOneWins = 1,
@@ -12,8 +12,8 @@ namespace Game.IGame
     }
     public enum Player
     {
-        PlayerOne = 1,
-        PlayerTwo = 0,
+        PlayerOne = GameResult.PlayerOneWins,
+        PlayerTwo = GameResult.PlayerTwoWins,
     }
 
     public interface IGame { }
@@ -25,7 +25,7 @@ namespace Game.IGame
 
         public IEnumerable<Action> PossibleActions(State state);
 
-        public GameResults GameResult(State state);
+        public GameResult Result(State state);
 
         public Player CurrentPlayer(State state);
 
