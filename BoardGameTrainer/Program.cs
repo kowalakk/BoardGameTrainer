@@ -11,7 +11,7 @@ namespace BoardGameTrainer
 
             var app = new Application("x.y.z", GLib.ApplicationFlags.None);
             app.Register(GLib.Cancellable.Current);
-            var win = new GameWindow(Gtk.WindowType.Toplevel);
+            var win = new GameWindow(Gdk.WindowType.Toplevel);
             app.AddWindow(win);
             win.DefaultSize = new Gdk.Size(700, 500);
             var button = new Button("QUIT");
