@@ -1,6 +1,6 @@
 using Game.Othello;
 
-namespace AI.Tests.UCT
+namespace AI.Tests.UCTTests
 {
     public class UCTTestsForOthello
     {
