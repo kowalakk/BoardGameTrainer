@@ -12,12 +12,13 @@ namespace BoardGameTrainer
         // Trzeba ją potem usunąć - nasz program powinien przeszukiwać katalog
         // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
         private static IGame game = new Checkers();
+        private static Application app;
         [STAThread]
         public static void Main(string[] args)
         {
             Application.Init();
             
-            var app = new Application("x.y.z", GLib.ApplicationFlags.None);
+            app = new Application("x.y.z", GLib.ApplicationFlags.None);
             app.Register(GLib.Cancellable.Current);
             var mainWindow = createMainWindow();
             app.AddWindow(mainWindow);
@@ -44,6 +45,7 @@ namespace BoardGameTrainer
             boardImage.Show();
 
             var newGameButton = new Button("New Game");
+            newGameButton.Clicked += (s, e) => OpenConfigWindow();
             var restartButton = new Button("Restart");
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
@@ -65,6 +67,13 @@ namespace BoardGameTrainer
             win.Show();
             win.DeleteEvent += (sender, args) => Application.Quit();
             return win;
+        }
+
+        static void OpenConfigWindow()
+        {
+            var configWindow = new Gtk.Window(Gtk.WindowType.Toplevel);
+            app.AddWindow(configWindow);
+            configWindow.Show();
         }
     }
 }
