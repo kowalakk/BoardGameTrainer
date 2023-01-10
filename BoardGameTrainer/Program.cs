@@ -13,6 +13,11 @@ namespace BoardGameTrainer
         // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
         private static IGame game = new Checkers();
         private static Application app;
+        private static bool isTwoPlayer = false;
+        private static bool showHintsForPlayer1 = true;
+        private static bool showHintsForPlayer2 = false;
+        private static bool isAImoduleOne = true;
+        private static int computationTime;
         [STAThread]
         public static void Main(string[] args)
         {
@@ -74,6 +79,33 @@ namespace BoardGameTrainer
             var configWindow = new Gtk.Window(Gtk.WindowType.Toplevel);
             app.AddWindow(configWindow);
             configWindow.Show();
+            var contentVbox = new Gtk.VBox();
+            var numOfPlayersHbox = new Gtk.HBox();
+            var onePlayerRadio = new Gtk.RadioButton((RadioButton) null);
+            var onePlayerLabel = new Gtk.Label("One Player");
+            var twoPlayersLabel = new Gtk.Label("Two Players");
+            var twoPlayerRadio = new Gtk.RadioButton(onePlayerRadio);
+            numOfPlayersHbox.PackStart(onePlayerRadio, false, false, 3);
+            numOfPlayersHbox.PackStart(onePlayerLabel, false, false, 3);
+            numOfPlayersHbox.PackStart(twoPlayerRadio, false, false, 3);
+            numOfPlayersHbox.PackStart(twoPlayersLabel, false, false, 3);
+            Frame numOfPlayersFrame = new("Number of players")
+            {
+                numOfPlayersHbox
+            };
+            contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
+            configWindow.Add(contentVbox);
+
+            onePlayerRadio.Clicked += (sender, args) => { isTwoPlayer = false; };
+            twoPlayerRadio.Clicked += (sender, args) => { isTwoPlayer = true; };
+            contentVbox.Show();
+            numOfPlayersFrame.Show();
+            numOfPlayersHbox.Show();
+            onePlayerRadio.Show();
+            twoPlayerRadio.Show();
+            onePlayerLabel.Show();
+            twoPlayersLabel.Show();
         }
+
     }
 }
