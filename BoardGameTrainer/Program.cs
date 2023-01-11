@@ -80,31 +80,66 @@ namespace BoardGameTrainer
             app.AddWindow(configWindow);
             configWindow.Show();
             var contentVbox = new Gtk.VBox();
+
+            var gameHBox = new Gtk.HBox();
+            var gamesDropDown = new Gtk.ComboBox(new string[] { "Checkers", "Othello" });
+            var gameLabel = new Gtk.Label("Game");
+            gameHBox.PackStart(gameLabel, false, false, 3);
+            gameHBox.PackStart(gamesDropDown, false, false, 3);
+            gameLabel.Show();
+            gamesDropDown.Show();
+            gameHBox.Show();
+
             var numOfPlayersHbox = new Gtk.HBox();
             var onePlayerRadio = new Gtk.RadioButton((RadioButton) null);
-            var onePlayerLabel = new Gtk.Label("One Player");
-            var twoPlayersLabel = new Gtk.Label("Two Players");
+            onePlayerRadio.Label = "One Player";
             var twoPlayerRadio = new Gtk.RadioButton(onePlayerRadio);
+            twoPlayerRadio.Label = "Two Players";
             numOfPlayersHbox.PackStart(onePlayerRadio, false, false, 3);
-            numOfPlayersHbox.PackStart(onePlayerLabel, false, false, 3);
             numOfPlayersHbox.PackStart(twoPlayerRadio, false, false, 3);
-            numOfPlayersHbox.PackStart(twoPlayersLabel, false, false, 3);
             Frame numOfPlayersFrame = new("Number of players")
             {
                 numOfPlayersHbox
             };
-            contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
-            configWindow.Add(contentVbox);
-
             onePlayerRadio.Clicked += (sender, args) => { isTwoPlayer = false; };
             twoPlayerRadio.Clicked += (sender, args) => { isTwoPlayer = true; };
-            contentVbox.Show();
             numOfPlayersFrame.Show();
             numOfPlayersHbox.Show();
             onePlayerRadio.Show();
             twoPlayerRadio.Show();
-            onePlayerLabel.Show();
-            twoPlayersLabel.Show();
+
+            var showHintsHBox = new Gtk.HBox();
+            var hintsForPlayer1Checkbox = new Gtk.CheckButton();
+            hintsForPlayer1Checkbox.Label = "Player 1";
+            var hintsForPlayer2Checkbox = new Gtk.CheckButton();
+            hintsForPlayer2Checkbox.Label = "Player 2";
+            showHintsHBox.PackStart(hintsForPlayer1Checkbox, false, false, 3);
+            showHintsHBox.PackStart(hintsForPlayer2Checkbox, false, false, 3);
+            showHintsHBox.Show();
+            hintsForPlayer1Checkbox.Show();
+            hintsForPlayer2Checkbox.Show();
+            Frame showHintsFrame = new("Show hints")
+            {
+                showHintsHBox
+            };
+            showHintsFrame.Show();
+
+            Frame computationTimeFrame = new("Computation time")
+            {
+
+            };
+            computationTimeFrame.Show();
+
+            var newGameButton = new Gtk.Button("Start new game");
+            newGameButton.Show();
+
+            contentVbox.PackStart(gameHBox, false, false, 3);
+            contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
+            contentVbox.PackStart(showHintsFrame, false, false, 3);
+            contentVbox.PackStart(computationTimeFrame, false, false, 3);
+            contentVbox.PackStart(newGameButton, false, false, 5);
+            contentVbox.Show();
+            configWindow.Add(contentVbox);
         }
 
     }
