@@ -45,8 +45,18 @@ namespace BoardGameTrainer
             var boardPixbuf = new Gdk.Pixbuf("..\\..\\..\\Tulips.jpg", 200, 200);
 
             // zamiast tego będzie przypisanie do boardImage wartości game.drawBoard()
-            var boardImage = new Gtk.Image(boardPixbuf);
-            contentHBox.PackStart(boardImage, false, false, 0);
+            var boardImage = new Gtk.DrawingArea();
+            boardImage.Drawn += (s, a) => { 
+                var context = a.Cr; 
+                context.Scale(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                //drawBoard()
+                context.LineWidth = 0.1;
+                context.SetSourceRGB(0, 0, 0);
+                context.MoveTo(0.1, 0.1);
+                context.LineTo(0.9, 0.9);
+                context.Stroke();
+            };
+            contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
 
             var newGameButton = new Button("New Game");
@@ -57,13 +67,13 @@ namespace BoardGameTrainer
 
             var mainTitle = new Gtk.Label(title);
             titleAndContentVBox.PackStart(mainTitle, false, false, 0);
-            titleAndContentVBox.PackStart(contentHBox, false, false, 0);
+            titleAndContentVBox.PackStart(contentHBox, true, true, 0);
             mainTitle.Show();
             contentHBox.Show();
 
             mainVBox.PackStart(panelHbox, false, false, 0);
             panelHbox.Show();
-            mainVBox.PackStart(titleAndContentVBox, false, false, 0);
+            mainVBox.PackStart(titleAndContentVBox, true, true, 0);
             titleAndContentVBox.Show();
             win.Add(mainVBox);
             mainVBox.Show();
@@ -83,6 +93,7 @@ namespace BoardGameTrainer
 
             var gameHBox = new Gtk.HBox();
             var gamesDropDown = new Gtk.ComboBox(new string[] { "Checkers", "Othello" });
+            //gamesDropDown.Changed += ...
             var gameLabel = new Gtk.Label("Game");
             gameHBox.PackStart(gameLabel, false, false, 3);
             gameHBox.PackStart(gamesDropDown, false, false, 3);
@@ -110,6 +121,7 @@ namespace BoardGameTrainer
 
             var showHintsHBox = new Gtk.HBox();
             var hintsForPlayer1Checkbox = new Gtk.CheckButton();
+            hintsForPlayer1Checkbox.Active = true;
             hintsForPlayer1Checkbox.Label = "Player 1";
             var hintsForPlayer2Checkbox = new Gtk.CheckButton();
             hintsForPlayer2Checkbox.Label = "Player 2";
