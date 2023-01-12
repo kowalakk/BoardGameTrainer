@@ -16,7 +16,8 @@ namespace Game.IGame
         PlayerTwo = GameResult.PlayerTwoWins,
     }
 
-    public interface IGame<Action, State, InputState> 
+    public interface IGame { }
+    public interface IGame<Action, State, InputState> : IGame
         where Action: IEquatable<Action>
         where State: IEquatable<State> 
     {
