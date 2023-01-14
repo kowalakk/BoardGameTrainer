@@ -222,7 +222,7 @@ namespace Game.Checkers
         private static bool HaveOppositeColors(Piece capturer, Piece target)
         {
             if (capturer == Piece.None || target == Piece.None) return false;
-            if (capturer == Piece.Captured || target == Piece.Captured) return false;
+            if (capturer == Piece.CapturedPiece || target == Piece.CapturedPiece) return false;
             bool isCapturerWhite = capturer == Piece.WhitePawn || capturer == Piece.WhiteCrowned;
             bool isTargetBlack = target == Piece.BlackPawn || target == Piece.BlackCrowned;
             return (isCapturerWhite && isTargetBlack) || (!isCapturerWhite && !isTargetBlack);

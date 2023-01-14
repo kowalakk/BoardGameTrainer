@@ -11,7 +11,7 @@ namespace BoardGameTrainer
         // Dołączyłem też referencję do warcabów jako przykład.
         // Trzeba ją potem usunąć - nasz program powinien przeszukiwać katalog
         // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
-        private static IGame game = new Checkers();
+        private static Checkers game = new Checkers();
         private static Application app;
         private static bool isTwoPlayer = false;
         private static bool showHintsForPlayer1 = true;
@@ -22,12 +22,12 @@ namespace BoardGameTrainer
         public static void Main(string[] args)
         {
             Application.Init();
-            
+
             app = new Application("x.y.z", GLib.ApplicationFlags.None);
             app.Register(GLib.Cancellable.Current);
             var mainWindow = createMainWindow();
             app.AddWindow(mainWindow);
-            
+
             Application.Run();
         }
 
@@ -36,7 +36,7 @@ namespace BoardGameTrainer
             string title = "New Game";
             var win = new Gtk.Window(Gtk.WindowType.Toplevel);
             win.DefaultSize = new Gdk.Size(700, 500);
-            
+
             var mainVBox = new Gtk.VBox();
             var panelHbox = new Gtk.HBox();
             var titleAndContentVBox = new Gtk.VBox();
@@ -46,12 +46,30 @@ namespace BoardGameTrainer
 
             // zamiast tego będzie przypisanie do boardImage wartości game.drawBoard()
             var boardImage = new Gtk.DrawingArea();
-            boardImage.Drawn += (s, a) => { 
-                var context = a.Cr; 
-                context.Scale(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
-                //drawBoard()
-                context.LineWidth = 0.1;
-                context.SetSourceRGB(0, 0, 0);
+            boardImage.Drawn += (sender, args) =>
+            {
+                var context = args.Cr;
+                int minDimention, maxDimention;
+                if (boardImage.AllocatedWidth > boardImage.AllocatedHeight)
+                {
+                    minDimention = boardImage.AllocatedHeight;
+                    maxDimention = boardImage.AllocatedWidth;
+                }
+                else
+                {
+                    minDimention = boardImage.AllocatedWidth;
+                    maxDimention = boardImage.AllocatedHeight;
+                }
+                int offset = Math.Max((boardImage.AllocatedWidth - boardImage.AllocatedHeight) / 2, 0);
+                context.Translate(offset, 0);
+                context.Scale(minDimention, minDimention);
+                CheckersState state = CheckersState.GetInitialState();
+                state.SetPieceAt("A1", Piece.WhiteCrowned);
+                state.SetPieceAt("H8", Piece.BlackCrowned);
+                game.DrawBoard(context, new CheckersInputState(), state, new List<(CheckersAction, double)>());
+                context.LineWidth = 0.001;
+
+                context.SetSourceRGB(1, 1, 0);
                 context.MoveTo(0.1, 0.1);
                 context.LineTo(0.9, 0.9);
                 context.Stroke();
@@ -102,7 +120,7 @@ namespace BoardGameTrainer
             gameHBox.Show();
 
             var numOfPlayersHbox = new Gtk.HBox();
-            var onePlayerRadio = new Gtk.RadioButton((RadioButton) null);
+            var onePlayerRadio = new Gtk.RadioButton((RadioButton)null);
             onePlayerRadio.Label = "One Player";
             var twoPlayerRadio = new Gtk.RadioButton(onePlayerRadio);
             twoPlayerRadio.Label = "Two Players";

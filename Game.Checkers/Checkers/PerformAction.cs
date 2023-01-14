@@ -13,7 +13,7 @@ namespace Game.Checkers
 
         private static CheckersState PerformTemporaryCapture(CaptureAction action, CheckersState state)
         {
-            return action.PerformOn(state, Piece.Captured);
+            return action.PerformOn(state, Piece.CapturedPiece);
         }
 
     }

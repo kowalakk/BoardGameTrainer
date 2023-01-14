@@ -1,4 +1,5 @@
-﻿using Game.IGame;
+﻿using Cairo;
+using Game.IGame;
 using Gdk;
 using Gtk;
 using LanguageExt;
@@ -15,7 +16,7 @@ namespace Game.Othello
             return (state.BlacksTurn) ? Player.PlayerOne : Player.PlayerTwo;
         }
 
-        public void DrawBoard(Widget widget, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
+        public void DrawBoard(Context context, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             throw new NotImplementedException();
         }

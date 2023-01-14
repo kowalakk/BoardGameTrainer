@@ -1,4 +1,5 @@
-﻿using Gdk;
+﻿using Cairo;
+using Gdk;
 using Gtk;
 
 namespace Game.IGame
@@ -29,7 +30,7 @@ namespace Game.IGame
 
         public Player CurrentPlayer(State state);
 
-        public void DrawBoard(Widget widget, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
+        public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 
         public (Action, InputState) HandleInput(Event @event, InputState inputState, State state);
 

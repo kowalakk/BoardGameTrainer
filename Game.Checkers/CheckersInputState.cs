@@ -4,7 +4,7 @@
     {
         public List<(int, int)> Fields { get; private set; }
 
-        public CheckersInputState(List<(int, int)> fields)
+        public CheckersInputState(List<(int, int)> fields = null)
         {
             Fields = fields;
         }

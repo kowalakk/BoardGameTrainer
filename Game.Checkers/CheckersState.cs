@@ -9,7 +9,7 @@ namespace Game.Checkers
         BlackPawn = 2,
         WhiteCrowned = 3,
         BlackCrowned = 4,
-        Captured = 5,
+        CapturedPiece = 5,
     }
 
     public class CheckersState : IEquatable<CheckersState>
@@ -128,17 +128,17 @@ namespace Game.Checkers
         {
             Piece[,] board = new Piece[,]
             {
-                { Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None },
-                { Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn },
-                { Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None, Piece.WhitePawn, Piece.None },
-                { Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None },
-                { Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None },
-                { Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn },
-                { Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None},
-                { Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn, Piece.None, Piece.BlackPawn },
+                { Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn, Piece.None },
+                { Piece.None, Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn },
+                { Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn, Piece.None },
+                { Piece.None, Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn },
+                { Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn, Piece.None },
+                { Piece.None, Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn },
+                { Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn, Piece.None },
+                { Piece.None, Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn },
             };
 
-            return new CheckersState(board, IGame.Player.PlayerOne);
+            return new CheckersState(board, Player.PlayerOne);
         }
         public static CheckersState GetEmptyBoardState(Player player = Player.PlayerOne)
         {
