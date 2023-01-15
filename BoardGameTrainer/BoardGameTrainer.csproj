@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Game.Checkers\Game.Checkers.csproj" />
     <ProjectReference Include="..\Game.IGame\Game.IGame.csproj" />
+    <ProjectReference Include="..\Game.Othello\Game.Othello.csproj" />
   </ItemGroup>
 
 </Project>
