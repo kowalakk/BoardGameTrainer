@@ -20,21 +20,13 @@ namespace Game.Checkers
 
                 context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
                 DrawField(context);
-                context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
-
-            }
-            context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
-            DrawGameState(context, inputState, state, ratedActions);
-            context.Scale(FIELD_SIZE, FIELD_SIZE);
-            foreach (Field field in state.GetFields())
-            {
-
-                context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
                 DrawPiece(context, state, field);
                 context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
 
             }
             context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
+            DrawGameState(context, inputState, state, ratedActions);
+
 
         }
 
@@ -119,9 +111,9 @@ namespace Game.Checkers
             if (inputState is IdleCIS) // draw best actions
             {
                 Color green = new(0.5, 1, 0);
-                foreach (var action in ratedActions)
+                foreach (var action in ratedActions.Reverse())
                 {
-                    DrawRatedAction(context, action, green);
+                    DrawRatedAction(context, state, action, green);
                 }
                 return;
             }
@@ -130,9 +122,9 @@ namespace Game.Checkers
                 Color blue = new(0, 0.75, 1);
                 foreach (var action in ratedActions)
                 {
-                    DrawRatedAction(context, action, blue);
+                    DrawRatedAction(context, state, action, blue);
                 }
-                DrawMarkedField(context, markedPieceState.MarkedField);
+                DrawMarkedField(context, state, markedPieceState.MarkedField);
                 return;
             }
             { // draw actions for ongoing action
@@ -140,12 +132,12 @@ namespace Game.Checkers
                 CaptureActionInProgressCIS actionInProgressState = (CaptureActionInProgressCIS)inputState;
                 foreach (var action in ratedActions)
                 {
-                    DrawRatedAction(context, action, blue);
+                    DrawRatedAction(context, state, action, blue);
                 }
 
                 DrawVisitedFields(context, actionInProgressState.VisitedFields);
                 Field markedField = actionInProgressState.VisitedFields.Last();
-                DrawMarkedField(context, markedField);
+                DrawMarkedField(context, state, markedField);
 
                 context.Scale(FIELD_SIZE, FIELD_SIZE);
                 context.Translate(markedField.Col, (CheckersState.BOARD_SIZE - 1 - markedField.Row));
@@ -157,25 +149,27 @@ namespace Game.Checkers
             }
         }
 
-        private void DrawMarkedField(Context context, Field field)
+        private void DrawMarkedField(Context context, CheckersState state, Field field)
         {
             Color orange = new(1, 0.75, 0);
             context.Scale(FIELD_SIZE, FIELD_SIZE);
             context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
             DrawSpecialField(context, orange);
+            DrawPiece(context, state, field);
             context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
             context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
         }
 
-        private void DrawRatedAction(Context context, (CheckersAction, double) action, Color color)
+        private void DrawRatedAction(Context context, CheckersState state, (CheckersAction, double) action, Color color)
         {
             IEnumerable<Field> fields = action.Item1.GetClickableFields();
-            
+
             context.Scale(FIELD_SIZE, FIELD_SIZE);
             foreach (Field field in fields)
             {
                 context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
                 DrawSpecialField(context, color);
+                DrawPiece(context, state, field);
                 context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
             }
             Field lastField = fields.Last();
