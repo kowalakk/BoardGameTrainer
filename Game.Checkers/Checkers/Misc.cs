@@ -8,7 +8,7 @@ namespace Game.Checkers
         public IEnumerable<(CheckersAction, double)> FilterByInputState(IEnumerable<(CheckersAction, double)> ratedActions, ICheckersInputState inputState)
         {
             if (inputState is IdleCIS)
-                return ratedActions.OrderBy(tuple => tuple.Item2).Take(3);
+                return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(3);
             if (inputState is MarkedPieceCIS cIS1)
                 return ratedActions.Where(tuple => tuple.Item1.Start.Equals(cIS1.MarkedField));
             if (inputState is CaptureActionInProgressCIS cIS2)

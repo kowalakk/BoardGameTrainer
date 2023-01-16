@@ -1,8 +1,8 @@
-﻿using Game.Checkers;
+﻿using AI;
+using Game.Checkers;
 using Game.IGame;
 using Gdk;
 using Gtk;
-using LanguageExt;
 
 namespace BoardGameTrainer
 {
@@ -13,12 +13,16 @@ namespace BoardGameTrainer
         // Trzeba ją potem usunąć - nasz program powinien przeszukiwać katalog
         // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
         private static Checkers game = new Checkers();
+        private static CheckersState state = CheckersState.GetInitialState();
+        private static ICheckersInputState inputState = new IdleCIS();
+        private static UCT<CheckersAction, CheckersState, ICheckersInputState> ai = new(1.414, game, new IterationStopCondition(10000));
+        private static List<(CheckersAction, double)> ratedActions = ai.MoveAssessment(state);
         private static Application app;
         private static bool isTwoPlayer = false;
-        private static bool showHintsForPlayer1 = true;
-        private static bool showHintsForPlayer2 = false;
-        private static bool isAImoduleOne = true;
-        private static int computationTime;
+        //private static bool showHintsForPlayer1 = true;
+        //private static bool showHintsForPlayer2 = false;
+        //private static bool isAImoduleOne = true;
+        //private static int computationTime;
         [STAThread]
         public static void Main(string[] args)
         {
@@ -56,10 +60,8 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                CheckersState state = CheckersState.GetInitialState(); // TODO
-                state.SetPieceAt("A1", Piece.WhiteCrowned);
-                state.SetPieceAt("H8", Piece.BlackCrowned);
-                game.DrawBoard(context, new IdleCIS(), state, new List<(CheckersAction, double)>() { (new CaptureAction(new Field("C3"), new Field("B2"), new Field("A1")),1.0) });
+
+                game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
 
             };
 
@@ -72,7 +74,18 @@ namespace BoardGameTrainer
                 double x = (args.Event.X - xOffset) / minDimention;
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
-                //game.HandleInput(x, y, inputState, state);
+
+                (ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state, game.FilterByInputState(ratedActions, inputState));
+                inputState= newInputState;
+                if(action != null)
+                {
+                    state = game.PerformAction(action, state);
+                    boardImage.QueueDraw();
+                    //wait
+                    state = game.PerformAction(ai.ChooseMove(state), state);
+                    ratedActions = ai.MoveAssessment(state);
+                }
+                boardImage.QueueDraw();
             };
 
             contentHBox.PackStart(boardImage, true, true, 0);
@@ -121,7 +134,7 @@ namespace BoardGameTrainer
             gameHBox.Show();
 
             var numOfPlayersHbox = new Gtk.HBox();
-            var onePlayerRadio = new Gtk.RadioButton((RadioButton)null);
+            var onePlayerRadio = new Gtk.RadioButton(IntPtr.Zero);
             onePlayerRadio.Label = "One Player";
             var twoPlayerRadio = new Gtk.RadioButton(onePlayerRadio);
             twoPlayerRadio.Label = "Two Players";

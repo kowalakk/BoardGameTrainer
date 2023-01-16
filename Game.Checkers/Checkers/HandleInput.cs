@@ -18,7 +18,7 @@ namespace Game.Checkers
                 return (new IdleCIS(), null);
             }
             int col = (int)(8 * x);
-            int row = (int)(8 * y);
+            int row = CheckersState.BOARD_SIZE - 1 - (int)(8 * y);
             Piece piece = state.GetPieceAt(col, row);
             Field clickedField = new Field(col, row);
             if (inputState is IdleCIS)

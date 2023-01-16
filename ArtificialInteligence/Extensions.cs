@@ -2,7 +2,7 @@
 {
     internal static class RandomWalkExtension
     {
-        private static readonly Random rand = new(); // TODO: add seed
+        private static readonly Random rand = new(DateTime.Now.Millisecond); // TODO: add seed
 
         public static void Shuffle<T>(this IList<T> list)
         {
@@ -17,6 +17,7 @@
         public static T RandomElement<T>(this IEnumerable<T> enumerable)
         {
             int index = rand.Next(0, enumerable.Count());
+            //Console.WriteLine($"{index}, {enumerable.Count()}");
             return enumerable.ElementAt(index);
         }
     }

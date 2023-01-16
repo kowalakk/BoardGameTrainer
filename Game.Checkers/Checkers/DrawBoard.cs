@@ -24,7 +24,7 @@ namespace Game.Checkers
 
             }
             context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
-            DrawGameState(context, inputState, ratedActions);
+            DrawGameState(context, inputState, state, ratedActions);
             context.Scale(FIELD_SIZE, FIELD_SIZE);
             foreach (Field field in state.GetFields())
             {
@@ -114,7 +114,7 @@ namespace Game.Checkers
             context.LineWidth = lineWidth;
         }
 
-        private void DrawGameState(Context context, ICheckersInputState inputState, IEnumerable<(CheckersAction, double)> ratedActions)
+        private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
             if (inputState is IdleCIS) // draw best actions
             {
@@ -144,6 +144,15 @@ namespace Game.Checkers
                 }
 
                 DrawVisitedFields(context, actionInProgressState.VisitedFields);
+                Field markedField = actionInProgressState.VisitedFields.Last();
+                DrawMarkedField(context, markedField);
+
+                context.Scale(FIELD_SIZE, FIELD_SIZE);
+                context.Translate(markedField.Col, (CheckersState.BOARD_SIZE - 1 - markedField.Row));
+                DrawPiece(context, state, actionInProgressState.VisitedFields.First());
+                context.Translate(-markedField.Col, -(CheckersState.BOARD_SIZE - 1 - markedField.Row));
+                context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
+
                 return;
             }
         }
@@ -207,7 +216,7 @@ namespace Game.Checkers
 
         private void DrawRating(Context context, int rating)
         {
-            context.SetSourceRGB(1, 1, 1);
+            context.SetSourceRGB(0, 0, 0);
             context.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Normal);
             context.SetFontSize(0.2);
             context.MoveTo(0, 0.2);

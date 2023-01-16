@@ -2,14 +2,21 @@
 {
     public class IterationStopCondition : IStopCondition
     {
-        private int Iterations { get; set; }
+        private int MaxIterations { get; set; }
+        private int CurrentIterations { get; set; }
         public IterationStopCondition(int iterations)
         {
-            Iterations= iterations;
+            MaxIterations = CurrentIterations = iterations;
         }
         public bool StopConditionOccured()
         {
-            return Iterations-- == 0;
+            //Console.WriteLine($"Iterations left {CurrentIterations}");
+            if(CurrentIterations-- == 0)
+            {
+                CurrentIterations = MaxIterations;
+                return true;
+            }
+            return false;
         }
     }
 }

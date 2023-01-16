@@ -104,18 +104,7 @@ namespace AI
         }
         private Node<Action, State>? BestChild(Node<Action, State> node)
         {
-            Node<Action, State>? bestChild = null;
-            double argMax = 0;
-            foreach (Node<Action, State> child in node.ExpandedChildren)
-            {
-                double newArgMax = ArgMax(child);
-                if (newArgMax > argMax)
-                {
-                    bestChild = child;
-                    argMax = newArgMax;
-                }
-            }
-            return bestChild;
+            return node.ExpandedChildren.MaxBy(ArgMax);
         }
         private double ArgMax(Node<Action, State> node)
         {
