@@ -64,7 +64,7 @@ namespace Game.Checkers
             {
                 return (new MarkedPieceCIS(clickedField), null);
             }
-            return (inputState, null);
+            return (new IdleCIS(), null);
         }
     }
 }

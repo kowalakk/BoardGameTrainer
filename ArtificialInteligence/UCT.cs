@@ -30,32 +30,32 @@ namespace AI
 
         private void UCTSearch(Node<Action, State> root)
         {
-            IEnumerator<Node<Action, State>> treePolicyEnumerator = TreePolicy(root);
             while (!StopCondition.StopConditionOccured())
             {
-                treePolicyEnumerator.MoveNext();
-                Node<Action, State> node = treePolicyEnumerator.Current;
+                Node<Action, State> node = TreePolicy(root);
                 GameResult gameResult = DefaultPolicy(node.CorespondingState);
                 Backup(node, gameResult);
             }
         }
 
-        private IEnumerator<Node<Action, State>> TreePolicy(Node<Action, State> node)
+        private Node<Action, State> TreePolicy(Node<Action, State> node)
         {
-            GameResult gameResult = Game.Result(node.CorespondingState);
-            while (gameResult == GameResult.InProgress)
+            if (Game.Result(node.CorespondingState) == GameResult.InProgress)
             {
-                yield return Expand(node);
-                while (node.UnexpandedChildren!.Any()) // node not fully expanded
+                Expand(node);
+                if (node.UnexpandedChildren!.Any()) // node not fully expanded
                 {
-                    yield return Expand(node);
+                    Node<Action, State> unexpandedChild = node.UnexpandedChildren!.Dequeue();
+                    node.ExpandedChildren.Add(unexpandedChild);
+                    return unexpandedChild;
                 }
-                node = BestChild(node)!; // game is InProgress so a child exists
-                gameResult = Game.Result(node.CorespondingState);
+                 // game is InProgress so a child exists
+                return TreePolicy(BestChild(node)!);
             }
+            return node;
         }
 
-        private Node<Action, State> Expand(Node<Action, State> node)
+        private void Expand(Node<Action, State> node)
         {
             if (node.UnexpandedChildren == null)
             {
@@ -70,9 +70,6 @@ namespace AI
                 unexpandedChildren.Shuffle();
                 node.UnexpandedChildren = new Queue<Node<Action, State>>(unexpandedChildren);
             }
-            Node<Action, State> unexpandedChild = node.UnexpandedChildren.Dequeue();
-            node.ExpandedChildren.Add(unexpandedChild);
-            return unexpandedChild;
         }
         private GameResult DefaultPolicy(State state)
         {
