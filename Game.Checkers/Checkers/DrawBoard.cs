@@ -20,12 +20,21 @@ namespace Game.Checkers
 
                 context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
                 DrawField(context);
-                DrawPiece(context, state, field);
                 context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
 
             }
             context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
             DrawGameState(context, inputState, ratedActions);
+            context.Scale(FIELD_SIZE, FIELD_SIZE);
+            foreach (Field field in state.GetFields())
+            {
+
+                context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
+                DrawPiece(context, state, field);
+                context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
+
+            }
+            context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
 
         }
 
@@ -71,14 +80,14 @@ namespace Game.Checkers
             double lineWidth = context.LineWidth;
             context.LineWidth = 0.03;
 
-            context.Arc(0.5, 0.5, 0.4, 0, 2 * Math.PI);
+            context.Arc(0.5, 0.5, 0.3, 0, 2 * Math.PI);
             context.SetSourceColor(fill);
             context.FillPreserve();
 
             context.SetSourceColor(border);
             context.Stroke();
 
-            context.Arc(0.5, 0.5, 0.2, 0, 2 * Math.PI);
+            context.Arc(0.5, 0.5, 0.15, 0, 2 * Math.PI);
             context.Stroke();
 
             context.LineWidth = lineWidth;
@@ -88,14 +97,14 @@ namespace Game.Checkers
         {
             double lineWidth = context.LineWidth;
             context.LineWidth = 0.03;
-            context.Arc(0.5, 0.5, 0.4, 0, 2 * Math.PI);
+            context.Arc(0.5, 0.5, 0.3, 0, 2 * Math.PI);
             context.SetSourceColor(fill);
             context.FillPreserve();
 
             context.SetSourceColor(border);
             context.Stroke();
 
-            context.Arc(0.5, 0.5, 0.2, 0, 2 * Math.PI);
+            context.Arc(0.5, 0.5, 0.15, 0, 2 * Math.PI);
             context.SetSourceRGB(0.831, 0.686, 0.216);
             context.FillPreserve();
 
@@ -114,6 +123,7 @@ namespace Game.Checkers
                 {
                     DrawRatedAction(context, action, green);
                 }
+                return;
             }
             if (inputState is MarkedPieceCIS markedPieceState) // draw actions for marked piece
             {
@@ -123,6 +133,7 @@ namespace Game.Checkers
                     DrawRatedAction(context, action, blue);
                 }
                 DrawMarkedField(context, markedPieceState.MarkedField);
+                return;
             }
             { // draw actions for ongoing action
                 Color blue = new(0, 0.75, 1);
@@ -133,7 +144,7 @@ namespace Game.Checkers
                 }
 
                 DrawVisitedFields(context, actionInProgressState.VisitedFields);
-
+                return;
             }
         }
 
@@ -182,23 +193,26 @@ namespace Game.Checkers
 
         private void DrawSpecialField(Context context, Color fill)
         {
-            double lineWidth = context.LineWidth;
-            context.LineWidth = 0.2;
+            //double lineWidth = context.LineWidth;
+            //context.LineWidth = 0.2;
 
-            context.Rectangle(0.1, 0.1, 0.9, 0.9);
+            //context.Rectangle(0.1, 0.1, 0.8, 0.8);
             context.SetSourceColor(fill);
-            context.Stroke();
+            //context.Stroke();
 
-            context.LineWidth = lineWidth;
+            //context.LineWidth = lineWidth;
+            context.Rectangle(0, 0, 1, 1);
+            context.Fill();
         }
 
         private void DrawRating(Context context, int rating)
         {
             context.SetSourceRGB(1, 1, 1);
             context.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Normal);
-            context.SetFontSize(2);
-            context.MoveTo(0.7, 0.1);
+            context.SetFontSize(0.2);
+            context.MoveTo(0, 0.2);
             context.ShowText($"{rating}%");
+            context.Stroke();
         }
     }
 }

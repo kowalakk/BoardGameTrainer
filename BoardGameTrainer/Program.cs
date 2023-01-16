@@ -59,7 +59,7 @@ namespace BoardGameTrainer
                 CheckersState state = CheckersState.GetInitialState(); // TODO
                 state.SetPieceAt("A1", Piece.WhiteCrowned);
                 state.SetPieceAt("H8", Piece.BlackCrowned);
-                game.DrawBoard(context, new IdleCIS(), state, new List<(CheckersAction, double)>());
+                game.DrawBoard(context, new IdleCIS(), state, new List<(CheckersAction, double)>() { (new CaptureAction(new Field("C3"), new Field("B2"), new Field("A1")),1.0) });
 
             };
 
@@ -72,7 +72,7 @@ namespace BoardGameTrainer
                 double x = (args.Event.X - xOffset) / minDimention;
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
-                //HandleInput(x, y, inputState, state);
+                //game.HandleInput(x, y, inputState, state);
             };
 
             contentHBox.PackStart(boardImage, true, true, 0);
