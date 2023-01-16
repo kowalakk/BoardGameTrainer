@@ -32,7 +32,7 @@ namespace Game.IGame
 
         public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 
-        public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state);
+        public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state, IEnumerable<(Action, double)> filteredActions);
 
         public IEnumerable<(Action, double)> FilterByInputState(IEnumerable<(Action, double)> ratedActions, InputState inputState);
     }

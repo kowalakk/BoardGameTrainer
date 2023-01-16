@@ -23,6 +23,17 @@ namespace Game.Checkers
             return true;
         }
 
+        public override IEnumerable<Field> GetClickableFields()
+        {
+            yield return Start;
+            yield return Finish;
+        }
+
+        public override IEnumerable<Field> GetPlayableFields()
+        {
+            yield return Finish;
+        }
+
         public override CheckersState PerformOn(CheckersState state)
         {
             Piece movedPiece = state.GetPieceAt(Start);

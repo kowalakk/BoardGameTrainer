@@ -39,6 +39,10 @@ namespace Game.Checkers
 
         public abstract CheckersState PerformOn(CheckersState state);
 
+        public abstract IEnumerable<Field> GetClickableFields();
+
+        public abstract IEnumerable<Field> GetPlayableFields();
+
         public override bool Equals(object? obj)
         {
             return Equals(obj as CheckersAction);

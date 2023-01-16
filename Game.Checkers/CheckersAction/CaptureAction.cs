@@ -30,10 +30,17 @@ namespace Game.Checkers
             Captures = new LinkedList<SimpleCapture>();
             Captures.AddFirst(new SimpleCapture(start, capture, finish));
         }
-        public IEnumerable<Field> GetVisitedFields()
+        public override IEnumerable<Field> GetClickableFields()
         {
             yield return Start;
             foreach(SimpleCapture capture in Captures)
+            {
+                yield return capture.Finish;
+            }
+        }
+        public override IEnumerable<Field> GetPlayableFields()
+        {
+            foreach (SimpleCapture capture in Captures)
             {
                 yield return capture.Finish;
             }

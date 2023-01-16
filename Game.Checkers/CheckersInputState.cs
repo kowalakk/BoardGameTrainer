@@ -24,26 +24,20 @@
             return MarkedField.Equals(cIS.MarkedField);
         }
     }
-    public class CaptureActionsInProgressCIS : ICheckersInputState
+    public class CaptureActionInProgressCIS : ICheckersInputState
     {
-        public IEnumerable<(CaptureAction, double)> RatedCaptureActions { get; private set; }
-        public Field MovingPiecePosition { get; private set; }
-        public CaptureActionsInProgressCIS(Field movingPiecePosition, IEnumerable<(CaptureAction, double)> captureActions)
+        public IEnumerable<Field> VisitedFields { get; private set; }
+
+        public CaptureActionInProgressCIS(IEnumerable<Field> visitedFields)
         {
-            MovingPiecePosition = movingPiecePosition;
-            RatedCaptureActions = captureActions;
+            VisitedFields = visitedFields;
         }
-        public IEnumerable<(CaptureAction, double)> FilterCaptureActionsByField(Field field)
-        {
-            return RatedCaptureActions.Where(tuple => tuple.Item1.GetVisitedFields().Contains(field));
-        }
+
         public bool Equals(ICheckersInputState? other)
         {
             if (other == null) return false;
-            if (other is not CaptureActionsInProgressCIS cIS) return false;
-            if (!MovingPiecePosition.Equals(cIS.MovingPiecePosition)) return false;
-            if (!RatedCaptureActions.SequenceEqual(cIS.RatedCaptureActions)) return false;
-            return true;
+            if (other is not CaptureActionInProgressCIS cIS) return false;
+            return VisitedFields.SequenceEqual(cIS.VisitedFields);
         }
     }
 }
