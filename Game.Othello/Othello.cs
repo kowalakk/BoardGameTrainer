@@ -13,7 +13,7 @@ namespace Game.Othello
 
         public Player CurrentPlayer(OthelloState state)
         {
-            return (state.BlacksTurn) ? Player.PlayerOne : Player.PlayerTwo;
+            return (state.BlacksTurn) ? Player.One : Player.Two;
         }
 
         public void DrawBoard(Context context, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)

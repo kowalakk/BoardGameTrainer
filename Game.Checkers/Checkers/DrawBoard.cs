@@ -3,9 +3,9 @@ using Game.IGame;
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, CheckersInputState>
+    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
     {
-        public void DrawBoard(Context context, CheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
+        public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
             double fieldSize = .125;
             context.SetSourceRGB(0.96, 0.85, 0.74);
@@ -18,20 +18,16 @@ namespace Game.Checkers
             {
 
                 context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
-                DrawField(context, inputState, state, field);
+                DrawField(context);
                 DrawPiece(context, state, field);
                 context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
 
             }
             context.Scale(1 / fieldSize, 1 / fieldSize);
 
-
-            context.MoveTo(0.1, 0.1);
-            context.LineTo(0.9, 0.9);
-            context.Stroke();
         }
 
-        private void DrawField(Context context, CheckersInputState inputState, CheckersState state, Field field)
+        private void DrawField(Context context)
         {
             context.SetSourceRGB(0.26, 0.13, 0);
             context.Rectangle(0, 0, 1, 1);

@@ -5,10 +5,10 @@ namespace Game.Checkers
     public enum Piece
     {
         None = 0,
-        WhitePawn = 1,
-        BlackPawn = 2,
-        WhiteCrowned = 3,
-        BlackCrowned = 4,
+        WhitePawn = Player.One,
+        BlackPawn = Player.Two,
+        WhiteCrowned = Player.One + 2,
+        BlackCrowned = Player.Two + 2,
         CapturedPiece = 5,
     }
 
@@ -138,9 +138,9 @@ namespace Game.Checkers
                 { Piece.None, Piece.WhitePawn, Piece.None, Piece.None, Piece.None, Piece.None, Piece.None, Piece.BlackPawn },
             };
 
-            return new CheckersState(board, Player.PlayerOne);
+            return new CheckersState(board, Player.One);
         }
-        public static CheckersState GetEmptyBoardState(Player player = Player.PlayerOne)
+        public static CheckersState GetEmptyBoardState(Player player = Player.One)
         {
             Piece[,] emptyBoard = new Piece[,]
             {

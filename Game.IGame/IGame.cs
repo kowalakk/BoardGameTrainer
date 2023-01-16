@@ -13,8 +13,8 @@ namespace Game.IGame
     }
     public enum Player
     {
-        PlayerOne = GameResult.PlayerOneWins,
-        PlayerTwo = GameResult.PlayerTwoWins,
+        One = GameResult.PlayerOneWins,
+        Two = GameResult.PlayerTwoWins,
     }
 
     public interface IGame { }
@@ -32,9 +32,9 @@ namespace Game.IGame
 
         public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 
-        public (Action, InputState) HandleInput(Event @event, InputState inputState, State state);
+        public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state);
 
-        public IEnumerable<Action> FilterByInputState(IEnumerable<Action> actions, InputState inputState);
+        public IEnumerable<(Action, double)> FilterByInputState(IEnumerable<(Action, double)> ratedActions, InputState inputState);
     }
 
 }

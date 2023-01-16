@@ -1,4 +1,4 @@
-namespace Game.Checkers.Test
+namespace Game.Checkers.Tests
 {
     public class CheckersStateTests
     {
@@ -14,7 +14,7 @@ namespace Game.Checkers.Test
         public void NotEqualPlayersShouldBeFalse()
         {
             CheckersState state1 = CheckersState.GetEmptyBoardState();
-            CheckersState state2 = CheckersState.GetEmptyBoardState(IGame.Player.PlayerTwo);
+            CheckersState state2 = CheckersState.GetEmptyBoardState(IGame.Player.Two);
             Assert.False(state1.Equals(state2));
             Assert.False(state2.Equals(state1));
         }

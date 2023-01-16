@@ -69,7 +69,7 @@ namespace AI.Tests.UCTTests
                 SuccessCount = 0
             };
             Node<CheckersAction, CheckersState> child = new(
-                new MoveAction(new("C1"), new("B2")), CheckersState.GetEmptyBoardState(Player.PlayerTwo), root)
+                new MoveAction(new("C1"), new("B2")), CheckersState.GetEmptyBoardState(Player.Two), root)
             {
                 VisitCount = 0,
                 SuccessCount = 0

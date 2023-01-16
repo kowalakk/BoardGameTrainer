@@ -32,13 +32,8 @@ namespace Game.Checkers
 
     public abstract class CheckersAction : IEquatable<CheckersAction>
     {
-        public Field Start { get; protected set; }
+        public virtual Field Start { get; protected set; }
         public abstract Field Finish { get; }
-
-        public CheckersAction(Field start)
-        {
-            Start = start;
-        }
 
         public abstract bool Equals(CheckersAction? other);
 

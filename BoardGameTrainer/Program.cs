@@ -2,6 +2,7 @@
 using Game.IGame;
 using Gdk;
 using Gtk;
+using LanguageExt;
 
 namespace BoardGameTrainer
 {
@@ -44,36 +45,36 @@ namespace BoardGameTrainer
             var contentHBox = new Gtk.HBox();
             var boardPixbuf = new Gdk.Pixbuf("..\\..\\..\\Tulips.jpg", 200, 200);
 
-            // zamiast tego będzie przypisanie do boardImage wartości game.drawBoard()
             var boardImage = new Gtk.DrawingArea();
             boardImage.Drawn += (sender, args) =>
             {
                 var context = args.Cr;
-                int minDimention, maxDimention;
-                if (boardImage.AllocatedWidth > boardImage.AllocatedHeight)
-                {
-                    minDimention = boardImage.AllocatedHeight;
-                    maxDimention = boardImage.AllocatedWidth;
-                }
-                else
-                {
-                    minDimention = boardImage.AllocatedWidth;
-                    maxDimention = boardImage.AllocatedHeight;
-                }
-                int offset = Math.Max((boardImage.AllocatedWidth - boardImage.AllocatedHeight) / 2, 0);
-                context.Translate(offset, 0);
+
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
-                CheckersState state = CheckersState.GetInitialState();
+
+                CheckersState state = CheckersState.GetInitialState(); // TODO
                 state.SetPieceAt("A1", Piece.WhiteCrowned);
                 state.SetPieceAt("H8", Piece.BlackCrowned);
-                game.DrawBoard(context, new CheckersInputState(), state, new List<(CheckersAction, double)>());
-                context.LineWidth = 0.001;
+                game.DrawBoard(context, new IdleCIS(), state, new List<(CheckersAction, double)>());
 
-                context.SetSourceRGB(1, 1, 0);
-                context.MoveTo(0.1, 0.1);
-                context.LineTo(0.9, 0.9);
-                context.Stroke();
             };
+
+            boardImage.AddEvents((int)EventMask.ButtonPressMask);
+            boardImage.ButtonPressEvent += delegate (object sender, ButtonPressEventArgs args)
+            {
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                double x = (args.Event.X - xOffset) / minDimention;
+                double y = (args.Event.Y - yOffset) / minDimention;
+                Console.WriteLine($"Button Pressed at {x}, {y}");
+                //HandleInput(x, y, inputState, state);
+            };
+
             contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
 

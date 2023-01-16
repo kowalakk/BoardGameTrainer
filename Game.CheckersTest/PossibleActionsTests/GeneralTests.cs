@@ -1,4 +1,4 @@
-﻿namespace Game.Checkers.Test
+﻿namespace Game.Checkers.Tests
 {
     public class GeneralTests
     {
