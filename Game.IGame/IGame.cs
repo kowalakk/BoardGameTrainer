@@ -29,10 +29,12 @@ namespace Game.IGame
         public GameResult Result(State state);
 
         public Player CurrentPlayer(State state);
+        public InputState EmptyInputState();
+        public State InitialState();
 
         public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 
-        public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state, IEnumerable<(Action, double)> filteredActions);
+        public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state);
 
         public IEnumerable<(Action, double)> FilterByInputState(IEnumerable<(Action, double)> ratedActions, InputState inputState);
     }
