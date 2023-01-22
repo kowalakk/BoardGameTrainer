@@ -7,14 +7,14 @@ namespace Game.Checkers
     {
         public IEnumerable<(CheckersAction, double)> FilterByInputState(IEnumerable<(CheckersAction, double)> ratedActions, ICheckersInputState inputState)
         {
-            if (inputState is IdleCIS)
+            if (inputState is DefaultCIS)
                 return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(3);
             if (inputState is MarkedPieceCIS cIS1)
                 return ratedActions.Where(tuple => tuple.Item1.Start.Equals(cIS1.MarkedField));
             if (inputState is CaptureActionInProgressCIS cIS2)
                 return ratedActions.Where(tuple =>
                 {
-                    IEnumerable<Field> fields = tuple.Item1.GetClickableFields();
+                    IEnumerable<Field> fields = tuple.Item1.GetParticipatingFields();
                     return fields.Take(cIS2.VisitedFields.Count()).SequenceEqual(cIS2.VisitedFields);
                 });
             throw new ArgumentException();
@@ -35,6 +35,16 @@ namespace Game.Checkers
                 return GameResult.PlayerOneWins;
             }
             return GameResult.InProgress;
+        }
+
+        public CheckersState InitialState()
+        {
+            return CheckersState.GetInitialState();
+        }
+
+        public ICheckersInputState EmptyInputState()
+        {
+            return new DefaultCIS();
         }
     }
 }

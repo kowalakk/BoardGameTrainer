@@ -1,12 +1,12 @@
 ﻿namespace Game.Checkers
 {
     public interface ICheckersInputState : IEquatable<ICheckersInputState> { }
-    public class IdleCIS : ICheckersInputState
+    public class DefaultCIS : ICheckersInputState
     {
         public bool Equals(ICheckersInputState? other)
         {
             if (other == null) return false;
-            return other is IdleCIS;
+            return other is DefaultCIS;
         }
     }
     public class MarkedPieceCIS : ICheckersInputState
@@ -26,11 +26,11 @@
     }
     public class CaptureActionInProgressCIS : ICheckersInputState
     {
-        public IEnumerable<Field> VisitedFields { get; private set; }
+        public List<Field> VisitedFields { get; private set; }
 
         public CaptureActionInProgressCIS(IEnumerable<Field> visitedFields)
         {
-            VisitedFields = visitedFields;
+            VisitedFields = new List<Field>(visitedFields);
         }
 
         public bool Equals(ICheckersInputState? other)

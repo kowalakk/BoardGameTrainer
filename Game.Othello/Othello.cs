@@ -183,7 +183,7 @@ namespace Game.Othello
             return (blackCount > whiteCount) ? IGame.GameResult.PlayerOneWins : IGame.GameResult.PlayerTwoWins;
         }
 
-        public (LanguageExt.Unit, OthelloAction?) HandleInput(double x, double y, LanguageExt.Unit inputState, OthelloState state, IEnumerable<(OthelloAction, double)> filteredActions)
+        public (LanguageExt.Unit, OthelloAction?) HandleInput(double x, double y, LanguageExt.Unit inputState, OthelloState state)
         {
             throw new NotImplementedException();
         }
@@ -191,6 +191,16 @@ namespace Game.Othello
         public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState)
         {
             return ratedActions;
+        }
+
+        public LanguageExt.Unit EmptyInputState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public OthelloState InitialState()
+        {
+            throw new NotImplementedException();
         }
     }
 }

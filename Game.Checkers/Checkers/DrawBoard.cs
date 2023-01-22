@@ -108,7 +108,7 @@ namespace Game.Checkers
 
         private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
-            if (inputState is IdleCIS) // draw best actions
+            if (inputState is DefaultCIS) // draw best actions
             {
                 Color green = new(0.5, 1, 0);
                 foreach (var action in ratedActions.Reverse())
@@ -162,7 +162,7 @@ namespace Game.Checkers
 
         private void DrawRatedAction(Context context, CheckersState state, (CheckersAction, double) action, Color color)
         {
-            IEnumerable<Field> fields = action.Item1.GetClickableFields();
+            IEnumerable<Field> fields = action.Item1.GetParticipatingFields();
 
             context.Scale(FIELD_SIZE, FIELD_SIZE);
             foreach (Field field in fields)

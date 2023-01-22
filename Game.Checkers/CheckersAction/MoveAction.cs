@@ -23,7 +23,7 @@ namespace Game.Checkers
             return true;
         }
 
-        public override IEnumerable<Field> GetClickableFields()
+        public override IEnumerable<Field> GetParticipatingFields()
         {
             yield return Start;
             yield return Finish;

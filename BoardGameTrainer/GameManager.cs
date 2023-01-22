@@ -1,19 +1,12 @@
 ﻿using Cairo;
 using Game.IGame;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
 
 namespace BoardGameTrainer
 {
     public interface IGameManager
     {
         public void Draw(Context context);
-        public bool HandleInput(double x, double y);
+        public GameResult HandleInput(double x, double y);
 
     }
     public class GameManager<Action, State, InputState> : IGameManager
@@ -35,7 +28,7 @@ namespace BoardGameTrainer
             game.DrawBoard(context, inputState, state, Enumerable.Empty<(Action, double)>());
         }
 
-        public bool HandleInput(double x, double y)
+        public GameResult HandleInput(double x, double y)
         {
             var (newInputState, action) = game.HandleInput(x, y, inputState, state);
             inputState = newInputState;
@@ -43,7 +36,7 @@ namespace BoardGameTrainer
             {
                 state = game.PerformAction(action, state);
             }
-            return game.Result(state) == GameResult.InProgress;
+            return game.Result(state);
         }
     }
 }

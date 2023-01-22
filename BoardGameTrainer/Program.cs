@@ -14,9 +14,13 @@ namespace BoardGameTrainer
         // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
         private static Checkers game = new Checkers();
         private static CheckersState state = CheckersState.GetInitialState();
-        private static ICheckersInputState inputState = new IdleCIS();
+        private static ICheckersInputState inputState = new DefaultCIS();
+
         private static UCT<CheckersAction, CheckersState, ICheckersInputState> ai = new(1.414, game, new IterationStopCondition(10000));
         private static List<(CheckersAction, double)> ratedActions = ai.MoveAssessment(state);
+
+
+
         private static Application app;
         private static bool isTwoPlayer = false;
         //private static bool showHintsForPlayer1 = true;
@@ -38,6 +42,7 @@ namespace BoardGameTrainer
 
         public static Gtk.Window createMainWindow()
         {
+
             string title = "New Game";
             var win = new Gtk.Window(Gtk.WindowType.Toplevel);
             win.DefaultSize = new Gdk.Size(700, 500);
@@ -75,7 +80,7 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                (ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state, game.FilterByInputState(ratedActions, inputState));
+                (ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state);
                 inputState= newInputState;
                 if(action != null)
                 {

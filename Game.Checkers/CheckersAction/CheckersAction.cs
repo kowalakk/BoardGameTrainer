@@ -39,7 +39,7 @@ namespace Game.Checkers
 
         public abstract CheckersState PerformOn(CheckersState state);
 
-        public abstract IEnumerable<Field> GetClickableFields();
+        public abstract IEnumerable<Field> GetParticipatingFields();
 
         public abstract IEnumerable<Field> GetPlayableFields();
 

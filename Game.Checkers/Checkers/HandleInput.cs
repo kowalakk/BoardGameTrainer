@@ -1,5 +1,4 @@
 ﻿using Game.IGame;
-using Gdk;
 
 namespace Game.Checkers
 {
@@ -10,48 +9,52 @@ namespace Game.Checkers
             double x,
             double y,
             ICheckersInputState inputState,
-            CheckersState state,
-            IEnumerable<(CheckersAction, double)> filteredActions)
+            CheckersState state)
         {
             if (x < 0 || x > 1 || y < 0 || x > 1)
             {
-                return (new IdleCIS(), null);
+                return (new DefaultCIS(), null);
             }
             int col = (int)(8 * x);
             int row = CheckersState.BOARD_SIZE - 1 - (int)(8 * y);
             Piece piece = state.GetPieceAt(col, row);
             Field clickedField = new Field(col, row);
-            if (inputState is IdleCIS)
+            if (inputState is DefaultCIS)
             {
                 return HandleFirstClick(piece, clickedField, inputState, state);
             }
-            if (inputState is MarkedPieceCIS cIS1)
+            if (inputState is MarkedPieceCIS markedPieceCIS)
             {
-                CheckersAction nextAction = filteredActions.FirstOrDefault(tuple => tuple.Item1.GetPlayableFields().Contains(clickedField)).Item1;
+                CheckersAction? nextAction = PossibleActions(state)
+                    .Where(action => action.Start.Equals(markedPieceCIS.MarkedField))
+                    .FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
                 {
                     return HandleFirstClick(piece, clickedField, inputState, state);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new IdleCIS(), nextAction);
+                    return (new DefaultCIS(), nextAction);
                 // part of action chosen
-                IEnumerable<Field> visitedFields = nextAction.GetClickableFields().TakeWhile(field => !field.Equals(clickedField));
+                IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields()
+                    .TakeWhile(field => !field.Equals(clickedField));
                 return (new CaptureActionInProgressCIS(visitedFields.Append(clickedField)), null);
             }
             {
-                // TODO: REFACTOR IF PASSED FIELDS DELETED FROM filteredActions
                 CaptureActionInProgressCIS cIS = (CaptureActionInProgressCIS)inputState;
                 if (cIS.VisitedFields.Contains(clickedField)) // used field got chosen 
                     return (cIS, null);
-                CheckersAction nextAction = filteredActions.FirstOrDefault(tuple => tuple.Item1.GetPlayableFields().Contains(clickedField)).Item1;
+                IEnumerable<CheckersAction> possibleActionsInProgress = PossibleActions(state).Where(
+                    action => action.GetParticipatingFields()
+                    .Take(cIS.VisitedFields.Count()).SequenceEqual(cIS.VisitedFields));
+                CheckersAction? nextAction = possibleActionsInProgress.FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
                 {
                     return (cIS, null);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new IdleCIS(), nextAction);
+                    return (new DefaultCIS(), nextAction);
                 // part of action chosen
-                IEnumerable<Field> visitedFields = nextAction.GetClickableFields().TakeWhile(field => !field.Equals(clickedField));
+                IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields().TakeWhile(field => !field.Equals(clickedField));
                 return (new CaptureActionInProgressCIS(visitedFields.Append(clickedField)), null);
             }
 
@@ -64,7 +67,7 @@ namespace Game.Checkers
             {
                 return (new MarkedPieceCIS(clickedField), null);
             }
-            return (new IdleCIS(), null);
+            return (new DefaultCIS(), null);
         }
     }
 }
