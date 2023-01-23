@@ -2,7 +2,7 @@
 
 namespace AI
 {
-    public class UCT<Action, State, InputState> : IArtificialIntelligence<Action, State, InputState, UCTModuleData<Action, State>>
+    public class UCT<Action, State, InputState> : IAi<Action, State, InputState>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {

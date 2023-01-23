@@ -1,6 +1,6 @@
 ﻿namespace AI
 {
-    internal class NMCS<Action, State, InputState> : IArtificialIntelligence<Action, State, InputState, NMCSModuleData<Action, State>>
+    internal class NMCS<Action, State, InputState> : IAi<Action, State, InputState, NMCSModuleData<Action, State>>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {

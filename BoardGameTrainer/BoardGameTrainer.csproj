@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ArtificialInteligence\ArtificialIntelligence.csproj" />
+    <ProjectReference Include="..\ArtificialInteligence\AI.csproj" />
     <ProjectReference Include="..\Game.Checkers\Game.Checkers.csproj" />
     <ProjectReference Include="..\Game.IGame\Game.IGame.csproj" />
   </ItemGroup>

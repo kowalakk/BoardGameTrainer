@@ -16,7 +16,7 @@ namespace Game.IGame
         private State state;
         private InputState inputState;
 
-        public GameManager(IGame<Action, State, InputState> game)
+        public GameManager(IGame<Action, State, InputState> game, AiFactory<Action, State, InputState> aiFactory)
         {
             this.game = game;
             state = game.InitialState();
