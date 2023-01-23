@@ -11,11 +11,13 @@ namespace Ai
             UctConstant = uctConstant;
         }
 
-        public IAi<Action, State, InputState> CreateAi<Action, State, InputState>(IGame<Action, State, InputState> game)
+        public IAi<Action, State, InputState> CreateAi<Action, State, InputState>(
+            IGame<Action, State, InputState> game,
+            IStopCondition stopCondition)
     where Action : IEquatable<Action>
     where State : IEquatable<State>
         {
-            return new Uct<Action, State, InputState>(UctConstant, game, new IterationStopCondition(1000));
+            return new Uct<Action, State, InputState>(UctConstant, game, stopCondition);
         }
     }
 }

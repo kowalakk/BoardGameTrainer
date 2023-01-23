@@ -118,7 +118,7 @@ namespace Game.Checkers
 
         private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
-            if (inputState is DefaultCIS) // draw best actions
+            if (inputState is DefaultInputState) // draw best actions
             {
                 foreach (var action in ratedActions.Reverse())
                 {
@@ -126,7 +126,7 @@ namespace Game.Checkers
                 }
                 return;
             }
-            if (inputState is MarkedPieceCIS markedPieceState) // draw actions for marked piece
+            if (inputState is MarkedPieceInputState markedPieceState) // draw actions for marked piece
             {
                 foreach (var action in ratedActions)
                 {
@@ -145,8 +145,6 @@ namespace Game.Checkers
             DrawVisitedFields(context, actionInProgressState.VisitedFields);
             Field markedField = actionInProgressState.VisitedFields.Last();
             DrawMarkedField(context, state, markedField);
-
-            //MoveContextToField(context, markedField);
             DrawPiece(context, state, actionInProgressState.VisitedFields.First());
 
         }

@@ -1,6 +1,7 @@
 using Ai;
 using Game.Checkers;
 using Game.IGame;
+using Game.Othello;
 using Gdk;
 using Gtk;
 
@@ -9,15 +10,17 @@ namespace BoardGameTrainer
     public static class Program
     {
 
-        private static IGameManager gameManager = new CheckersManagerFactory().CreateGameManager(new UctFactory(1.41));
-
-
         private static Application app;
+
+        private static IGameManager gameManager = new CheckersManagerFactory()
+            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000)); //na razie zaczynamy z warcabami, bo inaczej sie wykrzacza
+        private static string[] games = new string[] { "Checkers", "Othello" };
+        private static int gameNum = -1;
+        private static bool showHintsForPlayer1 = true;
+        private static bool showHintsForPlayer2 = false;
         private static bool isAiPlayer2 = true;
-        //private static bool showHintsForPlayer1 = true;
-        //private static bool showHintsForPlayer2 = false;
-        //private static bool isAImoduleOne = true;
-        //private static int computationTime;
+        private static bool isAImoduleOne = true;
+        private static double computationTime;
         [STAThread]
         public static void Main(string[] args)
         {
@@ -113,8 +116,9 @@ namespace BoardGameTrainer
             var contentVbox = new Gtk.VBox();
 
             var gameHBox = new Gtk.HBox();
-            var gamesDropDown = new Gtk.ComboBox(new string[] { "Checkers", "Othello" });
-            //gamesDropDown.Changed += ...
+            var gamesDropDown = new Gtk.ComboBox(games);
+            gamesDropDown.Active = 0;
+            gamesDropDown.Changed += (sender, args) => { gameNum = gamesDropDown.Active; };
             var gameLabel = new Gtk.Label("Game");
             gameHBox.PackStart(gameLabel, false, false, 3);
             gameHBox.PackStart(gamesDropDown, false, false, 3);
@@ -123,7 +127,7 @@ namespace BoardGameTrainer
             gameHBox.Show();
 
             var numOfPlayersHbox = new Gtk.HBox();
-            var onePlayerRadio = new Gtk.RadioButton(IntPtr.Zero);
+            var onePlayerRadio = new Gtk.RadioButton((RadioButton)null);
             onePlayerRadio.Label = "One Player";
             var twoPlayerRadio = new Gtk.RadioButton(onePlayerRadio);
             twoPlayerRadio.Label = "Two Players";
@@ -146,6 +150,8 @@ namespace BoardGameTrainer
             hintsForPlayer1Checkbox.Label = "Player 1";
             var hintsForPlayer2Checkbox = new Gtk.CheckButton();
             hintsForPlayer2Checkbox.Label = "Player 2";
+            hintsForPlayer1Checkbox.Clicked += (sender, args) => { showHintsForPlayer1 = hintsForPlayer1Checkbox.Active; };
+            hintsForPlayer2Checkbox.Clicked += (sender, args) => { showHintsForPlayer2 = hintsForPlayer2Checkbox.Active; };
             showHintsHBox.PackStart(hintsForPlayer1Checkbox, false, false, 3);
             showHintsHBox.PackStart(hintsForPlayer2Checkbox, false, false, 3);
             showHintsHBox.Show();
@@ -156,14 +162,23 @@ namespace BoardGameTrainer
                 showHintsHBox
             };
             showHintsFrame.Show();
-
+            var computationTimeSpinButton = new Gtk.SpinButton(0, 100, 1);
+            computationTimeSpinButton.Changed += (sender, args) => { computationTime = computationTimeSpinButton.Value; };
+            var computationTimeLabel = new Gtk.Label("ms");
+            var computationTimeHBox = new Gtk.HBox();
+            computationTimeHBox.PackStart(computationTimeSpinButton, false, false, 3);
+            computationTimeHBox.PackStart(computationTimeLabel, false, false, 3);
             Frame computationTimeFrame = new("Computation time")
             {
-
+                computationTimeHBox, computationTimeLabel
             };
+            computationTimeSpinButton.Show();
+            computationTimeLabel.Show();
+            computationTimeHBox.Show();
             computationTimeFrame.Show();
 
             var newGameButton = new Gtk.Button("Start new game");
+            newGameButton.Clicked += (sender, args) => { CreateNewGame(); configWindow.Close(); };
             newGameButton.Show();
 
             contentVbox.PackStart(gameHBox, false, false, 3);
@@ -174,6 +189,17 @@ namespace BoardGameTrainer
             contentVbox.Show();
             configWindow.Add(contentVbox);
         }
-
+        private static void CreateNewGame()
+        {
+            if (gameNum == 0)
+            {
+                gameManager = new CheckersManagerFactory()
+            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000));
+            }
+            if (gameNum == 1)
+            {
+                //gameManager = 
+            }
+        }
     }
 }

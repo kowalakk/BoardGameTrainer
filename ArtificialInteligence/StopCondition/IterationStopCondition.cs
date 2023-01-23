@@ -1,4 +1,6 @@
-﻿namespace Ai
+using Game.IGame;
+
+namespace Ai
 {
     public class IterationStopCondition : IStopCondition
     {
@@ -10,7 +12,6 @@
         }
         public bool StopConditionOccured()
         {
-            //Console.WriteLine($"Iterations left {CurrentIterations}");
             if (CurrentIterations-- == 0)
             {
                 CurrentIterations = MaxIterations;

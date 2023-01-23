@@ -13,17 +13,17 @@ namespace Game.Checkers
         {
             if (x < 0 || x > 1 || y < 0 || x > 1)
             {
-                return (new DefaultCIS(), null);
+                return (new DefaultInputState(), null);
             }
             int col = (int)(8 * x);
             int row = CheckersState.BOARD_SIZE - 1 - (int)(8 * y);
             Piece piece = state.GetPieceAt(col, row);
             Field clickedField = new Field(col, row);
-            if (inputState is DefaultCIS)
+            if (inputState is DefaultInputState)
             {
                 return HandleFirstClick(piece, clickedField, inputState, state);
             }
-            if (inputState is MarkedPieceCIS markedPieceCIS)
+            if (inputState is MarkedPieceInputState markedPieceCIS)
             {
                 CheckersAction? nextAction = PossibleActions(state)
                     .Where(action => action.Start.Equals(markedPieceCIS.MarkedField))
@@ -33,14 +33,14 @@ namespace Game.Checkers
                     return HandleFirstClick(piece, clickedField, inputState, state);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new DefaultCIS(), nextAction);
+                    return (new DefaultInputState(), nextAction);
                 // part of action chosen
                 IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields()
                     .TakeWhile(field => !field.Equals(clickedField));
-                return (new CaptureActionInProgressCIS(visitedFields.Append(clickedField)), null);
+                return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
             }
             {
-                CaptureActionInProgressCIS cIS = (CaptureActionInProgressCIS)inputState;
+                CaptureActionInProgressInputState cIS = (CaptureActionInProgressInputState)inputState;
                 if (cIS.VisitedFields.Contains(clickedField)) // used field got chosen 
                     return (cIS, null);
                 IEnumerable<CheckersAction> possibleActionsInProgress = PossibleActions(state).Where(
@@ -52,10 +52,10 @@ namespace Game.Checkers
                     return (cIS, null);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new DefaultCIS(), nextAction);
+                    return (new DefaultInputState(), nextAction);
                 // part of action chosen
                 IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields().TakeWhile(field => !field.Equals(clickedField));
-                return (new CaptureActionInProgressCIS(visitedFields.Append(clickedField)), null);
+                return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
             }
 
         }
@@ -65,9 +65,9 @@ namespace Game.Checkers
             if ((state.CurrentPlayer == Player.One && (piece == Piece.WhitePawn || piece == Piece.WhiteCrowned))
     || (state.CurrentPlayer == Player.Two && (piece == Piece.BlackPawn || piece == Piece.BlackCrowned)))
             {
-                return (new MarkedPieceCIS(clickedField), null);
+                return (new MarkedPieceInputState(clickedField), null);
             }
-            return (new DefaultCIS(), null);
+            return (new DefaultInputState(), null);
         }
     }
 }
