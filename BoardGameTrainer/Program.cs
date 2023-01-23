@@ -13,7 +13,7 @@ namespace BoardGameTrainer
 
 
         private static Application app;
-        private static bool isAiEnemy = true;
+        private static bool isAiPlayer2 = true;
         //private static bool showHintsForPlayer1 = true;
         //private static bool showHintsForPlayer2 = false;
         //private static bool isAImoduleOne = true;
@@ -55,8 +55,6 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-
-                //game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
                 gameManager.DrawBoard(context);
 
             };
@@ -71,19 +69,9 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                //(ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state);
-                //inputState= newInputState;
-                //if(action != null)
-                //{
-                //    state = game.PerformAction(action, state);
-                //    boardImage.QueueDraw();
-                //    //wait
-                //    state = game.PerformAction(ai.ChooseMove(state), state);
-                //    ratedActions = ai.MoveAssessment(state);
-                //}
                 gameManager.HandleInput(x, y);
                 boardImage.QueueDraw();
-                if (isAiEnemy)
+                if (isAiPlayer2)
                 {
 
                 }
@@ -145,8 +133,8 @@ namespace BoardGameTrainer
             {
                 numOfPlayersHbox
             };
-            onePlayerRadio.Clicked += (sender, args) => { isAiEnemy = true; };
-            twoPlayerRadio.Clicked += (sender, args) => { isAiEnemy = false; };
+            onePlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = true; };
+            twoPlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = false; };
             numOfPlayersFrame.Show();
             numOfPlayersHbox.Show();
             onePlayerRadio.Show();
