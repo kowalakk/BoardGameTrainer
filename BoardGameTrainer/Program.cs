@@ -1,5 +1,4 @@
-﻿using AI;
-using Game.Checkers;
+﻿using Game.Checkers;
 using Game.IGame;
 using Gdk;
 using Gtk;
@@ -8,15 +7,8 @@ namespace BoardGameTrainer
 {
     public static class Program
     {
-        // Dodałem bezparametrowy interfejs IGame. Znalazłem, że tak się robi
-        // Dołączyłem też referencję do warcabów jako przykład.
-        // Trzeba ją potem usunąć - nasz program powinien przeszukiwać katalog
-        // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
+
         private static IGameManager gameManager = new CheckersManagerFactory().GetGameManager();
-
-        //private static UCT<CheckersAction, CheckersState, ICheckersInputState> ai = new(1.414, game, new IterationStopCondition(10000));
-        //private static List<(CheckersAction, double)> ratedActions = ai.MoveAssessment(state);
-
 
 
         private static Application app;
