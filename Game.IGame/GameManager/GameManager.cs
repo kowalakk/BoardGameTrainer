@@ -2,12 +2,6 @@
 
 namespace Game.IGame
 {
-    public interface IGameManager
-    {
-        public void DrawBoard(Context context);
-        public GameResult HandleInput(double x, double y);
-    }
-
     public class GameManager<Action, State, InputState> : IGameManager
         where Action : IEquatable<Action>
         where State : IEquatable<State>
@@ -18,12 +12,12 @@ namespace Game.IGame
         private IAi<Action, State, InputState> ai;
         private List<(Action, double)> ratedActions;
 
-        public GameManager(IGame<Action, State, InputState> game, IAiFactory aiFactory)
+        public GameManager(IGame<Action, State, InputState> game, IAiFactory aiFactory, IStopCondition stopCondition)
         {
             this.game = game;
             state = game.InitialState();
             inputState = game.EmptyInputState();
-            ai = aiFactory.CreateAi(game);
+            ai = aiFactory.CreateAi(game, stopCondition);
             ratedActions = ai.MoveAssessment(state);
         }
 

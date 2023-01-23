@@ -108,7 +108,7 @@ namespace Game.Checkers
 
         private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
-            if (inputState is DefaultCIS) // draw best actions
+            if (inputState is DefaultInputState) // draw best actions
             {
                 Color green = new(0.5, 1, 0);
                 foreach (var action in ratedActions.Reverse())
@@ -117,7 +117,7 @@ namespace Game.Checkers
                 }
                 return;
             }
-            if (inputState is MarkedPieceCIS markedPieceState) // draw actions for marked piece
+            if (inputState is MarkedPieceInputState markedPieceState) // draw actions for marked piece
             {
                 Color blue = new(0, 0.75, 1);
                 foreach (var action in ratedActions)
@@ -129,7 +129,7 @@ namespace Game.Checkers
             }
             { // draw actions for ongoing action
                 Color blue = new(0, 0.75, 1);
-                CaptureActionInProgressCIS actionInProgressState = (CaptureActionInProgressCIS)inputState;
+                CaptureActionInProgressInputState actionInProgressState = (CaptureActionInProgressInputState)inputState;
                 foreach (var action in ratedActions)
                 {
                     DrawRatedAction(context, state, action, blue);
@@ -196,14 +196,7 @@ namespace Game.Checkers
 
         private void DrawSpecialField(Context context, Color fill)
         {
-            //double lineWidth = context.LineWidth;
-            //context.LineWidth = 0.2;
-
-            //context.Rectangle(0.1, 0.1, 0.8, 0.8);
             context.SetSourceColor(fill);
-            //context.Stroke();
-
-            //context.LineWidth = lineWidth;
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
         }
