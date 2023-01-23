@@ -1,4 +1,4 @@
-﻿namespace AI
+﻿namespace Ai
 {
     public record Node<Action, State>
     {

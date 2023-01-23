@@ -1,6 +1,6 @@
 ﻿using Game.IGame;
 
-namespace AI
+namespace Ai
 {
     public class UCT<Action, State, InputState> : IAi<Action, State, InputState>
         where Action : IEquatable<Action>

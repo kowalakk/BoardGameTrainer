@@ -17,9 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.CheckersTests", "Game.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.OthelloTests", "Game.OthelloTests\Game.OthelloTests.csproj", "{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI", "ArtificialInteligence\AI.csproj", "{818619EA-6125-4BC8-B9A9-2D5C90B91310}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ai", "ArtificialInteligence\Ai.csproj", "{818619EA-6125-4BC8-B9A9-2D5C90B91310}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArtificialIntelligence.Tests", "ArtificialIntelligence.Tests\ArtificialIntelligence.Tests.csproj", "{6A4CB9B4-10D9-4EEE-8AC0-2A092002E05F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ai.Tests", "ArtificialIntelligence.Tests\Ai.Tests.csproj", "{6A4CB9B4-10D9-4EEE-8AC0-2A092002E05F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

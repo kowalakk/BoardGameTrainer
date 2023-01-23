@@ -1,7 +1,7 @@
 ﻿using Game.Checkers;
 
 
-namespace AI.Tests.UCT
+namespace Ai.Tests.UCT
 {
     public class UCTTestsForCheckers
     {

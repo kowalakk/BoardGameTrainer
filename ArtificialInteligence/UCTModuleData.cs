@@ -1,4 +1,4 @@
-﻿namespace AI
+﻿namespace Ai
 {
     public class UCTModuleData<Action, State>
         where State : IEquatable<State>

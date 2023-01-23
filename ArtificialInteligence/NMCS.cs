@@ -1,6 +1,8 @@
-﻿namespace AI
+﻿using Game.IGame;
+
+namespace Ai
 {
-    internal class NMCS<Action, State, InputState> : IAi<Action, State, InputState, NMCSModuleData<Action, State>>
+    internal class NMCS<Action, State, InputState> : IAi<Action, State, InputState>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {

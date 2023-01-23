@@ -1,6 +1,4 @@
 ﻿using Cairo;
-using Gdk;
-using Gtk;
 
 namespace Game.IGame
 {
