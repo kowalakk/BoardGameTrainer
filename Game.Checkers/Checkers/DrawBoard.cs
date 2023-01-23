@@ -6,34 +6,47 @@ namespace Game.Checkers
 {
     public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
     {
-        private readonly double FIELD_SIZE = .125;
+        private static readonly double fieldSize = 0.125;
+        private static readonly Color white = new(0.9, 0.9, 0.9);
+        private static readonly Color grey = new(0.5, 0.5, 0.5);
+        private static readonly Color black = new(0.1, 0.1, 0.1);
+        private static readonly Color gold = new(0.831, 0.686, 0.216);
+        private static readonly Color blue = new(0, 0.75, 1);
+        private static readonly Color green = new(0.5, 1, 0);
+        private static readonly Color orange = new(1, 0.75, 0);
+        private static readonly Color red = new(1, 0.34, 0.2);
+        private static readonly Color brown = new(0.96, 0.85, 0.74);
+        private static readonly Color beige = new(0.26, 0.13, 0);
+        private Field currentField;
+
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
-            context.SetSourceRGB(0.96, 0.85, 0.74);
+            currentField = new(0, 7);
+            context.SetSourceColor(brown);
             context.LineWidth = 0.001;
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
 
-            context.Scale(FIELD_SIZE, FIELD_SIZE);
             foreach (Field field in state.GetFields())
             {
-
-                context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
+                MoveContextToField(context, field);
                 DrawField(context);
                 DrawPiece(context, state, field);
-                context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
-
             }
-            context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
             DrawGameState(context, inputState, state, ratedActions);
-
-
+        }
+        private void MoveContextToField(Context context, Field field)
+        {
+            context.Translate(
+                (field.Col - currentField.Col) * fieldSize,
+                (currentField.Row - field.Row) * fieldSize);
+            currentField = field;
         }
 
         private void DrawField(Context context)
         {
-            context.SetSourceRGB(0.26, 0.13, 0);
-            context.Rectangle(0, 0, 1, 1);
+            context.SetSourceColor(beige);
+            context.Rectangle(0, 0, fieldSize, fieldSize);
             context.Fill();
         }
 
@@ -42,9 +55,6 @@ namespace Game.Checkers
             Piece piece = state.GetPieceAt(field);
             if (piece == Piece.None)
                 return;
-            Color white = new(0.9, 0.9, 0.9);
-            Color grey = new(0.5, 0.5, 0.5);
-            Color black = new(0.1, 0.1, 0.1);
             if (piece == Piece.WhitePawn)
             {
                 DrawPawn(context, white, grey);
@@ -70,16 +80,16 @@ namespace Game.Checkers
         private void DrawPawn(Context context, Color fill, Color border)
         {
             double lineWidth = context.LineWidth;
-            context.LineWidth = 0.03;
+            context.LineWidth = 0.03 * fieldSize;
 
-            context.Arc(0.5, 0.5, 0.3, 0, 2 * Math.PI);
+            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.3 * fieldSize, 0, 2 * Math.PI);
             context.SetSourceColor(fill);
             context.FillPreserve();
 
             context.SetSourceColor(border);
             context.Stroke();
 
-            context.Arc(0.5, 0.5, 0.15, 0, 2 * Math.PI);
+            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.15 * fieldSize, 0, 2 * Math.PI);
             context.Stroke();
 
             context.LineWidth = lineWidth;
@@ -88,16 +98,16 @@ namespace Game.Checkers
         private void DrawCrowned(Context context, Color fill, Color border)
         {
             double lineWidth = context.LineWidth;
-            context.LineWidth = 0.03;
-            context.Arc(0.5, 0.5, 0.3, 0, 2 * Math.PI);
+            context.LineWidth = 0.03 * fieldSize;
+            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.3 * fieldSize, 0, 2 * Math.PI);
             context.SetSourceColor(fill);
             context.FillPreserve();
 
             context.SetSourceColor(border);
             context.Stroke();
 
-            context.Arc(0.5, 0.5, 0.15, 0, 2 * Math.PI);
-            context.SetSourceRGB(0.831, 0.686, 0.216);
+            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.15 * fieldSize, 0, 2 * Math.PI);
+            context.SetSourceColor(gold);
             context.FillPreserve();
 
             context.SetSourceColor(border);
@@ -110,7 +120,6 @@ namespace Game.Checkers
         {
             if (inputState is DefaultCIS) // draw best actions
             {
-                Color green = new(0.5, 1, 0);
                 foreach (var action in ratedActions.Reverse())
                 {
                     DrawRatedAction(context, state, action, green);
@@ -119,7 +128,6 @@ namespace Game.Checkers
             }
             if (inputState is MarkedPieceCIS markedPieceState) // draw actions for marked piece
             {
-                Color blue = new(0, 0.75, 1);
                 foreach (var action in ratedActions)
                 {
                     DrawRatedAction(context, state, action, blue);
@@ -127,84 +135,59 @@ namespace Game.Checkers
                 DrawMarkedField(context, state, markedPieceState.MarkedField);
                 return;
             }
-            { // draw actions for ongoing action
-                Color blue = new(0, 0.75, 1);
-                CaptureActionInProgressCIS actionInProgressState = (CaptureActionInProgressCIS)inputState;
-                foreach (var action in ratedActions)
-                {
-                    DrawRatedAction(context, state, action, blue);
-                }
-
-                DrawVisitedFields(context, actionInProgressState.VisitedFields);
-                Field markedField = actionInProgressState.VisitedFields.Last();
-                DrawMarkedField(context, state, markedField);
-
-                context.Scale(FIELD_SIZE, FIELD_SIZE);
-                context.Translate(markedField.Col, (CheckersState.BOARD_SIZE - 1 - markedField.Row));
-                DrawPiece(context, state, actionInProgressState.VisitedFields.First());
-                context.Translate(-markedField.Col, -(CheckersState.BOARD_SIZE - 1 - markedField.Row));
-                context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
-
-                return;
+            // draw actions for ongoing action
+            CaptureActionInProgressCIS actionInProgressState = (CaptureActionInProgressCIS)inputState;
+            foreach (var action in ratedActions)
+            {
+                DrawRatedAction(context, state, action, blue);
             }
+
+            DrawVisitedFields(context, actionInProgressState.VisitedFields);
+            Field markedField = actionInProgressState.VisitedFields.Last();
+            DrawMarkedField(context, state, markedField);
+
+            //MoveContextToField(context, markedField);
+            DrawPiece(context, state, actionInProgressState.VisitedFields.First());
+
         }
 
         private void DrawMarkedField(Context context, CheckersState state, Field field)
         {
-            Color orange = new(1, 0.75, 0);
-            context.Scale(FIELD_SIZE, FIELD_SIZE);
-            context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
+            MoveContextToField(context, field);
             DrawSpecialField(context, orange);
             DrawPiece(context, state, field);
-            context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
-            context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
         }
 
         private void DrawRatedAction(Context context, CheckersState state, (CheckersAction, double) action, Color color)
         {
             IEnumerable<Field> fields = action.Item1.GetParticipatingFields();
 
-            context.Scale(FIELD_SIZE, FIELD_SIZE);
             foreach (Field field in fields)
             {
-                context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
+                MoveContextToField(context, field);
                 DrawSpecialField(context, color);
                 DrawPiece(context, state, field);
-                context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
             }
             Field lastField = fields.Last();
             int rating = (int)((action.Item2 + 1) * 50);
 
-            context.Translate(lastField.Col, (CheckersState.BOARD_SIZE - 1 - lastField.Row));
+            MoveContextToField(context, lastField);
             DrawRating(context, rating);
-            context.Translate(-lastField.Col, -(CheckersState.BOARD_SIZE - 1 - lastField.Row));
-            context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
         }
 
         private void DrawVisitedFields(Context context, IEnumerable<Field> fields)
         {
-            Color red = new(1, 0.34, 0.2);
-            context.Scale(FIELD_SIZE, FIELD_SIZE);
             foreach (Field field in fields)
             {
-                context.Translate(field.Col, (CheckersState.BOARD_SIZE - 1 - field.Row));
+                MoveContextToField(context, field);
                 DrawSpecialField(context, red);
-                context.Translate(-field.Col, -(CheckersState.BOARD_SIZE - 1 - field.Row));
             }
-            context.Scale(1 / FIELD_SIZE, 1 / FIELD_SIZE);
         }
 
         private void DrawSpecialField(Context context, Color fill)
         {
-            //double lineWidth = context.LineWidth;
-            //context.LineWidth = 0.2;
-
-            //context.Rectangle(0.1, 0.1, 0.8, 0.8);
             context.SetSourceColor(fill);
-            //context.Stroke();
-
-            //context.LineWidth = lineWidth;
-            context.Rectangle(0, 0, 1, 1);
+            context.Rectangle(0, 0, fieldSize, fieldSize);
             context.Fill();
         }
 
@@ -212,8 +195,8 @@ namespace Game.Checkers
         {
             context.SetSourceRGB(0, 0, 0);
             context.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Normal);
-            context.SetFontSize(0.2);
-            context.MoveTo(0, 0.2);
+            context.SetFontSize(0.2 * fieldSize);
+            context.MoveTo(0 * fieldSize, 0.2 * fieldSize);
             context.ShowText($"{rating}%");
             context.Stroke();
         }
