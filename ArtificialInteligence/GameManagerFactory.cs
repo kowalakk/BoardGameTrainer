@@ -1,4 +1,4 @@
-﻿namespace Game.IGame
+﻿namespace Ai
 {
     public abstract class GameManagerFactory
     {

@@ -7,7 +7,8 @@ namespace Game.Checkers
     {
         protected override IGameManager MakeGameManager()
         {
-            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers(), new CheckersAiFactory());
+            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers(), 
+                new AiFactory<CheckersAction, CheckersState, ICheckersInputState>());
         }
     }
 }

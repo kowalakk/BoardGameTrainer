@@ -1,4 +1,4 @@
-﻿namespace Game.IGame
+﻿namespace Ai
 {
     public interface IAi<Action, State, InputState>
         where Action : IEquatable<Action>

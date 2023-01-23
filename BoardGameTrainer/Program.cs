@@ -1,4 +1,5 @@
-﻿using Game.Checkers;
+﻿using Ai;
+using Game.Checkers;
 using Game.IGame;
 using Gdk;
 using Gtk;
