@@ -2,15 +2,10 @@
 
 namespace Ai
 {
-    public class NmcsFactory : IAiFactory
+    public interface IAiFactory
     {
-        public NmcsFactory() { }
-
         public IAi<Action, State, InputState> CreateAi<Action, State, InputState>(IGame<Action, State, InputState> game)
     where Action : IEquatable<Action>
-    where State : IEquatable<State>
-        {
-            throw new NotImplementedException();
-        }
+    where State : IEquatable<State>;
     }
 }

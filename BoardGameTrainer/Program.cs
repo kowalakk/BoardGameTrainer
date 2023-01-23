@@ -9,7 +9,7 @@ namespace BoardGameTrainer
     public static class Program
     {
 
-        private static IGameManager gameManager = new CheckersManagerFactory().GetGameManager();
+        private static IGameManager gameManager = new CheckersManagerFactory().GetGameManager(new UCTFactory(1.41));
 
 
         private static Application app;

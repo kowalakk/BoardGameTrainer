@@ -19,12 +19,12 @@ namespace Ai
         private IAi<Action, State, InputState> ai;
         private List<(Action, double)> ratedActions;
 
-        public GameManager(IGame<Action, State, InputState> game, AiFactory<Action, State, InputState> aiFactory)
+        public GameManager(IGame<Action, State, InputState> game, IAiFactory aiFactory)
         {
             this.game = game;
             state = game.InitialState();
             inputState = game.EmptyInputState();
-            ai = aiFactory.GetUCT(game);
+            ai = aiFactory.CreateAi(game);
             ratedActions = ai.MoveAssessment(state);
         }
 

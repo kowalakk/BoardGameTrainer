@@ -3,12 +3,11 @@ using Game.IGame;
 
 namespace Game.Checkers
 {
-    public class CheckersManagerFactory : GameManagerFactory
+    public class CheckersManagerFactory : IGameManagerFactory
     {
-        protected override IGameManager MakeGameManager()
+        public IGameManager GetGameManager(IAiFactory aiFactory)
         {
-            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers(), 
-                new AiFactory<CheckersAction, CheckersState, ICheckersInputState>());
+            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers(), aiFactory);
         }
     }
 }
