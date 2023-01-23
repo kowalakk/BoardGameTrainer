@@ -1,4 +1,4 @@
-﻿using Ai;
+using Ai;
 using Game.Checkers;
 using Game.IGame;
 using Gdk;
@@ -55,8 +55,6 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-
-                //game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
                 gameManager.DrawBoard(context);
 
             };
@@ -71,16 +69,6 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                //(ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state);
-                //inputState= newInputState;
-                //if(action != null)
-                //{
-                //    state = game.PerformAction(action, state);
-                //    boardImage.QueueDraw();
-                //    //wait
-                //    state = game.PerformAction(ai.ChooseMove(state), state);
-                //    ratedActions = ai.MoveAssessment(state);
-                //}
                 gameManager.HandleInput(x, y);
                 boardImage.QueueDraw();
                 if (isAiEnemy)
