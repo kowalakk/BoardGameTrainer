@@ -12,12 +12,10 @@ namespace BoardGameTrainer
         // Dołączyłem też referencję do warcabów jako przykład.
         // Trzeba ją potem usunąć - nasz program powinien przeszukiwać katalog
         // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
-        private static Checkers game = new Checkers();
-        private static CheckersState state = CheckersState.GetInitialState();
-        private static ICheckersInputState inputState = new DefaultCIS();
+        private static IGameManager gameManager = new CheckersManagerFactory().GetGameManager();
 
-        private static UCT<CheckersAction, CheckersState, ICheckersInputState> ai = new(1.414, game, new IterationStopCondition(10000));
-        private static List<(CheckersAction, double)> ratedActions = ai.MoveAssessment(state);
+        //private static UCT<CheckersAction, CheckersState, ICheckersInputState> ai = new(1.414, game, new IterationStopCondition(10000));
+        //private static List<(CheckersAction, double)> ratedActions = ai.MoveAssessment(state);
 
 
 
@@ -66,7 +64,8 @@ namespace BoardGameTrainer
                 context.Scale(minDimention, minDimention);
 
 
-                game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
+                //game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
+                gameManager.DrawBoard(context);
 
             };
 
@@ -80,16 +79,17 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                (ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state);
-                inputState= newInputState;
-                if(action != null)
-                {
-                    state = game.PerformAction(action, state);
-                    boardImage.QueueDraw();
-                    //wait
-                    state = game.PerformAction(ai.ChooseMove(state), state);
-                    ratedActions = ai.MoveAssessment(state);
-                }
+                //(ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state);
+                //inputState= newInputState;
+                //if(action != null)
+                //{
+                //    state = game.PerformAction(action, state);
+                //    boardImage.QueueDraw();
+                //    //wait
+                //    state = game.PerformAction(ai.ChooseMove(state), state);
+                //    ratedActions = ai.MoveAssessment(state);
+                //}
+                gameManager.HandleInput(x, y);
                 boardImage.QueueDraw();
             };
 

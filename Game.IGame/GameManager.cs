@@ -1,14 +1,13 @@
 ﻿using Cairo;
-using Game.IGame;
 
-namespace BoardGameTrainer
+namespace Game.IGame
 {
     public interface IGameManager
     {
-        public void Draw(Context context);
+        public void DrawBoard(Context context);
         public GameResult HandleInput(double x, double y);
-
     }
+
     public class GameManager<Action, State, InputState> : IGameManager
         where Action : IEquatable<Action>
         where State : IEquatable<State>
@@ -16,16 +15,17 @@ namespace BoardGameTrainer
         public readonly IGame<Action, State, InputState> game;
         private State state;
         private InputState inputState;
+
         public GameManager(IGame<Action, State, InputState> game)
         {
             this.game = game;
-            this.state = game.InitialState();
-            this.inputState = game.EmptyInputState();   
+            state = game.InitialState();
+            inputState = game.EmptyInputState();
         }
 
-        public void Draw(Context context)
+        public void DrawBoard(Context context)
         {
-            game.DrawBoard(context, inputState, state, Enumerable.Empty<(Action, double)>());
+            game.DrawBoard(context, inputState, state, new List<(Action, double)>());
         }
 
         public GameResult HandleInput(double x, double y)
