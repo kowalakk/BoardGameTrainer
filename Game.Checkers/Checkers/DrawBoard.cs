@@ -11,10 +11,10 @@ namespace Game.Checkers
         private static readonly Color grey = new(0.5, 0.5, 0.5);
         private static readonly Color black = new(0.1, 0.1, 0.1);
         private static readonly Color gold = new(0.831, 0.686, 0.216);
-        private static readonly Color blue = new(0, 0.75, 1);
+        private static readonly Color blue = new(0, 0.5, 0.75);
         private static readonly Color green = new(0.5, 1, 0);
-        private static readonly Color orange = new(1, 0.75, 0);
-        private static readonly Color red = new(1, 0.34, 0.2);
+        private static readonly Color red = new(0.8, 0.4, 0.0);
+        //private static readonly Color red = new(0.8, 0.3, 0.3);
         private static readonly Color brown = new(0.96, 0.85, 0.74);
         private static readonly Color beige = new(0.26, 0.13, 0);
         private Field lastClickedField;
@@ -136,7 +136,7 @@ namespace Game.Checkers
                 return;
             }
             // draw actions for ongoing action
-            CaptureActionInProgressCIS actionInProgressState = (CaptureActionInProgressCIS)inputState;
+            CaptureActionInProgressInputState actionInProgressState = (CaptureActionInProgressInputState)inputState;
             foreach (var action in ratedActions)
             {
                 DrawRatedAction(context, state, action, blue);
@@ -152,14 +152,14 @@ namespace Game.Checkers
         private void DrawMarkedField(Context context, CheckersState state, Field field)
         {
             MoveContextToField(context, field);
-            DrawSpecialField(context, orange);
+            DrawSpecialField(context, blue);
             DrawPiece(context, state, field);
         }
 
         private void DrawRatedAction(Context context, CheckersState state, (CheckersAction, double) action, Color color)
         {
             IEnumerable<Field> fields = action.Item1.GetParticipatingFields();
-            Color colorFromRating = new Color((1-action.Item2)/2, (1 + action.Item2) / 2, 0);
+            Color colorFromRating = new((1-action.Item2)*0.75, (1 + action.Item2) * 0.75, 0);
 
             foreach (Field field in fields)
             {
@@ -168,8 +168,17 @@ namespace Game.Checkers
                 DrawPiece(context, state, field);
             }
             int rating = (int)((action.Item2 + 1) * 50);
-
             DrawRating(context, rating);
+
+            if (action.Item1 is CaptureAction captureAction)
+            {
+                foreach(Field field in captureAction.GetCapturedFields())
+                {
+                    MoveContextToField(context, field);
+                    DrawSpecialField(context, red);
+                    DrawPiece(context, state, field);
+                }
+            }
         }
 
         private void DrawVisitedFields(Context context, IEnumerable<Field> fields)
@@ -177,7 +186,7 @@ namespace Game.Checkers
             foreach (Field field in fields)
             {
                 MoveContextToField(context, field);
-                DrawSpecialField(context, red);
+                DrawSpecialField(context, blue);
             }
         }
 

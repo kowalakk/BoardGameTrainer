@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:ArtificialInteligence/StopCondition/IStopCondition.cs
-﻿namespace Ai
-========
-﻿namespace Game.IGame
->>>>>>>> ai-factory:Game.IGame/IStopCondition.cs
+namespace Game.IGame
 {
     public interface IStopCondition
     {

@@ -19,9 +19,11 @@ namespace Game.Checkers
     public class CaptureAction : CheckersAction
     {
         public override Field Start { get => Captures.First!.Value.Start; }
+
         public override Field Finish { get => Captures.Last!.Value.Finish; }
 
         public LinkedList<SimpleCapture> Captures { get; private set; }
+
         public int CapturesCount { get; private set; }
 
         public CaptureAction(Field start, Field capture, Field finish)
@@ -30,6 +32,7 @@ namespace Game.Checkers
             Captures = new LinkedList<SimpleCapture>();
             Captures.AddFirst(new SimpleCapture(start, capture, finish));
         }
+
         public override IEnumerable<Field> GetParticipatingFields()
         {
             yield return Start;
@@ -38,6 +41,7 @@ namespace Game.Checkers
                 yield return capture.Finish;
             }
         }
+
         public override IEnumerable<Field> GetPlayableFields()
         {
             foreach (SimpleCapture capture in Captures)
@@ -45,6 +49,15 @@ namespace Game.Checkers
                 yield return capture.Finish;
             }
         }
+
+        internal IEnumerable<Field> GetCapturedFields()
+        {
+            foreach (SimpleCapture capture in Captures)
+            {
+                yield return capture.Captured;
+            }
+        }
+
         public void CombineCapture(Field start, Field firstCapture)
         {
             SimpleCapture simpleCapture = new(start, firstCapture, Start);

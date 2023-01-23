@@ -11,7 +11,7 @@ namespace Game.Checkers
             ICheckersInputState inputState,
             CheckersState state)
         {
-            if (x < 0 || x > 1 || y < 0 || x > 1)
+            if (x < 0 || x > 1 || y < 0 || y > 1)
             {
                 return (new DefaultInputState(), null);
             }
