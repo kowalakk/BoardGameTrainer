@@ -1,6 +1,6 @@
-﻿namespace AI
+﻿namespace Game.IGame
 {
-    public interface IArtificialIntelligence<Action, State, InputState, ModuleData>
+    public interface IAi<Action, State, InputState>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {

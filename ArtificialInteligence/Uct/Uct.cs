@@ -1,15 +1,15 @@
 ﻿using Game.IGame;
 
-namespace AI
+namespace Ai
 {
-    public class UCT<Action, State, InputState> : IArtificialIntelligence<Action, State, InputState, UCTModuleData<Action, State>>
+    public class Uct<Action, State, InputState> : IAi<Action, State, InputState>
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
         private IStopCondition StopCondition { get; set; }
         private double UCTConstant { get; }
         private IGame<Action, State, InputState> Game { get; }
-        public UCT(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
+        public Uct(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
         {
             UCTConstant = uCTConstant;
             Game = game;

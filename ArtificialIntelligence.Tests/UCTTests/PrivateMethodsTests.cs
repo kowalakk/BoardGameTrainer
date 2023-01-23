@@ -3,11 +3,11 @@ using Game.IGame;
 using System.Reflection;
 using Assert = Xunit.Assert;
 
-namespace AI.Tests.UCT
+namespace Ai.Tests.UCT
 {
     public class PrivateMethodsTests
     {
-        private readonly UCT<CheckersAction, CheckersState, ICheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
+        private readonly Uct<CheckersAction, CheckersState, ICheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]
         public void TreePolicyTest()
         {

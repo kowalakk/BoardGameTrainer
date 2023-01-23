@@ -2,11 +2,11 @@
 
 namespace Game.Checkers
 {
-    public class CheckersManagerFactory : GameManagerFactory
+    public class CheckersManagerFactory : IGameManagerFactory
     {
-        protected override IGameManager MakeGameManager()
+        public IGameManager CreateGameManager(IAiFactory aiFactory)
         {
-            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers());
+            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers(), aiFactory);
         }
     }
 }

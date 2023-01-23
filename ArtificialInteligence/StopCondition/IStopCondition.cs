@@ -1,4 +1,4 @@
-﻿namespace AI
+﻿namespace Ai
 {
     public interface IStopCondition
     {

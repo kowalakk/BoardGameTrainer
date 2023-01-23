@@ -1,4 +1,5 @@
-﻿using Game.Checkers;
+using Ai;
+using Game.Checkers;
 using Game.IGame;
 using Gdk;
 using Gtk;
@@ -8,11 +9,11 @@ namespace BoardGameTrainer
     public static class Program
     {
 
-        private static IGameManager gameManager = new CheckersManagerFactory().GetGameManager();
+        private static IGameManager gameManager = new CheckersManagerFactory().CreateGameManager(new UctFactory(1.41));
 
 
         private static Application app;
-        private static bool isTwoPlayer = false;
+        private static bool isAiPlayer2 = true;
         //private static bool showHintsForPlayer1 = true;
         //private static bool showHintsForPlayer2 = false;
         //private static bool isAImoduleOne = true;
@@ -42,7 +43,6 @@ namespace BoardGameTrainer
             var titleAndContentVBox = new Gtk.VBox();
 
             var contentHBox = new Gtk.HBox();
-            var boardPixbuf = new Gdk.Pixbuf("..\\..\\..\\Tulips.jpg", 200, 200);
 
             var boardImage = new Gtk.DrawingArea();
             boardImage.Drawn += (sender, args) =>
@@ -55,8 +55,6 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-
-                //game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
                 gameManager.DrawBoard(context);
 
             };
@@ -71,18 +69,12 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                //(ICheckersInputState newInputState, CheckersAction? action) = game.HandleInput(x, y, inputState, state);
-                //inputState= newInputState;
-                //if(action != null)
-                //{
-                //    state = game.PerformAction(action, state);
-                //    boardImage.QueueDraw();
-                //    //wait
-                //    state = game.PerformAction(ai.ChooseMove(state), state);
-                //    ratedActions = ai.MoveAssessment(state);
-                //}
                 gameManager.HandleInput(x, y);
                 boardImage.QueueDraw();
+                if (isAiPlayer2)
+                {
+
+                }
             };
 
             contentHBox.PackStart(boardImage, true, true, 0);
@@ -141,8 +133,8 @@ namespace BoardGameTrainer
             {
                 numOfPlayersHbox
             };
-            onePlayerRadio.Clicked += (sender, args) => { isTwoPlayer = false; };
-            twoPlayerRadio.Clicked += (sender, args) => { isTwoPlayer = true; };
+            onePlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = true; };
+            twoPlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = false; };
             numOfPlayersFrame.Show();
             numOfPlayersHbox.Show();
             onePlayerRadio.Show();
