@@ -17,11 +17,11 @@ namespace Game.Checkers
         private static readonly Color red = new(1, 0.34, 0.2);
         private static readonly Color brown = new(0.96, 0.85, 0.74);
         private static readonly Color beige = new(0.26, 0.13, 0);
-        private Field currentField;
+        private Field lastClickedField;
 
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
         {
-            currentField = new(0, 7);
+            lastClickedField = new(0, 7);
             context.SetSourceColor(brown);
             context.LineWidth = 0.001;
             context.Rectangle(0, 0, 1, 1);
@@ -38,9 +38,9 @@ namespace Game.Checkers
         private void MoveContextToField(Context context, Field field)
         {
             context.Translate(
-                (field.Col - currentField.Col) * fieldSize,
-                (currentField.Row - field.Row) * fieldSize);
-            currentField = field;
+                (field.Col - lastClickedField.Col) * fieldSize,
+                (lastClickedField.Row - field.Row) * fieldSize);
+            lastClickedField = field;
         }
 
         private void DrawField(Context context)
@@ -161,17 +161,16 @@ namespace Game.Checkers
         private void DrawRatedAction(Context context, CheckersState state, (CheckersAction, double) action, Color color)
         {
             IEnumerable<Field> fields = action.Item1.GetParticipatingFields();
+            Color colorFromRating = new Color((1-action.Item2)/2, (1 + action.Item2) / 2, 0);
 
             foreach (Field field in fields)
             {
                 MoveContextToField(context, field);
-                DrawSpecialField(context, color);
+                DrawSpecialField(context, colorFromRating);
                 DrawPiece(context, state, field);
             }
-            Field lastField = fields.Last();
             int rating = (int)((action.Item2 + 1) * 50);
 
-            MoveContextToField(context, lastField);
             DrawRating(context, rating);
         }
 
