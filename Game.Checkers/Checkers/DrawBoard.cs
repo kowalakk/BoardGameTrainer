@@ -3,7 +3,7 @@ using Game.IGame;
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
+    public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
         private static readonly double fieldSize = 0.125;
         private static readonly Color white = new(0.9, 0.9, 0.9);
@@ -16,7 +16,7 @@ namespace Game.Checkers
         private static readonly Color beige = new(0.26, 0.13, 0);
         private Field lastClickedField;
 
-        public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
+        public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
         {
             lastClickedField = new(0, 7);
             context.SetSourceColor(brown);
@@ -120,7 +120,7 @@ namespace Game.Checkers
             context.LineWidth = lineWidth;
         }
 
-        private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(CheckersAction, double)> ratedActions)
+        private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
         {
             if (inputState is DefaultInputState) // draw best actions
             {
@@ -160,7 +160,7 @@ namespace Game.Checkers
             DrawPiece(context, state, field);
         }
 
-        private void DrawRatedAction(Context context, CheckersState state, (CheckersAction, double) action)
+        private void DrawRatedAction(Context context, CheckersState state, (ICheckersAction, double) action)
         {
             IEnumerable<Field> fields = action.Item1.GetParticipatingFields();
             Color colorFromRating = new((1-action.Item2)*0.75, (1 + action.Item2) * 0.75, 0);

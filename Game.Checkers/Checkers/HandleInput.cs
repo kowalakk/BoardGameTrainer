@@ -2,10 +2,10 @@
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
+    public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
 
-        public (ICheckersInputState, CheckersAction?) HandleInput(
+        public (ICheckersInputState, ICheckersAction?) HandleInput(
             double x,
             double y,
             ICheckersInputState inputState,
@@ -25,7 +25,7 @@ namespace Game.Checkers
             }
             if (inputState is MarkedPieceInputState markedPieceCIS)
             {
-                CheckersAction? nextAction = PossibleActions(state)
+                ICheckersAction? nextAction = PossibleActions(state)
                     .Where(action => action.Start.Equals(markedPieceCIS.MarkedField))
                     .FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
@@ -43,10 +43,10 @@ namespace Game.Checkers
                 CaptureActionInProgressInputState cIS = (CaptureActionInProgressInputState)inputState;
                 if (cIS.VisitedFields.Contains(clickedField)) // used field got chosen 
                     return (cIS, null);
-                IEnumerable<CheckersAction> possibleActionsInProgress = PossibleActions(state).Where(
+                IEnumerable<ICheckersAction> possibleActionsInProgress = PossibleActions(state).Where(
                     action => action.GetParticipatingFields()
                     .Take(cIS.VisitedFields.Count()).SequenceEqual(cIS.VisitedFields));
-                CheckersAction? nextAction = possibleActionsInProgress.FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
+                ICheckersAction? nextAction = possibleActionsInProgress.FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
                 {
                     return (cIS, null);
@@ -60,7 +60,7 @@ namespace Game.Checkers
 
         }
 
-        private (ICheckersInputState, CheckersAction?) HandleFirstClick(Piece piece, Field clickedField, ICheckersInputState inputState, CheckersState state)
+        private (ICheckersInputState, ICheckersAction?) HandleFirstClick(Piece piece, Field clickedField, ICheckersInputState inputState, CheckersState state)
         {
             if ((state.CurrentPlayer == Player.One && (piece == Piece.WhitePawn || piece == Piece.WhiteCrowned))
     || (state.CurrentPlayer == Player.Two && (piece == Piece.BlackPawn || piece == Piece.BlackCrowned)))

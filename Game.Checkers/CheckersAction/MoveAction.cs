@@ -3,9 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace Game.Checkers
 {
-    public class MoveAction : CheckersAction
+    public class MoveAction : ICheckersAction
     {
-        public override Field Finish { get; }
+        public Field Start { get; }
+        public Field Finish { get; }
 
         public MoveAction(Field start, Field finish)
         {
@@ -13,7 +14,7 @@ namespace Game.Checkers
             Finish = finish;
         }
 
-        public override bool Equals(CheckersAction? other)
+        public bool Equals(ICheckersAction? other)
         {
             if (other == null) return false;
             if (other is not MoveAction) return false;
@@ -23,18 +24,18 @@ namespace Game.Checkers
             return true;
         }
 
-        public override IEnumerable<Field> GetParticipatingFields()
+        public IEnumerable<Field> GetParticipatingFields()
         {
             yield return Start;
             yield return Finish;
         }
 
-        public override IEnumerable<Field> GetPlayableFields()
+        public IEnumerable<Field> GetPlayableFields()
         {
             yield return Finish;
         }
 
-        public override CheckersState PerformOn(CheckersState state)
+        public CheckersState PerformOn(CheckersState state)
         {
             Piece movedPiece = state.GetPieceAt(Start);
             CheckersState newState = new(state);

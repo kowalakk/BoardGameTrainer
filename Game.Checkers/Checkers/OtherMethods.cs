@@ -3,9 +3,9 @@ using Gdk;
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
+    public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
-        public IEnumerable<(CheckersAction, double)> FilterByInputState(IEnumerable<(CheckersAction, double)> ratedActions, ICheckersInputState inputState)
+        public IEnumerable<(ICheckersAction, double)> FilterByInputState(IEnumerable<(ICheckersAction, double)> ratedActions, ICheckersInputState inputState)
         {
             if (inputState is DefaultInputState)
                 return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(3);
@@ -28,7 +28,7 @@ namespace Game.Checkers
         //needs optimization
         public GameResult Result(CheckersState state)
         {
-            IEnumerable<CheckersAction> possibleActions = PossibleActions(state);
+            IEnumerable<ICheckersAction> possibleActions = PossibleActions(state);
             if (possibleActions.Count() == 0)
             {
                 if (state.CurrentPlayer == Player.One) return GameResult.PlayerTwoWins;
