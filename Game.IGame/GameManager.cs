@@ -1,7 +1,6 @@
 ﻿using Cairo;
-using Game.IGame;
 
-namespace Ai
+namespace Game.IGame
 {
     public interface IGameManager
     {

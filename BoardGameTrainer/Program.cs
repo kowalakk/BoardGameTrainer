@@ -9,11 +9,11 @@ namespace BoardGameTrainer
     public static class Program
     {
 
-        private static IGameManager gameManager = new CheckersManagerFactory().GetGameManager(new UCTFactory(1.41));
+        private static IGameManager gameManager = new CheckersManagerFactory().CreateGameManager(new UctFactory(1.41));
 
 
         private static Application app;
-        private static bool isTwoPlayer = false;
+        private static bool isAiEnemy = true;
         //private static bool showHintsForPlayer1 = true;
         //private static bool showHintsForPlayer2 = false;
         //private static bool isAImoduleOne = true;
@@ -43,7 +43,6 @@ namespace BoardGameTrainer
             var titleAndContentVBox = new Gtk.VBox();
 
             var contentHBox = new Gtk.HBox();
-            var boardPixbuf = new Gdk.Pixbuf("..\\..\\..\\Tulips.jpg", 200, 200);
 
             var boardImage = new Gtk.DrawingArea();
             boardImage.Drawn += (sender, args) =>
@@ -84,6 +83,10 @@ namespace BoardGameTrainer
                 //}
                 gameManager.HandleInput(x, y);
                 boardImage.QueueDraw();
+                if (isAiEnemy)
+                {
+
+                }
             };
 
             contentHBox.PackStart(boardImage, true, true, 0);
@@ -142,8 +145,8 @@ namespace BoardGameTrainer
             {
                 numOfPlayersHbox
             };
-            onePlayerRadio.Clicked += (sender, args) => { isTwoPlayer = false; };
-            twoPlayerRadio.Clicked += (sender, args) => { isTwoPlayer = true; };
+            onePlayerRadio.Clicked += (sender, args) => { isAiEnemy = true; };
+            twoPlayerRadio.Clicked += (sender, args) => { isAiEnemy = false; };
             numOfPlayersFrame.Show();
             numOfPlayersHbox.Show();
             onePlayerRadio.Show();

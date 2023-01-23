@@ -20,15 +20,17 @@ namespace Game.IGame
         where Action: IEquatable<Action>
         where State: IEquatable<State> 
     {
-        public State PerformAction(Action action, State state);
+        public State InitialState();
 
+        public InputState EmptyInputState();
+        
+        public Player CurrentPlayer(State state);
+        
         public IEnumerable<Action> PossibleActions(State state);
 
-        public GameResult Result(State state);
+        public State PerformAction(Action action, State state);
 
-        public Player CurrentPlayer(State state);
-        public InputState EmptyInputState();
-        public State InitialState();
+        public GameResult Result(State state);
 
         public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 

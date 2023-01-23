@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Checkers", "Game.Check
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Othello", "Game.Othello\Game.Othello.csproj", "{09A9C62E-CAA1-436F-AB76-2371DF7353B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameTrainerTests", "BoardGameTrainerTests\BoardGameTrainerTests.csproj", "{31AA4FE0-59A4-4BC4-B905-38DE852B6525}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameTrainer.Tests", "BoardGameTrainerTests\BoardGameTrainer.Tests.csproj", "{31AA4FE0-59A4-4BC4-B905-38DE852B6525}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.CheckersTests", "Game.CheckersTest\Game.CheckersTests.csproj", "{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}"
 EndProject

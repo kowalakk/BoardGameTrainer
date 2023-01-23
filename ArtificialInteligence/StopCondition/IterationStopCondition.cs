@@ -11,7 +11,7 @@
         public bool StopConditionOccured()
         {
             //Console.WriteLine($"Iterations left {CurrentIterations}");
-            if(CurrentIterations-- == 0)
+            if (CurrentIterations-- == 0)
             {
                 CurrentIterations = MaxIterations;
                 return true;

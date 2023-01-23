@@ -1,11 +1,10 @@
-﻿using Ai;
-using Game.IGame;
+﻿using Game.IGame;
 
 namespace Game.Checkers
 {
     public class CheckersManagerFactory : IGameManagerFactory
     {
-        public IGameManager GetGameManager(IAiFactory aiFactory)
+        public IGameManager CreateGameManager(IAiFactory aiFactory)
         {
             return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(new Checkers(), aiFactory);
         }
