@@ -1,4 +1,4 @@
-﻿namespace Game.Checkers.Test
+﻿namespace Game.Checkers.Tests
 {
     public class CaptureActionTests
     {
@@ -30,8 +30,8 @@
             Assert.Equal(new Field(4, 0), action.Start);
             Assert.Equal(2, action.CapturesCount);
             LinkedList<SimpleCapture> captures = new();
-            captures.AddLast(new SimpleCapture(new Field(3, 1), new Field(2, 2)));
-            captures.AddLast(new SimpleCapture(new Field(1, 1), new Field(0, 0)));
+            captures.AddLast(new SimpleCapture(new Field(4, 0), new Field(3, 1), new Field(2, 2)));
+            captures.AddLast(new SimpleCapture(new Field(2, 2), new Field(1, 1), new Field(0, 0)));
             Assert.Equal(action.Captures, captures);
         }
     }

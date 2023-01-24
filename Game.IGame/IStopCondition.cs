@@ -1,4 +1,4 @@
-﻿namespace AI
+﻿namespace Game.IGame
 {
     public interface IStopCondition
     {

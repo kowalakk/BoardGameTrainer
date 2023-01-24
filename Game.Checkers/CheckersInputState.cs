@@ -1,18 +1,43 @@
 ﻿namespace Game.Checkers
 {
-    public class CheckersInputState : IEquatable<CheckersInputState>
+    public interface ICheckersInputState : IEquatable<ICheckersInputState> { }
+    public class DefaultInputState : ICheckersInputState
     {
-        public List<(int, int)> Fields { get; private set; }
-
-        public CheckersInputState(List<(int, int)> fields)
-        {
-            Fields = fields;
-        }
-        public bool Equals(CheckersInputState? other)
+        public bool Equals(ICheckersInputState? other)
         {
             if (other == null) return false;
-            if (Enumerable.SequenceEqual(Fields, other.Fields)) return true;
-            return false;
+            return other is DefaultInputState;
+        }
+    }
+    public class MarkedPieceInputState : ICheckersInputState
+    {
+        public Field MarkedField { get; private set; }
+        public MarkedPieceInputState(Field markedField)
+        {
+            MarkedField = markedField;
+        }
+
+        public bool Equals(ICheckersInputState? other)
+        {
+            if (other == null) return false;
+            if (other is not MarkedPieceInputState cIS) return false;
+            return MarkedField.Equals(cIS.MarkedField);
+        }
+    }
+    public class CaptureActionInProgressInputState : ICheckersInputState
+    {
+        public List<Field> VisitedFields { get; private set; }
+
+        public CaptureActionInProgressInputState(IEnumerable<Field> visitedFields)
+        {
+            VisitedFields = new List<Field>(visitedFields);
+        }
+
+        public bool Equals(ICheckersInputState? other)
+        {
+            if (other == null) return false;
+            if (other is not CaptureActionInProgressInputState cIS) return false;
+            return VisitedFields.SequenceEqual(cIS.VisitedFields);
         }
     }
 }

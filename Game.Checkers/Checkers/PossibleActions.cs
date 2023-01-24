@@ -2,12 +2,12 @@
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, CheckersInputState>
+    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
     {
         public IEnumerable<CheckersAction> PossibleActions(CheckersState state)
         {
             (List<CheckersAction> list, int maxCapturesCount) possibleActions = (new(), 0);
-            if (state.CurrentPlayer == Player.PlayerOne)
+            if (state.CurrentPlayer == Player.One)
             {
                 foreach (Field field in state.GetFields())
                 {
@@ -222,7 +222,7 @@ namespace Game.Checkers
         private static bool HaveOppositeColors(Piece capturer, Piece target)
         {
             if (capturer == Piece.None || target == Piece.None) return false;
-            if (capturer == Piece.Captured || target == Piece.Captured) return false;
+            if (capturer == Piece.CapturedPiece || target == Piece.CapturedPiece) return false;
             bool isCapturerWhite = capturer == Piece.WhitePawn || capturer == Piece.WhiteCrowned;
             bool isTargetBlack = target == Piece.BlackPawn || target == Piece.BlackCrowned;
             return (isCapturerWhite && isTargetBlack) || (!isCapturerWhite && !isTargetBlack);

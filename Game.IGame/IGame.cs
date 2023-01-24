@@ -1,5 +1,4 @@
-﻿using Gdk;
-using Gtk;
+﻿using Cairo;
 
 namespace Game.IGame
 {
@@ -12,8 +11,8 @@ namespace Game.IGame
     }
     public enum Player
     {
-        PlayerOne = GameResult.PlayerOneWins,
-        PlayerTwo = GameResult.PlayerTwoWins,
+        One = GameResult.PlayerOneWins,
+        Two = GameResult.PlayerTwoWins,
     }
 
     public interface IGame { }
@@ -21,19 +20,23 @@ namespace Game.IGame
         where Action: IEquatable<Action>
         where State: IEquatable<State> 
     {
-        public State PerformAction(Action action, State state);
+        public State InitialState();
 
+        public InputState EmptyInputState();
+        
+        public Player CurrentPlayer(State state);
+        
         public IEnumerable<Action> PossibleActions(State state);
+
+        public State PerformAction(Action action, State state);
 
         public GameResult Result(State state);
 
-        public Player CurrentPlayer(State state);
+        public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
 
-        public void DrawBoard(Widget widget, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
+        public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state);
 
-        public (Action, InputState) HandleInput(Event @event, InputState inputState, State state);
-
-        public IEnumerable<Action> FilterByInputState(IEnumerable<Action> actions, InputState inputState);
+        public IEnumerable<(Action, double)> FilterByInputState(IEnumerable<(Action, double)> ratedActions, InputState inputState);
     }
 
 }

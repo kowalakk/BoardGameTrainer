@@ -3,11 +3,11 @@ using Game.IGame;
 using System.Reflection;
 using Assert = Xunit.Assert;
 
-namespace AI.Tests.UCTTests
+namespace Ai.Tests.UCT
 {
     public class PrivateMethodsTests
     {
-        private readonly UCT<CheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
+        private readonly Uct<CheckersAction, CheckersState, ICheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]
         public void TreePolicyTest()
         {
@@ -69,7 +69,7 @@ namespace AI.Tests.UCTTests
                 SuccessCount = 0
             };
             Node<CheckersAction, CheckersState> child = new(
-                new MoveAction(new("C1"), new("B2")), CheckersState.GetEmptyBoardState(Player.PlayerTwo), root)
+                new MoveAction(new("C1"), new("B2")), CheckersState.GetEmptyBoardState(Player.Two), root)
             {
                 VisitCount = 0,
                 SuccessCount = 0

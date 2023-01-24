@@ -7,8 +7,9 @@ namespace Game.Checkers
     {
         public override Field Finish { get; }
 
-        public MoveAction(Field start, Field finish) : base(start)
+        public MoveAction(Field start, Field finish)
         {
+            Start= start;
             Finish = finish;
         }
 
@@ -22,13 +23,24 @@ namespace Game.Checkers
             return true;
         }
 
+        public override IEnumerable<Field> GetParticipatingFields()
+        {
+            yield return Start;
+            yield return Finish;
+        }
+
+        public override IEnumerable<Field> GetPlayableFields()
+        {
+            yield return Finish;
+        }
+
         public override CheckersState PerformOn(CheckersState state)
         {
             Piece movedPiece = state.GetPieceAt(Start);
             CheckersState newState = new(state);
             newState.SetPieceAt(Start, Piece.None);
             newState.SetPieceAtWithPossiblePromotion(Finish, movedPiece);
-            newState.CurrentPlayer = state.CurrentPlayer == Player.PlayerOne? Player.PlayerTwo: Player.PlayerOne;
+            newState.CurrentPlayer = state.CurrentPlayer == Player.One? Player.Two: Player.One;
             return newState;
         }
     }

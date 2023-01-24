@@ -1,4 +1,5 @@
-﻿using Game.Checkers;
+using Ai;
+using Game.Checkers;
 using Game.IGame;
 using Game.Othello;
 using Gdk;
@@ -8,60 +9,77 @@ namespace BoardGameTrainer
 {
     public static class Program
     {
-        // Dodałem bezparametrowy interfejs IGame. Znalazłem, że tak się robi
-        // Dołączyłem też referencję do warcabów jako przykład.
-        // Trzeba ją potem usunąć - nasz program powinien przeszukiwać katalog
-        // i sam dodawać gry z .dllek, a nie mieć bezpośrednią referencję
-        private static IGame game = new Checkers();
+
         private static Application app;
+
+        private static IGameManager gameManager = new CheckersManagerFactory()
+            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000)); //na razie zaczynamy z warcabami, bo inaczej sie wykrzacza
+        private static string[] games = new string[] { "Checkers", "Othello" };
         private static int gameNum = -1;
-        private static bool isTwoPlayer = false;
         private static bool showHintsForPlayer1 = true;
         private static bool showHintsForPlayer2 = false;
+        private static bool isAiPlayer2 = true;
         private static bool isAImoduleOne = true;
         private static double computationTime;
-
-        private static string[] games = new string[] { "Checkers", "Othello" };
-
         [STAThread]
         public static void Main(string[] args)
         {
             Application.Init();
-            
+
             app = new Application("x.y.z", GLib.ApplicationFlags.None);
             app.Register(GLib.Cancellable.Current);
             var mainWindow = createMainWindow();
             app.AddWindow(mainWindow);
-            
+
             Application.Run();
         }
 
         public static Gtk.Window createMainWindow()
         {
+
             string title = "New Game";
             var win = new Gtk.Window(Gtk.WindowType.Toplevel);
             win.DefaultSize = new Gdk.Size(700, 500);
-            
+
             var mainVBox = new Gtk.VBox();
             var panelHbox = new Gtk.HBox();
             var titleAndContentVBox = new Gtk.VBox();
 
             var contentHBox = new Gtk.HBox();
-            var boardPixbuf = new Gdk.Pixbuf("..\\..\\..\\Tulips.jpg", 200, 200);
 
-            // zamiast tego będzie przypisanie do boardImage wartości game.drawBoard()
             var boardImage = new Gtk.DrawingArea();
-            boardImage.Drawn += (s, a) => { 
-                var context = a.Cr;
-                int size = (boardImage.AllocatedWidth < boardImage.AllocatedHeight) ? boardImage.AllocatedWidth : boardImage.AllocatedHeight;
-                context.Scale(size, size);
-                //drawBoard()
-                context.LineWidth = 0.1;
-                context.SetSourceRGB(0, 0, 0);
-                context.MoveTo(0.1, 0.1);
-                context.LineTo(0.9, 0.9);
-                context.Stroke();
+            boardImage.Drawn += (sender, args) =>
+            {
+                var context = args.Cr;
+
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                context.Translate(xOffset, yOffset);
+                context.Scale(minDimention, minDimention);
+
+                gameManager.DrawBoard(context);
+
             };
+
+            boardImage.AddEvents((int)EventMask.ButtonPressMask);
+            boardImage.ButtonPressEvent += delegate (object sender, ButtonPressEventArgs args)
+            {
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                double x = (args.Event.X - xOffset) / minDimention;
+                double y = (args.Event.Y - yOffset) / minDimention;
+                Console.WriteLine($"Button Pressed at {x}, {y}");
+
+                gameManager.HandleInput(x, y);
+                boardImage.QueueDraw();
+                if (isAiPlayer2)
+                {
+
+                }
+            };
+
             contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
 
@@ -109,7 +127,7 @@ namespace BoardGameTrainer
             gameHBox.Show();
 
             var numOfPlayersHbox = new Gtk.HBox();
-            var onePlayerRadio = new Gtk.RadioButton((RadioButton) null);
+            var onePlayerRadio = new Gtk.RadioButton((RadioButton)null);
             onePlayerRadio.Label = "One Player";
             var twoPlayerRadio = new Gtk.RadioButton(onePlayerRadio);
             twoPlayerRadio.Label = "Two Players";
@@ -119,8 +137,8 @@ namespace BoardGameTrainer
             {
                 numOfPlayersHbox
             };
-            onePlayerRadio.Clicked += (sender, args) => { isTwoPlayer = false; };
-            twoPlayerRadio.Clicked += (sender, args) => { isTwoPlayer = true; };
+            onePlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = true; };
+            twoPlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = false; };
             numOfPlayersFrame.Show();
             numOfPlayersHbox.Show();
             onePlayerRadio.Show();
@@ -144,7 +162,6 @@ namespace BoardGameTrainer
                 showHintsHBox
             };
             showHintsFrame.Show();
-
             var computationTimeSpinButton = new Gtk.SpinButton(0, 100, 1);
             computationTimeSpinButton.Changed += (sender, args) => { computationTime = computationTimeSpinButton.Value; };
             var computationTimeLabel = new Gtk.Label("ms");
@@ -172,18 +189,17 @@ namespace BoardGameTrainer
             contentVbox.Show();
             configWindow.Add(contentVbox);
         }
-
         private static void CreateNewGame()
         {
             if (gameNum == 0)
             {
-                game = new Checkers();
+                gameManager = new CheckersManagerFactory()
+            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000));
             }
-            if(gameNum == 1)
+            if (gameNum == 1)
             {
-                game = new Othello();
+                //gameManager = 
             }
         }
-
     }
 }

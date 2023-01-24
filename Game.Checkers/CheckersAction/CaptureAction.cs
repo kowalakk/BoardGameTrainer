@@ -4,11 +4,13 @@ namespace Game.Checkers
 {
     public struct SimpleCapture
     {
+        public Field Start { get; private set; }
         public Field Captured { get; private set; }
         public Field Finish { get; private set; }
 
-        public SimpleCapture(Field captured, Field finish)
+        public SimpleCapture(Field start, Field captured, Field finish)
         {
+            Start = start;
             Captured = captured;
             Finish = finish;
         }
@@ -16,22 +18,37 @@ namespace Game.Checkers
 
     public class CaptureAction : CheckersAction
     {
+        public override Field Start { get => Captures.First!.Value.Start; }
         public override Field Finish { get => Captures.Last!.Value.Finish; }
 
         public LinkedList<SimpleCapture> Captures { get; private set; }
         public int CapturesCount { get; private set; }
 
-        public CaptureAction(Field start, Field capture, Field finish) : base(start)
+        public CaptureAction(Field start, Field capture, Field finish)
         {
             CapturesCount = 1;
             Captures = new LinkedList<SimpleCapture>();
-            Captures.AddFirst(new SimpleCapture(capture, finish));
+            Captures.AddFirst(new SimpleCapture(start, capture, finish));
+        }
+        public override IEnumerable<Field> GetParticipatingFields()
+        {
+            yield return Start;
+            foreach(SimpleCapture capture in Captures)
+            {
+                yield return capture.Finish;
+            }
+        }
+        public override IEnumerable<Field> GetPlayableFields()
+        {
+            foreach (SimpleCapture capture in Captures)
+            {
+                yield return capture.Finish;
+            }
         }
         public void CombineCapture(Field start, Field firstCapture)
         {
-            SimpleCapture simpleCapture = new(firstCapture, Start);
+            SimpleCapture simpleCapture = new(start, firstCapture, Start);
             Captures.AddFirst(simpleCapture);
-            Start = start;
             CapturesCount++;
         }
 
@@ -60,7 +77,7 @@ namespace Game.Checkers
                 newState.SetPieceAt(capture.Captured, substituteCapturedWith);
             }
             newState.SetPieceAtWithPossiblePromotion(Finish, capturer);
-            newState.CurrentPlayer = state.CurrentPlayer == Player.PlayerOne ? Player.PlayerTwo : Player.PlayerOne;
+            newState.CurrentPlayer = state.CurrentPlayer == Player.One ? Player.Two : Player.One;
             return newState;
         }
     }

@@ -1,8 +1,8 @@
-﻿namespace AI
+﻿namespace Ai
 {
     internal static class RandomWalkExtension
     {
-        private static readonly Random rand = new(); // TODO: add seed
+        private static readonly Random rand = new(DateTime.Now.Millisecond);
 
         public static void Shuffle<T>(this IList<T> list)
         {

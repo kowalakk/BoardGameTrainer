@@ -1,10 +1,10 @@
-﻿namespace AI
+﻿namespace Ai
 {
-    public class UCTModuleData<Action, State>
+    public class UctModuleData<Action, State>
         where State : IEquatable<State>
     {
         internal Node<Action, State> Root { get; private set; }
-        public UCTModuleData(State state)
+        public UctModuleData(State state)
         {
             Root = new Node<Action, State>(state);
         }

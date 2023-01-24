@@ -1,4 +1,5 @@
-﻿using Game.IGame;
+﻿using Cairo;
+using Game.IGame;
 using Gdk;
 using Gtk;
 using LanguageExt;
@@ -12,10 +13,10 @@ namespace Game.Othello
 
         public Player CurrentPlayer(OthelloState state)
         {
-            return (state.BlacksTurn) ? Player.PlayerOne : Player.PlayerTwo;
+            return (state.BlacksTurn) ? Player.One : Player.Two;
         }
 
-        public void DrawBoard(Widget widget, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
+        public void DrawBoard(Context context, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             throw new NotImplementedException();
         }
@@ -31,11 +32,6 @@ namespace Game.Othello
                 if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)
                     return HasBlackWon(state);
             return IGame.GameResult.InProgress;
-        }
-
-        public (OthelloAction, LanguageExt.Unit) HandleInput(Event @event, LanguageExt.Unit u, OthelloState state)
-        {
-            throw new NotImplementedException();
         }
 
         public OthelloState PerformAction(OthelloAction action, OthelloState state)
@@ -185,6 +181,26 @@ namespace Game.Othello
             if (whiteCount == blackCount)
                 return IGame.GameResult.Draw;
             return (blackCount > whiteCount) ? IGame.GameResult.PlayerOneWins : IGame.GameResult.PlayerTwoWins;
+        }
+
+        public (LanguageExt.Unit, OthelloAction?) HandleInput(double x, double y, LanguageExt.Unit inputState, OthelloState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState)
+        {
+            return ratedActions;
+        }
+
+        public LanguageExt.Unit EmptyInputState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public OthelloState InitialState()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -4,7 +4,7 @@ using Gtk;
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, CheckersInputState>
+    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
     {
         public CheckersState PerformAction(CheckersAction action, CheckersState state)
         {
@@ -13,7 +13,7 @@ namespace Game.Checkers
 
         private static CheckersState PerformTemporaryCapture(CaptureAction action, CheckersState state)
         {
-            return action.PerformOn(state, Piece.Captured);
+            return action.PerformOn(state, Piece.CapturedPiece);
         }
 
     }

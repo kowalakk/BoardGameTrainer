@@ -32,17 +32,16 @@ namespace Game.Checkers
 
     public abstract class CheckersAction : IEquatable<CheckersAction>
     {
-        public Field Start { get; protected set; }
+        public virtual Field Start { get; protected set; }
         public abstract Field Finish { get; }
-
-        public CheckersAction(Field start)
-        {
-            Start = start;
-        }
 
         public abstract bool Equals(CheckersAction? other);
 
         public abstract CheckersState PerformOn(CheckersState state);
+
+        public abstract IEnumerable<Field> GetParticipatingFields();
+
+        public abstract IEnumerable<Field> GetPlayableFields();
 
         public override bool Equals(object? obj)
         {
