@@ -1,7 +1,7 @@
 ﻿namespace Game.Checkers
 {
-    public interface ICheckersInputState : IEquatable<ICheckersInputState> 
+    public interface ICheckersInputState// : IEquatable<ICheckersInputState> 
     { 
-        //CheckersAction
+        public ICheckersAction? PreviousAction { get; }
     }
 }

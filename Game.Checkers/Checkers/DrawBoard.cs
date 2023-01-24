@@ -14,6 +14,7 @@ namespace Game.Checkers
         private static readonly Color red = new(0.8, 0.3, 0.3);
         private static readonly Color brown = new(0.96, 0.85, 0.74);
         private static readonly Color beige = new(0.26, 0.13, 0);
+        private static readonly Color purple = new(0.5, 0.3, 0.9);
         private Field lastClickedField;
 
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
@@ -31,12 +32,7 @@ namespace Game.Checkers
                 DrawPiece(context, state, field);
             }
             DrawGameState(context, inputState, state, ratedActions);
-            DrawPreviousAction(context, inputState, state);
-        }
-
-        private void DrawPreviousAction(Context context, ICheckersInputState inputState, CheckersState state)
-        {
-            //throw new NotImplementedException();
+            DrawPreviousAction(context, inputState.PreviousAction, state);
         }
 
         private void MoveContextToField(Context context, Field field)
@@ -103,6 +99,7 @@ namespace Game.Checkers
         {
             double lineWidth = context.LineWidth;
             context.LineWidth = 0.03 * fieldSize;
+
             context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.3 * fieldSize, 0, 2 * Math.PI);
             context.SetSourceColor(fill);
             context.FillPreserve();
@@ -209,6 +206,42 @@ namespace Game.Checkers
             context.MoveTo(0 * fieldSize, 0.2 * fieldSize);
             context.ShowText($"{rating}%");
             context.Stroke();
+        }
+
+        private void DrawPreviousAction(Context context, ICheckersAction? previousAction, CheckersState state)
+        {
+            if (previousAction is null)
+                return;
+            foreach (Field field in previousAction.GetParticipatingFields())
+            {
+                MoveContextToField(context, field);
+                DrawPreviousActionField(context, purple);
+            }
+            if (previousAction is CaptureAction captureAction)
+            {
+                foreach (Field field in captureAction.GetCapturedFields())
+                {
+                    MoveContextToField(context, field);
+                    DrawPreviousActionField(context, red);
+                }
+            }
+        }
+
+        private void DrawPreviousActionField(Context context, Color color)
+        {
+            double lineWidth = context.LineWidth;
+            context.LineWidth = 0.03 * fieldSize;
+
+            context.SetSourceColor(color);
+            
+            context.Arc(0.2 * fieldSize, 0.2 * fieldSize, 0.15 * fieldSize, Math.PI, 1.5 * Math.PI);
+            context.Arc(0.8 * fieldSize, 0.2 * fieldSize, 0.15 * fieldSize, 1.5 * Math.PI, 2 * Math.PI);
+            context.Arc(0.8 * fieldSize, 0.8 * fieldSize, 0.15 * fieldSize, 2 * Math.PI, 0.5 * Math.PI);
+            context.Arc(0.2 * fieldSize, 0.8 * fieldSize, 0.15 * fieldSize, 0.5 * Math.PI, Math.PI);
+            context.ClosePath();
+            context.Stroke();
+
+            context.LineWidth = lineWidth;
         }
     }
 }

@@ -2,10 +2,10 @@
 {
     public class DefaultInputState : ICheckersInputState
     {
-        public bool Equals(ICheckersInputState? other)
+        public ICheckersAction? PreviousAction { get; }
+        public DefaultInputState(ICheckersAction? previousAction = null)
         {
-            if (other == null) return false;
-            return other is DefaultInputState;
+            PreviousAction = previousAction;
         }
     }
 }

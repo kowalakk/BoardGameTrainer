@@ -33,7 +33,10 @@ namespace Game.Checkers
             return possibleActions.list;
         }
 
-        private (List<ICheckersAction>, int) PossibleWhitePawnActions(CheckersState state, Field start, int minCapturesCount)
+        private (List<ICheckersAction>, int) PossibleWhitePawnActions(
+            CheckersState state, 
+            Field start, 
+            int minCapturesCount)
         {
             (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = PossiblePawnCaptures(state, start, minCapturesCount);
             if (possibleCaptures.list.Any())
@@ -59,7 +62,10 @@ namespace Game.Checkers
             return (possibleMoves, 0);
         }
 
-        private (List<ICheckersAction>, int) PossibleBlackPownActions(CheckersState state, Field start, int minCapturesCount)
+        private (List<ICheckersAction>, int) PossibleBlackPownActions(
+            CheckersState state, 
+            Field start, 
+            int minCapturesCount)
         {
             (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = PossiblePawnCaptures(state, start, minCapturesCount);
             if (possibleCaptures.list.Any())
@@ -85,7 +91,10 @@ namespace Game.Checkers
             return (possibleMoves, 0);
         }
 
-        private (List<ICheckersAction>, int) PossiblePawnCaptures(CheckersState state, Field start, int minCapturesCount)
+        private (List<ICheckersAction>, int) PossiblePawnCaptures(
+            CheckersState state, 
+            Field start, 
+            int minCapturesCount)
         {
             (List<ICheckersAction>, int) possibleCaptures = (new(), minCapturesCount);
 
@@ -113,7 +122,10 @@ namespace Game.Checkers
             return possibleCaptures;
         }
 
-        private static (List<ICheckersAction>, int) PossibleCrownedActions(CheckersState state, Field start, int minCapturesCount)
+        private static (List<ICheckersAction>, int) PossibleCrownedActions(
+            CheckersState state, 
+            Field start, 
+            int minCapturesCount)
         {
             (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = PossibleCrownedCaptures(state, start, minCapturesCount);
             if (possibleCaptures.list.Any())
@@ -124,7 +136,10 @@ namespace Game.Checkers
             return (PossibleCrownedMoves(state, start), 0);
         }
 
-        private static (List<ICheckersAction>, int) PossibleCrownedCaptures(CheckersState state, Field start, int minCapturesCount)
+        private static (List<ICheckersAction>, int) PossibleCrownedCaptures(
+            CheckersState state, 
+            Field start, 
+            int minCapturesCount)
         {
             (List<ICheckersAction>, int) possibleCaptures = (new(), minCapturesCount);
             foreach ((int dCol, int dRow, int fields) in GetDiagsData(start))
