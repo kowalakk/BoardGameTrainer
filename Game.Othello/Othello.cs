@@ -195,12 +195,12 @@ namespace Game.Othello
 
         public LanguageExt.Unit EmptyInputState()
         {
-            throw new NotImplementedException();
+            return LanguageExt.Unit.Default;
         }
 
         public OthelloState InitialState()
         {
-            throw new NotImplementedException();
+            return OthelloState.GenerateInitialOthelloState();
         }
     }
 }

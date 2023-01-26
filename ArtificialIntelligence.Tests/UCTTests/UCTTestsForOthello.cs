@@ -18,7 +18,7 @@ namespace Ai.Tests.UCT
         {
             var assesments = uct.MoveAssessment(OthelloState.GenerateInitialOthelloState());
             var bestMove = assesments.MaxBy(action => { return action.Item2; }).Item1;
-            Assert.Equal(bestMove, uct.ChooseMove(OthelloState.GenerateInitialOthelloState()));
+            Assert.Equal(bestMove, uct.ChooseAction(OthelloState.GenerateInitialOthelloState()));
         }
 
 

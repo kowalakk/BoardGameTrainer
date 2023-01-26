@@ -6,7 +6,7 @@ namespace Ai
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
-        public Action ChooseMove( State state)
+        public Action ChooseAction( State state)
         {
             throw new NotImplementedException();
         }

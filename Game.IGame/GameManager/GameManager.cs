@@ -26,16 +26,26 @@ namespace Game.IGame
             game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState, bestShownActionsCount));
         }
 
-        public GameResult HandleInput(double x, double y)
+        public GameResult HandleInput(double x, double y, bool isPlayer2Ai)
         {
             var (newInputState, action) = game.HandleInput(x, y, inputState, state);
             inputState = newInputState;
+            GameResult gameResult = GameResult.InProgress;
             if (action is not null)
             {
                 state = game.PerformAction(action, state);
-                ratedActions = ai.MoveAssessment(state);
+                gameResult = game.Result(state);
+                if (gameResult == GameResult.InProgress)
+                {
+                    if (isPlayer2Ai)
+                    {
+                        state = game.PerformAction(ai.ChooseAction(state), state);
+                        gameResult = game.Result(state);
+                    }
+                    ratedActions = ai.MoveAssessment(state);
+                }
             }
-            return game.Result(state);
+            return gameResult;
         }
     }
 }

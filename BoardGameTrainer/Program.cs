@@ -12,13 +12,12 @@ namespace BoardGameTrainer
 
         private static Application app;
 
-        private static IGameManager gameManager = new CheckersManagerFactory()
-            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(1000)); //na razie zaczynamy z warcabami, bo inaczej sie wykrzacza
+        private static IGameManager gameManager = new DefaultGameManager();
         private static string[] games = new string[] { "Checkers", "Othello" };
-        private static int gameNum = -1;
+        private static int gameNum = 0;
         private static bool showHintsForPlayer1 = true;
         private static bool showHintsForPlayer2 = false;
-        private static bool isAiPlayer2 = true;
+        private static bool isPlayer2Ai = true;
         private static bool isAImoduleOne = true;
         private static double computationTime;
         [STAThread]
@@ -72,19 +71,19 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                gameManager.HandleInput(x, y);
+                gameManager.HandleInput(x, y, isPlayer2Ai);
                 boardImage.QueueDraw();
-                if (isAiPlayer2)
-                {
+                //if (isPlayer2Ai)
+                //    gameManager.HandleAiTurn();
 
-                }
             };
 
             contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
 
             var newGameButton = new Button("New Game");
-            newGameButton.Clicked += (s, e) => OpenConfigWindow();
+
+            newGameButton.Clicked += (s, e) => { OpenConfigWindow(); };
             var restartButton = new Button("Restart");
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
@@ -137,8 +136,8 @@ namespace BoardGameTrainer
             {
                 numOfPlayersHbox
             };
-            onePlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = true; };
-            twoPlayerRadio.Clicked += (sender, args) => { isAiPlayer2 = false; };
+            onePlayerRadio.Clicked += (sender, args) => { isPlayer2Ai = true; };
+            twoPlayerRadio.Clicked += (sender, args) => { isPlayer2Ai = false; };
             numOfPlayersFrame.Show();
             numOfPlayersHbox.Show();
             onePlayerRadio.Show();
@@ -194,11 +193,12 @@ namespace BoardGameTrainer
             if (gameNum == 0)
             {
                 gameManager = new CheckersManagerFactory()
-            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000));
+                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(1000));
             }
             if (gameNum == 1)
             {
-                //gameManager = 
+                gameManager = new OthelloManagerFactory()
+                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(1000));
             }
         }
     }
