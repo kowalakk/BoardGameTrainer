@@ -1,6 +1,5 @@
 ﻿using Cairo;
 using Game.IGame;
-using Gdk;
 using Gtk;
 using LanguageExt;
 using static Game.Othello.OthelloState;
@@ -18,7 +17,64 @@ namespace Game.Othello
 
         public void DrawBoard(Context context, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
-            throw new NotImplementedException();
+            context.SetSourceRGB(0.86, 0.85, 0.74);
+            context.LineWidth = 0.001;
+            context.Rectangle(0, 0, 1, 1);
+            context.Fill();
+            context.SetSourceRGB(0, 0, 0);
+            const double fieldSize = 1.0 / boardSize;
+            
+            for (double position = 0; position <= 1; position += 0.125)
+            {
+                context.MoveTo(position, 0);
+                context.LineTo(position, 1);
+                context.Stroke();
+                context.MoveTo(0, position);
+                context.LineTo(1, position);
+                context.Stroke();
+            }
+            context.Scale(fieldSize, fieldSize);
+
+            for (int i = 0; i < boardSize; i++)
+                for (int j = 0; j < boardSize; j++)
+                {
+                    context.Translate(j, (boardSize - 1 - i));
+                    DrawPiece(context, state.board[i, j]);
+                    context.Translate(-j, -(boardSize - 1 - i));
+                }
+             
+            //foreach(var action in ratedActions)
+            //{
+            //    DrawRatedAction(context, action);
+            //}
+        }
+
+        private void DrawRatedAction(Context context, (OthelloAction, double) action)
+        {
+            //TODO
+        }
+
+        private void DrawPiece(Context context, Field field)
+        {
+            if(field != Field.Empty)
+            {
+                Color white = new(0.9, 0.9, 0.9);
+                Color grey = new(0.5, 0.5, 0.5);
+                Color black = new(0.1, 0.1, 0.1);
+
+                Color color = (field == Field.Black) ? black : white;
+                double lineWidth = context.LineWidth;
+                context.LineWidth = 0.03;
+
+                context.Arc(0.5, 0.5, 0.4, 0, 2 * Math.PI);
+                context.SetSourceColor(color);
+                context.FillPreserve();
+
+                context.SetSourceColor(grey);
+                context.Stroke();
+
+                context.LineWidth = lineWidth;
+            }
         }
 
         public IEnumerable<OthelloAction> FilterByInputState(IEnumerable<OthelloAction> actions, LanguageExt.Unit u)
@@ -84,85 +140,16 @@ namespace Game.Othello
                 return actions;
             }
             Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
-            Field opponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
 
-            (int, int, int, int) GetPotentialAction(int x, int y)
-            {
-                int up = 0;
-                int down = 0;
-                int left = 0;
-                int right = 0;
-                // sprawdzenie w każdym z 4 kierunków czy sąsiaduje z szeregiem pionków przeciwnika, zakończonym własnym pionkiem
-                int oponentsPiecesCount = 0;
-                for(int i = x - 1; i >= 0; i--)
-                {
-                    if (state.board[i, y] == Field.Empty)
-                        break;
-                    if (state.board[i, y] == opponentsColor)
-                        oponentsPiecesCount++;
-                    if (state.board[i, y] == playersColor)
-                    {
-                        if (oponentsPiecesCount > 0)
-                            up = oponentsPiecesCount;
-                        break;
-                    }
-                    
-                }
-                oponentsPiecesCount = 0;
-                
-                for (int i = x + 1; i < boardSize; i++)
-                {
-                    if (state.board[i, y] == Field.Empty)
-                        break;
-                    if (state.board[i, y] == opponentsColor)
-                        oponentsPiecesCount++;
-                    if (state.board[i, y] == playersColor)
-                    {
-                        if (oponentsPiecesCount > 0)
-                            down = oponentsPiecesCount;
-                        break;
-                    }
-                }
-                oponentsPiecesCount = 0;
-                for (int j = y - 1; j >= 0; j--)
-                {
-                    if (state.board[x, j] == Field.Empty)
-                        break;
-                    if (state.board[x, j] == opponentsColor)
-                        oponentsPiecesCount++;
-                    if (state.board[x, j] == playersColor)
-                    {
-                        if (oponentsPiecesCount > 0)
-                            left = oponentsPiecesCount;
-                        break;
-                    }
-                }
-                oponentsPiecesCount = 0;
-                for (int j = y + 1;  j < boardSize; j++)
-                {
-                    if (state.board[x, j] == Field.Empty)
-                        break;
-                    if (state.board[x, j] == opponentsColor)
-                        oponentsPiecesCount++;
-                    if (state.board[x, j] == playersColor)
-                    {
-                        if (oponentsPiecesCount > 0)
-                            right = oponentsPiecesCount;
-                        break;
-                    }
-                }
-                return (up, down, left, right);
-            }    
             for (int i = 0; i < boardSize; i++)
                 for (int j = 0; j < boardSize; j++)
                     if (state.board[i, j] == Field.Empty)
                     {
-                        (int up, int down, int left, int right) potentialAction = GetPotentialAction(i, j);
+                        (int up, int down, int left, int right) potentialAction = GetPotentialAction(i, j, state);
                         if (potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
                             continue;
                         actions.Add(new OthelloFullAction((i, j), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
-                    }
-                        
+                    }               
             return actions;
         }
 
@@ -185,7 +172,15 @@ namespace Game.Othello
 
         public (LanguageExt.Unit, OthelloAction?) HandleInput(double x, double y, LanguageExt.Unit inputState, OthelloState state)
         {
-            throw new NotImplementedException();
+            if (x < 0 || x > 1 || y < 0 || y > 1)
+                return (new LanguageExt.Unit(), new OthelloEmptyAction());
+            int row = (int)(x * boardSize);
+            int col = (int)(y * boardSize);
+            (int up, int down, int left, int right) potentialAction = GetPotentialAction(row, col, state);
+            if(potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
+                return (new LanguageExt.Unit(), new OthelloEmptyAction());
+            Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
+            return (new LanguageExt.Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
         }
 
         public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState)
@@ -195,12 +190,83 @@ namespace Game.Othello
 
         public LanguageExt.Unit EmptyInputState()
         {
-            throw new NotImplementedException();
+            return new LanguageExt.Unit();
         }
 
         public OthelloState InitialState()
         {
-            throw new NotImplementedException();
+            return OthelloState.GenerateInitialOthelloState();
+        }
+
+        (int up, int down, int left, int right) GetPotentialAction(int x, int y, OthelloState state)
+        {
+            int up = 0;
+            int down = 0;
+            int left = 0;
+            int right = 0;
+            Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
+            Field opponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
+
+            // sprawdzenie w każdym z 4 kierunków czy sąsiaduje z szeregiem pionków przeciwnika, zakończonym własnym pionkiem
+            int oponentsPiecesCount = 0;
+            for (int i = x - 1; i >= 0; i--)
+            {
+                if (state.board[i, y] == Field.Empty)
+                    break;
+                if (state.board[i, y] == opponentsColor)
+                    oponentsPiecesCount++;
+                if (state.board[i, y] == playersColor)
+                {
+                    if (oponentsPiecesCount > 0)
+                        up = oponentsPiecesCount;
+                    break;
+                }
+
+            }
+            oponentsPiecesCount = 0;
+
+            for (int i = x + 1; i < boardSize; i++)
+            {
+                if (state.board[i, y] == Field.Empty)
+                    break;
+                if (state.board[i, y] == opponentsColor)
+                    oponentsPiecesCount++;
+                if (state.board[i, y] == playersColor)
+                {
+                    if (oponentsPiecesCount > 0)
+                        down = oponentsPiecesCount;
+                    break;
+                }
+            }
+            oponentsPiecesCount = 0;
+            for (int j = y - 1; j >= 0; j--)
+            {
+                if (state.board[x, j] == Field.Empty)
+                    break;
+                if (state.board[x, j] == opponentsColor)
+                    oponentsPiecesCount++;
+                if (state.board[x, j] == playersColor)
+                {
+                    if (oponentsPiecesCount > 0)
+                        left = oponentsPiecesCount;
+                    break;
+                }
+            }
+            oponentsPiecesCount = 0;
+            for (int j = y + 1; j < boardSize; j++)
+            {
+                if (state.board[x, j] == Field.Empty)
+                    break;
+                if (state.board[x, j] == opponentsColor)
+                    oponentsPiecesCount++;
+                if (state.board[x, j] == playersColor)
+                {
+                    if (oponentsPiecesCount > 0)
+                        right = oponentsPiecesCount;
+                    break;
+                }
+            }
+            return (up, down, left, right);
         }
     }
 }
