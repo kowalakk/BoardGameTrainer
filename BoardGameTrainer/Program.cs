@@ -12,7 +12,7 @@ namespace BoardGameTrainer
 
         private static Application app;
 
-        private static IGameManager gameManager = new CheckersManagerFactory()
+        private static IGameManager gameManager = new OthelloManagerFactory()
             .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000)); //na razie zaczynamy z warcabami, bo inaczej sie wykrzacza
         private static string[] games = new string[] { "Checkers", "Othello" };
         private static int gameNum = -1;
@@ -58,9 +58,9 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                Othello othello = new Othello();
-                othello.DrawBoard(context, new LanguageExt.Unit(), OthelloState.GenerateInitialOthelloState(), null);
-                //gameManager.DrawBoard(context);
+                //Othello othello = new Othello();
+                //othello.DrawBoard(context, new LanguageExt.Unit(), OthelloState.GenerateInitialOthelloState(), null);
+                gameManager.DrawBoard(context);
 
             };
 
