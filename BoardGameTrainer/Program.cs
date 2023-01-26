@@ -13,7 +13,7 @@ namespace BoardGameTrainer
         private static Application app;
 
         private static IGameManager gameManager = new CheckersManagerFactory()
-            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000)); //na razie zaczynamy z warcabami, bo inaczej sie wykrzacza
+            .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(1000)); //na razie zaczynamy z warcabami, bo inaczej sie wykrzacza
         private static string[] games = new string[] { "Checkers", "Othello" };
         private static int gameNum = -1;
         private static bool showHintsForPlayer1 = true;
@@ -58,7 +58,7 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                gameManager.DrawBoard(context);
+                gameManager.DrawBoard(context, int.MaxValue);
 
             };
 

@@ -2,18 +2,18 @@
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
+    public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
 
-        public (ICheckersInputState, CheckersAction?) HandleInput(
+        public (ICheckersInputState, ICheckersAction?) HandleInput(
             double x,
             double y,
             ICheckersInputState inputState,
             CheckersState state)
         {
-            if (x < 0 || x > 1 || y < 0 || x > 1)
+            if (x < 0 || x > 1 || y < 0 || y > 1)
             {
-                return (new DefaultInputState(), null);
+                return (new DefaultInputState(inputState.PreviousAction), null);
             }
             int col = (int)(8 * x);
             int row = CheckersState.BOARD_SIZE - 1 - (int)(8 * y);
@@ -23,51 +23,55 @@ namespace Game.Checkers
             {
                 return HandleFirstClick(piece, clickedField, inputState, state);
             }
-            if (inputState is MarkedPieceInputState markedPieceCIS)
+            if (inputState is MarkedPieceInputState mpInputState)
             {
-                CheckersAction? nextAction = PossibleActions(state)
-                    .Where(action => action.Start.Equals(markedPieceCIS.MarkedField))
+                ICheckersAction? nextAction = PossibleActions(state)
+                    .Where(action => action.Start.Equals(mpInputState.MarkedField))
                     .FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
                 {
                     return HandleFirstClick(piece, clickedField, inputState, state);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new DefaultInputState(), nextAction);
+                    return (new DefaultInputState(nextAction), nextAction);
                 // part of action chosen
                 IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields()
                     .TakeWhile(field => !field.Equals(clickedField));
-                return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
+                return (new CaptureActionInProgressInputState(mpInputState.PreviousAction, visitedFields.Append(clickedField)), null);
             }
             {
-                CaptureActionInProgressInputState cIS = (CaptureActionInProgressInputState)inputState;
-                if (cIS.VisitedFields.Contains(clickedField)) // used field got chosen 
-                    return (cIS, null);
-                IEnumerable<CheckersAction> possibleActionsInProgress = PossibleActions(state).Where(
+                CaptureActionInProgressInputState caipInputState = (CaptureActionInProgressInputState)inputState;
+                if (caipInputState.VisitedFields.Contains(clickedField)) // used field got chosen 
+                    return (caipInputState, null);
+                IEnumerable<ICheckersAction> possibleActionsInProgress = PossibleActions(state).Where(
                     action => action.GetParticipatingFields()
-                    .Take(cIS.VisitedFields.Count()).SequenceEqual(cIS.VisitedFields));
-                CheckersAction? nextAction = possibleActionsInProgress.FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
+                    .Take(caipInputState.VisitedFields.Count()).SequenceEqual(caipInputState.VisitedFields));
+                ICheckersAction? nextAction = possibleActionsInProgress.FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
                 {
-                    return (cIS, null);
+                    return (caipInputState, null);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new DefaultInputState(), nextAction);
+                    return (new DefaultInputState(nextAction), nextAction);
                 // part of action chosen
                 IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields().TakeWhile(field => !field.Equals(clickedField));
-                return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
+                return (new CaptureActionInProgressInputState(caipInputState.PreviousAction,visitedFields.Append(clickedField)), null);
             }
 
         }
 
-        private (ICheckersInputState, CheckersAction?) HandleFirstClick(Piece piece, Field clickedField, ICheckersInputState inputState, CheckersState state)
+        private (ICheckersInputState, ICheckersAction?) HandleFirstClick(
+            Piece piece, 
+            Field clickedField, 
+            ICheckersInputState inputState, 
+            CheckersState state)
         {
             if ((state.CurrentPlayer == Player.One && (piece == Piece.WhitePawn || piece == Piece.WhiteCrowned))
     || (state.CurrentPlayer == Player.Two && (piece == Piece.BlackPawn || piece == Piece.BlackCrowned)))
             {
-                return (new MarkedPieceInputState(clickedField), null);
+                return (new MarkedPieceInputState(inputState.PreviousAction, clickedField), null);
             }
-            return (new DefaultInputState(), null);
+            return (new DefaultInputState(inputState.PreviousAction), null);
         }
     }
 }

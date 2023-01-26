@@ -7,7 +7,7 @@ namespace Ai.Tests.UCT
 {
     public class PrivateMethodsTests
     {
-        private readonly Uct<CheckersAction, CheckersState, ICheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
+        private readonly Uct<ICheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]
         public void TreePolicyTest()
         {
@@ -16,12 +16,12 @@ namespace Ai.Tests.UCT
             state.SetPieceAt("D4", Piece.WhitePawn);
             state.SetPieceAt("C5", Piece.BlackPawn);
 
-            Node<CheckersAction, CheckersState> root = new(state);
+            Node<ICheckersAction, CheckersState> root = new(state);
             MethodInfo method = uct.GetType().GetMethod("TreePolicy", BindingFlags.NonPublic | BindingFlags.Instance)!;
             var retVal = method.Invoke(uct, new object[] { root });
-            var enumerator = Assert.IsAssignableFrom<IEnumerator<Node<CheckersAction, CheckersState>>>(retVal);
+            var enumerator = Assert.IsAssignableFrom<IEnumerator<Node<ICheckersAction, CheckersState>>>(retVal);
 
-            List<Node<CheckersAction, CheckersState>> nodes = new();
+            List<Node<ICheckersAction, CheckersState>> nodes = new();
             Assert.True(enumerator.MoveNext());
             nodes.Add(enumerator.Current);
             Assert.True(enumerator.MoveNext());
@@ -39,7 +39,7 @@ namespace Ai.Tests.UCT
             CheckersState state = CheckersState.GetEmptyBoardState();
             state.SetPieceAt("B4", Piece.WhitePawn);
 
-            Node<CheckersAction, CheckersState> root = new(state);
+            Node<ICheckersAction, CheckersState> root = new(state);
             MethodInfo method = uct.GetType().GetMethod("Expand", BindingFlags.NonPublic | BindingFlags.Instance)!;
             
             method.Invoke(uct, new object[] { root });
@@ -63,19 +63,19 @@ namespace Ai.Tests.UCT
         [Fact]
         public void BackupTest()
         {
-            Node<CheckersAction, CheckersState> root = new(CheckersState.GetEmptyBoardState())
+            Node<ICheckersAction, CheckersState> root = new(CheckersState.GetEmptyBoardState())
             {
                 VisitCount = 0,
                 SuccessCount = 0
             };
-            Node<CheckersAction, CheckersState> child = new(
+            Node<ICheckersAction, CheckersState> child = new(
                 new MoveAction(new("C1"), new("B2")), CheckersState.GetEmptyBoardState(Player.Two), root)
             {
                 VisitCount = 0,
                 SuccessCount = 0
             };
             root.ExpandedChildren.Add(child);
-            Node<CheckersAction, CheckersState> grandchild = new(
+            Node<ICheckersAction, CheckersState> grandchild = new(
                 new MoveAction(new("C1"), new("D2")), CheckersState.GetEmptyBoardState(), child)
             {
                 VisitCount = 0,
@@ -102,18 +102,18 @@ namespace Ai.Tests.UCT
         public void BestChildTest()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            Node<CheckersAction, CheckersState> root = new(state)
+            Node<ICheckersAction, CheckersState> root = new(state)
             {
                 VisitCount = 10,
                 SuccessCount = -4
             };
-            Node<CheckersAction, CheckersState> child1 = new(new MoveAction(new("C1"), new("B2")), state, root)
+            Node<ICheckersAction, CheckersState> child1 = new(new MoveAction(new("C1"), new("B2")), state, root)
             {
                 VisitCount = 5,
                 SuccessCount = 3
             };
             root.ExpandedChildren.Add(child1);
-            Node<CheckersAction, CheckersState> child2 = new(new MoveAction(new("C1"), new("D2")), state, root)
+            Node<ICheckersAction, CheckersState> child2 = new(new MoveAction(new("C1"), new("D2")), state, root)
             {
                 VisitCount = 5,
                 SuccessCount = 1
@@ -121,7 +121,7 @@ namespace Ai.Tests.UCT
             root.ExpandedChildren.Add(child2);
             MethodInfo method = uct.GetType().GetMethod("BestChild", BindingFlags.NonPublic | BindingFlags.Instance)!;
             var retVal = method.Invoke(uct, new object[] { root });
-            var node = Assert.IsAssignableFrom<Node<CheckersAction, CheckersState>>(retVal);
+            var node = Assert.IsAssignableFrom<Node<ICheckersAction, CheckersState>>(retVal);
             Assert.Equal(child1, node);
         }
     }
