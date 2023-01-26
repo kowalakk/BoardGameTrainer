@@ -1,11 +1,45 @@
 ﻿using Cairo;
 using Game.IGame;
+using LanguageExt;
 
 namespace BoardGameTrainer
 {
     internal class DefaultGameManager : IGameManager
     {
-        public void DrawBoard(Context context, int bestShownActionsCount) { }
+        private GameResult gameResult;
+
+        public DefaultGameManager(GameResult gameResult)
+        {
+            this.gameResult = gameResult;
+        }
+
+        public void DrawBoard(Context context, int bestShownActionsCount)
+        {
+
+            if (gameResult == GameResult.InProgress)
+                return;
+            string text = string.Empty;
+            if (gameResult == GameResult.PlayerOneWins)
+            {
+                text = "Player One Wins!";
+                context.MoveTo(0, 0.5);
+            }
+            else if (gameResult == GameResult.PlayerTwoWins)
+            {
+                text = "Player Two Wins!";
+                context.MoveTo(0 , 0.5 );
+            }
+            else if (gameResult == GameResult.Draw)
+            {
+                text = "A Draw!";
+                context.MoveTo(0.25, 0.5);
+            }
+            context.SetSourceRGB(0, 0, 0);
+            context.SelectFontFace("Sans", FontSlant.Italic, FontWeight.Bold);
+            context.SetFontSize(0.12);
+            context.ShowText(text);
+            context.Stroke();
+        }
 
         public GameResult HandleInput(double x, double y, bool isPlayer2Ai)
         {

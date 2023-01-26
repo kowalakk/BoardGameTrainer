@@ -12,7 +12,7 @@ namespace BoardGameTrainer
 
         private static Application app;
 
-        private static IGameManager gameManager = new DefaultGameManager();
+        private static IGameManager gameManager = new DefaultGameManager(GameResult.InProgress);
         private static string[] games = new string[] { "Checkers", "Othello" };
         private static int gameNum = 0;
         private static bool showHintsForPlayer1 = true;
@@ -71,19 +71,18 @@ namespace BoardGameTrainer
                 double y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                gameManager.HandleInput(x, y, isPlayer2Ai);
+                GameResult gameResult = gameManager.HandleInput(x, y, isPlayer2Ai);
+                if (gameResult != GameResult.InProgress)
+                    gameManager = new DefaultGameManager(gameResult);
                 boardImage.QueueDraw();
-                //if (isPlayer2Ai)
-                //    gameManager.HandleAiTurn();
-
             };
 
             contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
 
             var newGameButton = new Button("New Game");
-
             newGameButton.Clicked += (s, e) => { OpenConfigWindow(); };
+
             var restartButton = new Button("Restart");
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
