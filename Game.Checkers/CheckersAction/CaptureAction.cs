@@ -91,6 +91,8 @@ namespace Game.Checkers
             }
             newState.SetPieceAtWithPossiblePromotion(Finish, capturer);
             newState.CurrentPlayer = state.CurrentPlayer == Player.One ? Player.Two : Player.One;
+            newState.LastAction = this;
+
             return newState;
         }
     }

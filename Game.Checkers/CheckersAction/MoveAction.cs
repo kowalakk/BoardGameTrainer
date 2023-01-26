@@ -42,6 +42,8 @@ namespace Game.Checkers
             newState.SetPieceAt(Start, Piece.None);
             newState.SetPieceAtWithPossiblePromotion(Finish, movedPiece);
             newState.CurrentPlayer = state.CurrentPlayer == Player.One? Player.Two: Player.One;
+            newState.LastAction = this;
+
             return newState;
         }
     }

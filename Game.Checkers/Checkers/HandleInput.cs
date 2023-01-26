@@ -16,7 +16,7 @@ namespace Game.Checkers
                 return (new DefaultInputState(inputState.PreviousAction), null);
             }
             int col = (int)(8 * x);
-            int row = CheckersState.BOARD_SIZE - 1 - (int)(8 * y);
+            int row = CheckersState.boardSize - 1 - (int)(8 * y);
             Piece piece = state.GetPieceAt(col, row);
             Field clickedField = new Field(col, row);
             if (inputState is DefaultInputState)

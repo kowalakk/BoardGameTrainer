@@ -32,7 +32,7 @@ namespace Game.Checkers
                 DrawPiece(context, state, field);
             }
             DrawInpputState(context, inputState, state, ratedActions);
-            DrawPreviousAction(context, inputState.PreviousAction, state);
+            DrawPreviousAction(context, state);
         }
 
         private void MoveContextToField(Context context, Field field)
@@ -208,8 +208,9 @@ namespace Game.Checkers
             context.Stroke();
         }
 
-        private void DrawPreviousAction(Context context, ICheckersAction? previousAction, CheckersState state)
+        private void DrawPreviousAction(Context context, CheckersState state)
         {
+            ICheckersAction? previousAction = state.LastAction;
             if (previousAction is null)
                 return;
             foreach (Field field in previousAction.GetParticipatingFields())

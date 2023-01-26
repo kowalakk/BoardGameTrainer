@@ -13,7 +13,7 @@ namespace BoardGameTrainer
             this.gameResult = gameResult;
         }
 
-        public void DrawBoard(Context context, int bestShownActionsCount)
+        public void DrawBoard(Context context, int numberOfShownHints)
         {
 
             if (gameResult == GameResult.InProgress)

@@ -46,10 +46,10 @@ namespace Game.Checkers
                 return (new List<ICheckersAction>(), 0);
             List<ICheckersAction> possibleMoves = new();
             int newRow = start.Row + 1;
-            if (newRow < CheckersState.BOARD_SIZE)
+            if (newRow < CheckersState.boardSize)
             {
                 int newCol = start.Col + 1;
-                if (newCol < CheckersState.BOARD_SIZE && state.GetPieceAt(newCol, newRow) == Piece.None)
+                if (newCol < CheckersState.boardSize && state.GetPieceAt(newCol, newRow) == Piece.None)
                 {
                     possibleMoves.Add(new MoveAction(start, new Field(newCol, newRow)));
                 }
@@ -78,7 +78,7 @@ namespace Game.Checkers
             if (newRow >= 0)
             {
                 int newCol = start.Col + 1;
-                if (newCol < CheckersState.BOARD_SIZE && state.GetPieceAt(newCol, newRow) == Piece.None)
+                if (newCol < CheckersState.boardSize && state.GetPieceAt(newCol, newRow) == Piece.None)
                 {
                     possibleMoves.Add(new MoveAction(start, new Field(newCol, newRow)));
                 }
@@ -107,8 +107,8 @@ namespace Game.Checkers
                 {
                     (int x, int y) = (neighbour.Col - start.Col, neighbour.Row - start.Row);
                     Field finish = new(neighbour.Col + x, neighbour.Row + y);
-                    if (finish.Col < CheckersState.BOARD_SIZE && finish.Col >= 0
-                        && finish.Row < CheckersState.BOARD_SIZE && finish.Row >= 0
+                    if (finish.Col < CheckersState.boardSize && finish.Col >= 0
+                        && finish.Row < CheckersState.boardSize && finish.Row >= 0
                         && state.GetPieceAt(finish) == Piece.None)
                     {
                         CaptureAction action = new(start, neighbour, finish);
@@ -245,9 +245,9 @@ namespace Game.Checkers
 
         private static IEnumerable<(int, int, int)> GetDiagsData(Field field)
         {
-            yield return (1, 1, Math.Min(CheckersState.BOARD_SIZE - 1 - field.Col, CheckersState.BOARD_SIZE - 1 - field.Row));
-            yield return (-1, 1, Math.Min(field.Col, CheckersState.BOARD_SIZE - 1 - field.Row));
-            yield return (1, -1, Math.Min(CheckersState.BOARD_SIZE - 1 - field.Col, field.Row));
+            yield return (1, 1, Math.Min(CheckersState.boardSize - 1 - field.Col, CheckersState.boardSize - 1 - field.Row));
+            yield return (-1, 1, Math.Min(field.Col, CheckersState.boardSize - 1 - field.Row));
+            yield return (1, -1, Math.Min(CheckersState.boardSize - 1 - field.Col, field.Row));
             yield return (-1, -1, Math.Min(field.Col, field.Row));
         }
     }

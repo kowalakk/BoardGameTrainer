@@ -14,34 +14,39 @@ namespace Game.Checkers
 
     public class CheckersState : IEquatable<CheckersState>
     {
-        public static int BOARD_SIZE = 8;
+        public static int boardSize = 8;
         //private static Dictionary<(int, int), (int, int)[] Neighbours = new Dictionary<(int, int), List<(int, int)>> {
         //    new KeyValuePair<(int, int),List<(int, int)>>((0,0), new List<(int, int)> { (1,1) }),
         //};
         private readonly Piece[,] board;
+
         public Player CurrentPlayer { get; set; }
 
-        private CheckersState(Piece[,] board, Player currentPlayer)
+        public ICheckersAction? LastAction { get; set; }
+
+        private CheckersState(Piece[,] board, Player currentPlayer, ICheckersAction? lastAction = null)
         {
-            this.board = new Piece[BOARD_SIZE, BOARD_SIZE];
+            this.board = new Piece[boardSize, boardSize];
             Array.Copy(board, this.board, board.Length);
             CurrentPlayer = currentPlayer;
+            LastAction = lastAction;
         }
 
         public CheckersState(CheckersState state)
         {
-            board = new Piece[BOARD_SIZE, BOARD_SIZE];
+            board = new Piece[boardSize, boardSize];
             Array.Copy(state.board, board, state.board.Length);
             CurrentPlayer = state.CurrentPlayer;
+            LastAction = state.LastAction;
         }
 
         public bool Equals(CheckersState? other)
         {
             if (other == null) return false;
             if (CurrentPlayer != other.CurrentPlayer) return false;
-            for (int x = 0; x < BOARD_SIZE; x++)
+            for (int x = 0; x < boardSize; x++)
             {
-                for (int y = 0; y < BOARD_SIZE; y++)
+                for (int y = 0; y < boardSize; y++)
                 {
                     if (GetPieceAt(x, y) != other.GetPieceAt(x, y)) return false;
                 }
@@ -50,9 +55,9 @@ namespace Game.Checkers
         }
         public IEnumerable<Field> GetFields()
         {
-            for (int col = 0; col < BOARD_SIZE; col++)
+            for (int col = 0; col < boardSize; col++)
             {
-                for (int row = col % 2; row < BOARD_SIZE; row += 2)
+                for (int row = col % 2; row < boardSize; row += 2)
                 {
                     yield return new Field(col, row);
                 }
@@ -63,16 +68,16 @@ namespace Game.Checkers
             int x = field.Col;
             int y = field.Row;
             List<Field> neighbours = new();
-            if (y < BOARD_SIZE - 1)
+            if (y < boardSize - 1)
             {
-                if (x < BOARD_SIZE - 1)
+                if (x < boardSize - 1)
                     neighbours.Add(new Field(x + 1, y + 1));
                 if (x > 0)
                     neighbours.Add(new Field(x - 1, y + 1));
             }
             if (y > 0)
             {
-                if (x < BOARD_SIZE - 1)
+                if (x < boardSize - 1)
                     neighbours.Add(new Field(x + 1, y - 1));
                 if (x > 0)
                     neighbours.Add(new Field(x - 1, y - 1));
@@ -101,7 +106,7 @@ namespace Game.Checkers
         public void SetPieceAtWithPossiblePromotion(Field field, Piece piece)
         {
 
-            if (piece == Piece.WhitePawn && field.Row == BOARD_SIZE - 1)
+            if (piece == Piece.WhitePawn && field.Row == boardSize - 1)
             {
                 SetPieceAt(field.Col, field.Row, Piece.WhiteCrowned);
                 return;

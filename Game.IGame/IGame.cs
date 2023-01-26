@@ -39,7 +39,7 @@ namespace Game.IGame
         public IEnumerable<(Action, double)> FilterByInputState(
             IEnumerable<(Action, double)> ratedActions, 
             InputState inputState, 
-            int bestShownActionsCount);
+            int numberOfActions);
     }
 
 }

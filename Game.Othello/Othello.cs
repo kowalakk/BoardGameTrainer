@@ -188,7 +188,7 @@ namespace Game.Othello
             throw new NotImplementedException();
         }
 
-        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState, int bestShownActionsCount)
+        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState, int numberOfActions)
         {
             return ratedActions;
         }

@@ -35,10 +35,10 @@ namespace Game.Checkers
         public IEnumerable<(ICheckersAction, double)> FilterByInputState(
             IEnumerable<(ICheckersAction, double)> ratedActions, 
             ICheckersInputState inputState,
-            int bestShownActionsCount)
+            int numberOfActions)
         {
             if (inputState is DefaultInputState)
-                return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(bestShownActionsCount);
+                return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(numberOfActions);
             if (inputState is MarkedPieceInputState cIS1)
                 return ratedActions.Where(tuple => tuple.Item1.Start.Equals(cIS1.MarkedField));
             if (inputState is CaptureActionInProgressInputState cIS2)
