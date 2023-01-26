@@ -21,9 +21,9 @@ namespace Game.IGame
             ratedActions = ai.MoveAssessment(state);
         }
 
-        public void DrawBoard(Context context)
+        public void DrawBoard(Context context, int bestShownActionsCount)
         {
-            game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState));
+            game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState, bestShownActionsCount));
         }
 
         public GameResult HandleInput(double x, double y)

@@ -31,7 +31,7 @@ namespace Game.Checkers
                 DrawField(context);
                 DrawPiece(context, state, field);
             }
-            DrawGameState(context, inputState, state, ratedActions);
+            DrawInpputState(context, inputState, state, ratedActions);
             DrawPreviousAction(context, inputState.PreviousAction, state);
         }
 
@@ -117,7 +117,7 @@ namespace Game.Checkers
             context.LineWidth = lineWidth;
         }
 
-        private void DrawGameState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
+        private void DrawInpputState(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
         {
             if (inputState is DefaultInputState) // draw best actions
             {
@@ -233,11 +233,7 @@ namespace Game.Checkers
             context.LineWidth = 0.03 * fieldSize;
 
             context.SetSourceColor(color);
-            
-            context.Arc(0.2 * fieldSize, 0.2 * fieldSize, 0.15 * fieldSize, Math.PI, 1.5 * Math.PI);
-            context.Arc(0.8 * fieldSize, 0.2 * fieldSize, 0.15 * fieldSize, 1.5 * Math.PI, 2 * Math.PI);
-            context.Arc(0.8 * fieldSize, 0.8 * fieldSize, 0.15 * fieldSize, 2 * Math.PI, 0.5 * Math.PI);
-            context.Arc(0.2 * fieldSize, 0.8 * fieldSize, 0.15 * fieldSize, 0.5 * Math.PI, Math.PI);
+            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.3 * fieldSize, 0, 2 * Math.PI);
             context.ClosePath();
             context.Stroke();
 

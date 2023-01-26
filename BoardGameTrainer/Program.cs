@@ -58,7 +58,7 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                gameManager.DrawBoard(context);
+                gameManager.DrawBoard(context, int.MaxValue);
 
             };
 
