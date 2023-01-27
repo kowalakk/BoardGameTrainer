@@ -65,13 +65,17 @@ namespace Game.Checkers
             CapturesCount++;
         }
 
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as ICheckersAction);
+        }
+
         public bool Equals(ICheckersAction? other)
         {
             if (other == null) return false;
-            if (other is not CaptureAction) return false;
-            CaptureAction moveAction = (CaptureAction)other;
-            if (!moveAction.Start.Equals(Start)) return false;
-            if (!moveAction.Captures.SequenceEqual(Captures)) return false;
+            if (other is not CaptureAction captureAction) return false;
+            if (!captureAction.Start.Equals(Start)) return false;
+            if (!captureAction.Captures.SequenceEqual(Captures)) return false;
             return true;
         }
 

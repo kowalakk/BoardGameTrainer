@@ -7,7 +7,7 @@ namespace Ai.Tests.UCT
 {
     public class PrivateMethodsTests
     {
-        private readonly Uct<ICheckersAction, CheckersState, CheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
+        private readonly Uct<ICheckersAction, CheckersState, ICheckersInputState> uct = new(1.414, new Checkers(), new IterationStopCondition(10));
         [Fact]
         public void TreePolicyTest()
         {
@@ -19,41 +19,38 @@ namespace Ai.Tests.UCT
             Node<ICheckersAction, CheckersState> root = new(state);
             MethodInfo method = uct.GetType().GetMethod("TreePolicy", BindingFlags.NonPublic | BindingFlags.Instance)!;
             var retVal = method.Invoke(uct, new object[] { root });
-            var enumerator = Assert.IsAssignableFrom<IEnumerator<Node<ICheckersAction, CheckersState>>>(retVal);
+            Assert.IsAssignableFrom<Node<ICheckersAction, CheckersState>>(retVal);
 
-            List<Node<ICheckersAction, CheckersState>> nodes = new();
-            Assert.True(enumerator.MoveNext());
-            nodes.Add(enumerator.Current);
-            Assert.True(enumerator.MoveNext());
-            nodes.Add(enumerator.Current);
-            try
-            {
-                enumerator.MoveNext();
-                Assert.Fail("BestChild() should return null");
-            }
-            catch (NullReferenceException) { }
+            retVal = method.Invoke(uct, new object[] { root });
+            Assert.IsAssignableFrom<Node<ICheckersAction, CheckersState>>(retVal);
+
+            retVal = method.Invoke(uct, new object[] { root });
+            var node1 = Assert.IsAssignableFrom<Node<ICheckersAction, CheckersState>>(retVal);
+
+            retVal = method.Invoke(uct, new object[] { root });
+            var node2 = Assert.IsAssignableFrom<Node<ICheckersAction, CheckersState>>(retVal);
+
+            Assert.Equal(node1, node2);
+
         }
-        [Fact] 
-        public void ExpandTest() 
+        [Fact]
+        public void ExpandTest()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
             state.SetPieceAt("B4", Piece.WhitePawn);
 
             Node<ICheckersAction, CheckersState> root = new(state);
             MethodInfo method = uct.GetType().GetMethod("Expand", BindingFlags.NonPublic | BindingFlags.Instance)!;
-            
-            method.Invoke(uct, new object[] { root });
-            Assert.NotNull(root.UnexpandedChildren);
-            Assert.NotNull(root.ExpandedChildren);
-            Assert.Single(root.UnexpandedChildren);
-            Assert.Single(root.ExpandedChildren);
 
             method.Invoke(uct, new object[] { root });
-            Assert.Empty(root.UnexpandedChildren);
-            Assert.Equal(2, root.ExpandedChildren.Count);
+
+            Assert.NotNull(root.UnexpandedChildren);
+            Assert.NotNull(root.ExpandedChildren);
+            Assert.Equal(2, root.UnexpandedChildren!.Count);
+            Assert.Empty(root.ExpandedChildren);
         }
-        [Fact] 
-        public void DefaultPolicyTest() 
+        [Fact]
+        public void DefaultPolicyTest()
         {
             CheckersState state = CheckersState.GetInitialState();
             MethodInfo method = uct.GetType().GetMethod("DefaultPolicy", BindingFlags.NonPublic | BindingFlags.Instance)!;

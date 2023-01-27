@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Othello", "Game.Othell
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameTrainer.Tests", "BoardGameTrainerTests\BoardGameTrainer.Tests.csproj", "{31AA4FE0-59A4-4BC4-B905-38DE852B6525}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.CheckersTests", "Game.CheckersTest\Game.CheckersTests.csproj", "{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Checkers.Tests", "Game.CheckersTest\Game.Checkers.Tests.csproj", "{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.OthelloTests", "Game.OthelloTests\Game.OthelloTests.csproj", "{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}"
 EndProject

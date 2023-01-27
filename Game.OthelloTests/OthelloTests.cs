@@ -49,7 +49,7 @@ namespace Game.Othello.Tests
             for (int i = 0; i < boardSize; i++)
                 for (int j = 0; j < boardSize; j++)
                     board[i, j] = Field.Empty;
-            board[2, 3] = board[3,3] = board[3, 4] = board[4, 3] = Field.Black;
+            board[2, 3] = board[3, 3] = board[3, 4] = board[4, 3] = Field.Black;
             board[4, 4] = Field.White;
             OthelloState expected = new OthelloState(board, 30, 29, false);
             OthelloState actual = othello.PerformAction(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0), OthelloState.GenerateInitialOthelloState());
@@ -78,7 +78,7 @@ namespace Game.Othello.Tests
         }
 
         [Fact]
-        void PossibleActionsShouldReturnEmptyList()
+        void PossibleActionsShouldReturnListContainingOneOthelloEmptyAction()
         {
             Field[,] board = new Field[boardSize, boardSize];
             for (int i = 0; i < boardSize; i++)
@@ -86,14 +86,16 @@ namespace Game.Othello.Tests
                     board[i, j] = Field.Empty;
             board[0, 0] = Field.White;
             OthelloState state = new OthelloState(board, 23, 22, false);
-            Assert.Equal(new List<OthelloFullAction>(), othello.PossibleActions(state));
+            Assert.Equal(new List<OthelloAction> { new OthelloEmptyAction() }, othello.PossibleActions(state));
         }
 
         [Fact]
         void PossibleActionsShouldReturnListContainingOneOthelloEmptyActionIfCurrentPlayerHasNoPieces()
         {
-            List<OthelloAction> actionsEmpty = new List<OthelloAction>();
-            actionsEmpty.Add(new OthelloEmptyAction());
+            List<OthelloAction> actionsEmpty = new List<OthelloAction>
+            {
+                new OthelloEmptyAction()
+            };
             OthelloState state = GenerateInitialOthelloState();
             state.BlackHandCount = 0;
             Assert.Equal(actionsEmpty, othello.PossibleActions(state));

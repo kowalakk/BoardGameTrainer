@@ -14,6 +14,11 @@ namespace Game.Checkers
             Finish = finish;
         }
 
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as ICheckersAction);
+        }
+
         public bool Equals(ICheckersAction? other)
         {
             if (other == null) return false;

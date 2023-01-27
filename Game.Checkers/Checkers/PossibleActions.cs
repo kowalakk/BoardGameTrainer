@@ -13,7 +13,7 @@ namespace Game.Checkers
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.WhitePawn)
-                        UpdateActions(ref possibleActions, PossibleWhitePawnActions(state, field, possibleActions.maxCapturesCount));
+                        UpdateActions(ref possibleActions, PossiblePawnActions(state, field, possibleActions.maxCapturesCount, 1));
                     else if (piece == Piece.WhiteCrowned)
                         UpdateActions(ref possibleActions, PossibleCrownedActions(state, field, possibleActions.maxCapturesCount));
                 }
@@ -24,7 +24,7 @@ namespace Game.Checkers
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.BlackPawn)
-                        UpdateActions(ref possibleActions, PossibleBlackPownActions(state, field, possibleActions.maxCapturesCount));
+                        UpdateActions(ref possibleActions, PossiblePawnActions(state, field, possibleActions.maxCapturesCount, -1));
                     else if (piece == Piece.BlackCrowned)
                         UpdateActions(ref possibleActions, PossibleCrownedActions(state, field, possibleActions.maxCapturesCount));
 
@@ -33,19 +33,20 @@ namespace Game.Checkers
             return possibleActions.list;
         }
 
-        private (List<ICheckersAction>, int) PossibleWhitePawnActions(
-            CheckersState state, 
-            Field start, 
-            int minCapturesCount)
+        private (List<ICheckersAction>, int) PossiblePawnActions(
+            CheckersState state,
+            Field start,
+            int minCapturesCount,
+            int directionOfMovement)
         {
             (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = PossiblePawnCaptures(state, start, minCapturesCount);
             if (possibleCaptures.list.Any())
                 return possibleCaptures;
-            //no captures - simple move north-east/north-west
+            //no captures - simple move
             if (minCapturesCount > 0)
                 return (new List<ICheckersAction>(), 0);
             List<ICheckersAction> possibleMoves = new();
-            int newRow = start.Row + 1;
+            int newRow = start.Row + directionOfMovement;
             if (newRow < CheckersState.boardSize)
             {
                 int newCol = start.Col + 1;
@@ -62,38 +63,9 @@ namespace Game.Checkers
             return (possibleMoves, 0);
         }
 
-        private (List<ICheckersAction>, int) PossibleBlackPownActions(
-            CheckersState state, 
-            Field start, 
-            int minCapturesCount)
-        {
-            (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = PossiblePawnCaptures(state, start, minCapturesCount);
-            if (possibleCaptures.list.Any())
-                return possibleCaptures;
-            //no captures - simple move south-east/south-west
-            if (minCapturesCount > 0)
-                return (new List<ICheckersAction>(), 0);
-            List<ICheckersAction> possibleMoves = new();
-            int newRow = start.Row - 1;
-            if (newRow >= 0)
-            {
-                int newCol = start.Col + 1;
-                if (newCol < CheckersState.boardSize && state.GetPieceAt(newCol, newRow) == Piece.None)
-                {
-                    possibleMoves.Add(new MoveAction(start, new Field(newCol, newRow)));
-                }
-                newCol = start.Col - 1;
-                if (newCol >= 0 && state.GetPieceAt(newCol, newRow) == Piece.None)
-                {
-                    possibleMoves.Add(new MoveAction(start, new Field(newCol, newRow)));
-                }
-            }
-            return (possibleMoves, 0);
-        }
-
         private (List<ICheckersAction>, int) PossiblePawnCaptures(
-            CheckersState state, 
-            Field start, 
+            CheckersState state,
+            Field start,
             int minCapturesCount)
         {
             (List<ICheckersAction>, int) possibleCaptures = (new(), minCapturesCount);
@@ -123,8 +95,8 @@ namespace Game.Checkers
         }
 
         private static (List<ICheckersAction>, int) PossibleCrownedActions(
-            CheckersState state, 
-            Field start, 
+            CheckersState state,
+            Field start,
             int minCapturesCount)
         {
             (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = PossibleCrownedCaptures(state, start, minCapturesCount);
@@ -137,8 +109,8 @@ namespace Game.Checkers
         }
 
         private static (List<ICheckersAction>, int) PossibleCrownedCaptures(
-            CheckersState state, 
-            Field start, 
+            CheckersState state,
+            Field start,
             int minCapturesCount)
         {
             (List<ICheckersAction>, int) possibleCaptures = (new(), minCapturesCount);

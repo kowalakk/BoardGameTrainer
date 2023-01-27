@@ -20,18 +20,6 @@ namespace Game.Checkers
             return new DefaultInputState();
         }
 
-        //needs optimization
-        public GameResult Result(CheckersState state)
-        {
-            IEnumerable<ICheckersAction> possibleActions = PossibleActions(state);
-            if (possibleActions.Count() == 0)
-            {
-                if (state.CurrentPlayer == Player.One) return GameResult.PlayerTwoWins;
-                return GameResult.PlayerOneWins;
-            }
-            return GameResult.InProgress;
-        }
-
         public IEnumerable<(ICheckersAction, double)> FilterByInputState(
             IEnumerable<(ICheckersAction, double)> ratedActions, 
             ICheckersInputState inputState,
