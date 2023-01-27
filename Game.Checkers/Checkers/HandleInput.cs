@@ -13,7 +13,7 @@ namespace Game.Checkers
         {
             if (x < 0 || x > 1 || y < 0 || y > 1)
             {
-                return (new DefaultInputState(inputState.PreviousAction), null);
+                return (new DefaultInputState(), null);
             }
             int col = (int)(8 * x);
             int row = CheckersState.boardSize - 1 - (int)(8 * y);
@@ -33,11 +33,11 @@ namespace Game.Checkers
                     return HandleFirstClick(piece, clickedField, inputState, state);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new DefaultInputState(nextAction), nextAction);
+                    return (new DefaultInputState(), nextAction);
                 // part of action chosen
                 IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields()
                     .TakeWhile(field => !field.Equals(clickedField));
-                return (new CaptureActionInProgressInputState(mpInputState.PreviousAction, visitedFields.Append(clickedField)), null);
+                return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
             }
             {
                 CaptureActionInProgressInputState caipInputState = (CaptureActionInProgressInputState)inputState;
@@ -52,10 +52,10 @@ namespace Game.Checkers
                     return (caipInputState, null);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
-                    return (new DefaultInputState(nextAction), nextAction);
+                    return (new DefaultInputState(), nextAction);
                 // part of action chosen
                 IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields().TakeWhile(field => !field.Equals(clickedField));
-                return (new CaptureActionInProgressInputState(caipInputState.PreviousAction,visitedFields.Append(clickedField)), null);
+                return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
             }
 
         }
@@ -69,9 +69,9 @@ namespace Game.Checkers
             if ((state.CurrentPlayer == Player.One && (piece == Piece.WhitePawn || piece == Piece.WhiteCrowned))
     || (state.CurrentPlayer == Player.Two && (piece == Piece.BlackPawn || piece == Piece.BlackCrowned)))
             {
-                return (new MarkedPieceInputState(inputState.PreviousAction, clickedField), null);
+                return (new MarkedPieceInputState(clickedField), null);
             }
-            return (new DefaultInputState(inputState.PreviousAction), null);
+            return (new DefaultInputState(), null);
         }
     }
 }
