@@ -14,7 +14,7 @@ namespace BoardGameTrainer
 
         private static IGameManager gameManager = new DefaultGameManager(GameResult.InProgress);
         private static string[] games = new string[] { "Checkers", "Othello" };
-        private static int gameNum = 0;
+        private static int gameNum = -1;
         private static bool showHintsForPlayer1 = true;
         private static bool showHintsForPlayer2 = false;
         private static bool isPlayer2Ai = true;
@@ -82,8 +82,8 @@ namespace BoardGameTrainer
 
             var newGameButton = new Button("New Game");
             newGameButton.Clicked += (s, e) => { OpenConfigWindow(); };
-
             var restartButton = new Button("Restart");
+            restartButton.Clicked += (s, e) => { CreateNewGame(); };
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
 
@@ -108,6 +108,7 @@ namespace BoardGameTrainer
 
         static void OpenConfigWindow()
         {
+            gameNum= 0;
             var configWindow = new Gtk.Window(Gtk.WindowType.Toplevel);
             app.AddWindow(configWindow);
             configWindow.Show();

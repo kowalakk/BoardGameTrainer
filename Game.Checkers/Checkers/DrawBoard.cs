@@ -14,7 +14,7 @@ namespace Game.Checkers
         private static readonly Color red = new(0.8, 0.3, 0.3);
         private static readonly Color brown = new(0.96, 0.85, 0.74);
         private static readonly Color beige = new(0.26, 0.13, 0);
-        private static readonly Color purple = new(0.5, 0.3, 0.9);
+        private static readonly Color purple = new (0.5, 0.4, 1);
         private Field lastClickedField;
 
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
@@ -231,10 +231,10 @@ namespace Game.Checkers
         private void DrawPreviousActionField(Context context, Color color)
         {
             double lineWidth = context.LineWidth;
-            context.LineWidth = 0.03 * fieldSize;
+            context.LineWidth = 0.05 * fieldSize;
 
             context.SetSourceColor(color);
-            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.3 * fieldSize, 0, 2 * Math.PI);
+            context.Arc(0.5 * fieldSize, 0.5 * fieldSize, 0.31 * fieldSize, 0, 2 * Math.PI);
             context.ClosePath();
             context.Stroke();
 

@@ -162,7 +162,8 @@ namespace Game.Othello
                             continue;
                         actions.Add(new OthelloFullAction((i, j), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
                     }
-                        
+            if (!actions.Any())
+                actions.Add(new OthelloEmptyAction());
             return actions;
         }
 
