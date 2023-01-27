@@ -22,7 +22,7 @@ namespace Game.Checkers
 
         public Player CurrentPlayer { get; set; }
 
-        public ICheckersAction? LastAction { get; set; }
+        public ICheckersAction? LastAction { get; set; } // for drawing purposes
 
         private CheckersState(Piece[,] board, Player currentPlayer, ICheckersAction? lastAction = null)
         {
