@@ -42,11 +42,13 @@ namespace Game.Othello
                     DrawPiece(context, state.board[i, j]);
                     context.Translate(-j, -(boardSize - 1 - i));
                 }
-             
+
             //foreach(var action in ratedActions)
             //{
             //    DrawRatedAction(context, action);
             //}
+
+            context.Scale(1 / fieldSize, 1/ fieldSize);
         }
 
         private void DrawRatedAction(Context context, (OthelloAction, double) action)
@@ -149,7 +151,9 @@ namespace Game.Othello
                         if (potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
                             continue;
                         actions.Add(new OthelloFullAction((i, j), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
-                    }               
+                    }
+            if(actions.Count == 0)
+                actions.Add(new OthelloEmptyAction());
             return actions;
         }
 

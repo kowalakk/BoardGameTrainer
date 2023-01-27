@@ -58,9 +58,9 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                //Othello othello = new Othello();
-                //othello.DrawBoard(context, new LanguageExt.Unit(), OthelloState.GenerateInitialOthelloState(), null);
-                gameManager.DrawBoard(context);
+                Othello othello = new Othello();
+                othello.DrawBoard(context, new LanguageExt.Unit(), OthelloState.GenerateInitialOthelloState(), null);
+                //gameManager.DrawBoard(context);
 
             };
 
