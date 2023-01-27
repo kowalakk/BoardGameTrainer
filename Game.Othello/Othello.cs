@@ -99,7 +99,8 @@ namespace Game.Othello
 
             var playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             var oponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
-            Field[,] board = state.board;
+            Field[,] board = new Field[boardSize, boardSize];
+            Array.Copy(state.board, board, state.board.Length);
             OthelloFullAction fullAction = (OthelloFullAction)action;
             int x = fullAction.Position.Item1;
             int y = fullAction.Position.Item2;
