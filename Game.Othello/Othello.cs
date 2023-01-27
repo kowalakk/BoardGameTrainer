@@ -38,22 +38,36 @@ namespace Game.Othello
             for (int i = 0; i < boardSize; i++)
                 for (int j = 0; j < boardSize; j++)
                 {
-                    context.Translate(j, (boardSize - 1 - i));
+                    context.Translate(j, i);
                     DrawPiece(context, state.board[i, j]);
-                    context.Translate(-j, -(boardSize - 1 - i));
+                    context.Translate(-j, -i);
                 }
 
-            //foreach(var action in ratedActions)
-            //{
-            //    DrawRatedAction(context, action);
-            //}
+            foreach (var action in ratedActions)
+            {
+                DrawRatedAction(context, action);
+            }
 
             context.Scale(1 / fieldSize, 1/ fieldSize);
         }
 
         private void DrawRatedAction(Context context, (OthelloAction, double) action)
         {
-            //TODO
+            if (action.Item1 is OthelloEmptyAction)
+                return;
+            OthelloFullAction fullAction = (OthelloFullAction) action.Item1;
+            int rating = (int)((action.Item2 + 1) * 50);
+            context.Translate(fullAction.Position.Item2, fullAction.Position.Item1);
+            context.SetSourceRGB(0.5, 0.5 + action.Item2 / 2, 0);
+            context.Rectangle(0, 0, 1, 1);
+            context.Fill();
+            context.SetSourceRGB(0, 0, 0);
+            context.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Normal);
+            context.SetFontSize(0.2);
+            context.MoveTo(0, 0.2);
+            context.ShowText($"{rating}%");
+            context.Stroke();
+            context.Translate(-fullAction.Position.Item2, -fullAction.Position.Item1);
         }
 
         private void DrawPiece(Context context, Field field)
@@ -89,7 +103,7 @@ namespace Game.Othello
             if (PossibleActions(state).Where(action => action is OthelloEmptyAction).Count() > 0)
                 if(PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)
                     return HasBlackWon(state);
-            return IGame.GameResult.InProgress;
+            return GameResult.InProgress;
         }
 
         public OthelloState PerformAction(OthelloAction action, OthelloState state)
@@ -98,7 +112,6 @@ namespace Game.Othello
                 return new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn);
 
             var playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
-            var oponentsColor = (state.BlacksTurn) ? Field.White : Field.Black;
             Field[,] board = new Field[boardSize, boardSize];
             Array.Copy(state.board, board, state.board.Length);
             OthelloFullAction fullAction = (OthelloFullAction)action;
@@ -120,13 +133,13 @@ namespace Game.Othello
             int j = y - 1;
             while (j >= y - fullAction.left) 
             {
-                board[j, y] = playersColor;
+                board[x, j] = playersColor;
                 j--;
             }
             j = y + 1;
             while (j <= y + fullAction.right)
             {
-                board[j, y] = playersColor;
+                board[x, j] = playersColor;
                 j++;
             }
             int whiteCount = (state.BlacksTurn) ? state.WhiteHandCount : state.WhiteHandCount - 1;
@@ -179,8 +192,10 @@ namespace Game.Othello
         {
             if (x < 0 || x > 1 || y < 0 || y > 1)
                 return (new LanguageExt.Unit(), new OthelloEmptyAction());
-            int row = (int)(x * boardSize);
-            int col = (int)(y * boardSize);
+            int col = (int)(x * boardSize);
+            int row = (int)(y * boardSize);
+            if (state.board[row, col] != Field.Empty)
+                return (new LanguageExt.Unit(), new OthelloEmptyAction());
             (int up, int down, int left, int right) potentialAction = GetPotentialAction(row, col, state);
             if(potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
                 return (new LanguageExt.Unit(), new OthelloEmptyAction());
@@ -200,7 +215,7 @@ namespace Game.Othello
 
         public OthelloState InitialState()
         {
-            return OthelloState.GenerateInitialOthelloState();
+            return GenerateInitialOthelloState();
         }
 
         (int up, int down, int left, int right) GetPotentialAction(int x, int y, OthelloState state)
