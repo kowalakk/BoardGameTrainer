@@ -162,7 +162,8 @@ namespace BoardGameTrainer
             };
             showHintsFrame.Show();
 
-            var computationTimeSpinButton = new Gtk.SpinButton(0, 1000, 1);
+            var computationTimeSpinButton = new Gtk.SpinButton(10, 10000, 10);
+            computationTimeSpinButton.Value = 500;
             computationTimeSpinButton.Changed += (sender, args) => { computationTime = computationTimeSpinButton.Value; };
             var computationTimeLabel = new Gtk.Label("ms");
             var computationTimeHBox = new Gtk.HBox();
