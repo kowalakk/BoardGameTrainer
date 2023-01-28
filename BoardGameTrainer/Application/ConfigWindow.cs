@@ -32,8 +32,8 @@ namespace BoardGameTrainer
 
             ShowHintsFrame showHintsFrame = new();
             showHintsFrame.Show();
-            showHintsFrame.FirstClicked += (sender, args) => { application.showHintsForPlayer1 = showHintsFrame.FirstActive; };
-            showHintsFrame.SecondClicked += (sender, args) => { application.showHintsForPlayer2 = showHintsFrame.SecondActive; };
+            showHintsFrame.FirstClicked += (sender, args) => { application.numberOfHints.Item1 = showHintsFrame.FirstActive ? int.MaxValue : 0; };
+            showHintsFrame.SecondClicked += (sender, args) => { application.numberOfHints.Item2 = showHintsFrame.SecondActive ? int.MaxValue : 0; };
 
             // for later
             //SpinButtonFrame computationTimeFrame = new("Computation time", 10, 10000, 10, computationTime, "ms");

@@ -11,12 +11,11 @@ namespace BoardGameTrainer
         public IGameManager gameManager = new DefaultGameManager(GameResult.InProgress);
         public string[] games = new string[] { "Checkers", "Othello" };
         public int gameNum = -1;
-        public bool showHintsForPlayer1 = true;
-        public bool showHintsForPlayer2 = false;
         public bool isPlayer2Ai = true;
         public bool isAImoduleOne = true;
         public double computationTime;
         public int iterationsNumber = 1000;
+        public (int, int) numberOfHints = (int.MaxValue, int.MaxValue);
 
         public GameTrainerApplication() : base("x.y.z", GLib.ApplicationFlags.None)
         {

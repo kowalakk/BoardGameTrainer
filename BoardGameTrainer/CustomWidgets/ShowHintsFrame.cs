@@ -30,6 +30,7 @@ namespace BoardGameTrainer
 
             secondCheckbox = new CheckButton("Player 2");
             secondCheckbox.Show();
+            secondCheckbox.Active = true;
 
             HBox box = new();
             box.Show();

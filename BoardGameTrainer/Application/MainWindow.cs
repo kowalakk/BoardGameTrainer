@@ -29,7 +29,7 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                application.gameManager.DrawBoard(context, int.MaxValue);
+                application.gameManager.DrawBoard(context, application.numberOfHints);
 
             };
 
