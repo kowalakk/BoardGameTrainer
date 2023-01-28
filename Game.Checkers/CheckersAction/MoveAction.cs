@@ -5,10 +5,10 @@ namespace Game.Checkers
 {
     public class MoveAction : ICheckersAction
     {
-        public Field Start { get; }
-        public Field Finish { get; }
+        public int Start { get; }
+        public int Finish { get; }
 
-        public MoveAction(Field start, Field finish)
+        public MoveAction(int start, int finish)
         {
             Start= start;
             Finish = finish;
@@ -24,13 +24,13 @@ namespace Game.Checkers
             return true;
         }
 
-        public IEnumerable<Field> GetParticipatingFields()
+        public IEnumerable<int> GetParticipatingFields()
         {
             yield return Start;
             yield return Finish;
         }
 
-        public IEnumerable<Field> GetPlayableFields()
+        public IEnumerable<int> GetPlayableFields()
         {
             yield return Finish;
         }

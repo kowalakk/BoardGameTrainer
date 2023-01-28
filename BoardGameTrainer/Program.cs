@@ -196,12 +196,12 @@ namespace BoardGameTrainer
             if (gameNum == 0)
             {
                 gameManager = new CheckersManagerFactory()
-                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(1000));
+                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000));
             }
             if (gameNum == 1)
             {
                 gameManager = new OthelloManagerFactory()
-                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(1000));
+                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(10000));
             }
         }
     }

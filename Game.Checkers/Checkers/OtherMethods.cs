@@ -21,7 +21,7 @@ namespace Game.Checkers
         }
 
         public IEnumerable<(ICheckersAction, double)> FilterByInputState(
-            IEnumerable<(ICheckersAction, double)> ratedActions, 
+            IEnumerable<(ICheckersAction, double)> ratedActions,
             ICheckersInputState inputState,
             int numberOfActions)
         {
@@ -32,7 +32,7 @@ namespace Game.Checkers
             if (inputState is CaptureActionInProgressInputState cIS2)
                 return ratedActions.Where(tuple =>
                 {
-                    IEnumerable<Field> fields = tuple.Item1.GetParticipatingFields();
+                    IEnumerable<int> fields = tuple.Item1.GetParticipatingFields();
                     return fields.Take(cIS2.VisitedFields.Count()).SequenceEqual(cIS2.VisitedFields);
                 });
             throw new ArgumentException();

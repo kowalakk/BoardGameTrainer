@@ -19,13 +19,13 @@ namespace Game.Checkers
 
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
         {
-            lastClickedField = new(0, 7);
+            lastClickedField = new(0, 0);
             context.SetSourceColor(brown);
             context.LineWidth = 0.001;
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
 
-            foreach (Field field in state.GetFields())
+            for (int field = 0; field < CheckersState.fieldCount; field++)
             {
                 MoveContextToField(context, field);
                 DrawField(context);
@@ -35,12 +35,18 @@ namespace Game.Checkers
             DrawPreviousAction(context, state);
         }
 
-        private void MoveContextToField(Context context, Field field)
+        private void MoveContextToField(Context context, int field)
         {
+            (int col, int row) = GetFieldCoordinates(field);
             context.Translate(
-                (field.Col - lastClickedField.Col) * fieldSize,
-                (lastClickedField.Row - field.Row) * fieldSize);
-            lastClickedField = field;
+                (col - lastClickedField.Col) * fieldSize,
+                (row - lastClickedField.Row) * fieldSize);
+            lastClickedField = new(col, row);
+        }
+
+        private static (int col, int row) GetFieldCoordinates(int field)
+        {
+            return (((field % 8) * 2 + 1) % 9, field / 4);
         }
 
         private void DrawField(Context context)
@@ -50,7 +56,7 @@ namespace Game.Checkers
             context.Fill();
         }
 
-        private void DrawPiece(Context context, CheckersState state, Field field)
+        private void DrawPiece(Context context, CheckersState state, int field)
         {
             Piece piece = state.GetPieceAt(field);
             if (piece == Piece.None)
@@ -144,13 +150,13 @@ namespace Game.Checkers
             }
 
             DrawVisitedFields(context, actionInProgressState.VisitedFields);
-            Field markedField = actionInProgressState.VisitedFields.Last();
+            int markedField = actionInProgressState.VisitedFields.Last();
             DrawMarkedField(context, state, markedField);
             DrawPiece(context, state, actionInProgressState.VisitedFields.First());
 
         }
 
-        private void DrawMarkedField(Context context, CheckersState state, Field field)
+        private void DrawMarkedField(Context context, CheckersState state, int field)
         {
             MoveContextToField(context, field);
             DrawSpecialField(context, blue);
@@ -159,10 +165,10 @@ namespace Game.Checkers
 
         private void DrawRatedAction(Context context, CheckersState state, (ICheckersAction, double) action)
         {
-            IEnumerable<Field> fields = action.Item1.GetParticipatingFields();
+            IEnumerable<int> fields = action.Item1.GetParticipatingFields();
             Color colorFromRating = new((1-action.Item2)*0.75, (1 + action.Item2) * 0.75, 0);
 
-            foreach (Field field in fields)
+            foreach (int field in fields)
             {
                 MoveContextToField(context, field);
                 DrawSpecialField(context, colorFromRating);
@@ -173,7 +179,7 @@ namespace Game.Checkers
 
             if (action.Item1 is CaptureAction captureAction)
             {
-                foreach(Field field in captureAction.GetCapturedFields())
+                foreach(int field in captureAction.GetCapturedFields())
                 {
                     MoveContextToField(context, field);
                     DrawSpecialField(context, red);
@@ -182,9 +188,9 @@ namespace Game.Checkers
             }
         }
 
-        private void DrawVisitedFields(Context context, IEnumerable<Field> fields)
+        private void DrawVisitedFields(Context context, IEnumerable<int> fields)
         {
-            foreach (Field field in fields)
+            foreach (int field in fields)
             {
                 MoveContextToField(context, field);
                 DrawSpecialField(context, blue);
@@ -213,14 +219,14 @@ namespace Game.Checkers
             ICheckersAction? previousAction = state.LastAction;
             if (previousAction is null)
                 return;
-            foreach (Field field in previousAction.GetParticipatingFields())
+            foreach (int field in previousAction.GetParticipatingFields())
             {
                 MoveContextToField(context, field);
                 DrawPreviousActionField(context, purple);
             }
             if (previousAction is CaptureAction captureAction)
             {
-                foreach (Field field in captureAction.GetCapturedFields())
+                foreach (int field in captureAction.GetCapturedFields())
                 {
                     MoveContextToField(context, field);
                     DrawPreviousActionField(context, red);

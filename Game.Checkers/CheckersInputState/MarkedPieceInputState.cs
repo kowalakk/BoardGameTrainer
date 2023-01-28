@@ -2,9 +2,9 @@
 {
     public class MarkedPieceInputState : ICheckersInputState
     {
-        public Field MarkedField { get; }
+        public int MarkedField { get; }
 
-        public MarkedPieceInputState(Field markedField)
+        public MarkedPieceInputState(int markedField)
         {
             MarkedField = markedField;
         }

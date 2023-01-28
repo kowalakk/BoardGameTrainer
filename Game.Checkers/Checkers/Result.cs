@@ -20,10 +20,10 @@ namespace Game.Checkers
         {
             if (state.CurrentPlayer == Player.One)
             {
-                foreach (Field field in state.GetFields())
+                for (int field = 0; field < CheckersState.fieldCount; field++)
                 {
                     Piece piece = state.GetPieceAt(field);
-                    if (piece == Piece.WhitePawn && PossiblePawnActions(state, field, 0, 1).Item1.Any())
+                    if (piece == Piece.WhitePawn && PossibleWhitePawnActions(state, field, 0).Item1.Any())
                     {
                         return true;
                     }
@@ -35,10 +35,10 @@ namespace Game.Checkers
             }
             else //state.CurrentPlayer == Player.Black
             {
-                foreach (Field field in state.GetFields())
+                for (int field = 0; field < CheckersState.fieldCount; field++)
                 {
                     Piece piece = state.GetPieceAt(field);
-                    if (piece == Piece.BlackPawn && PossiblePawnActions(state, field, 0, -1).Item1.Any())
+                    if (piece == Piece.BlackPawn && PossibleBlackPawnActions(state, field, 0).Item1.Any())
                         return true;
                     else if (piece == Piece.BlackCrowned && PossibleCrownedActions(state, field, 0).Item1.Any())
                         return true;
