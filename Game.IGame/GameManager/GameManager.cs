@@ -21,21 +21,33 @@ namespace Game.IGame
             ratedActions = ai.MoveAssessment(state);
         }
 
-        public void DrawBoard(Context context, int bestShownActionsCount)
+        public void DrawBoard(Context context, (int, int) numberOfHints)
         {
-            game.DrawBoard(context, inputState, state, game.FilterByInputState(ratedActions, inputState, bestShownActionsCount));
+            int numberOfActions = game.CurrentPlayer(state) == Player.One? numberOfHints.Item1 :  numberOfHints.Item2;
+            IEnumerable<(Action, double)> filteredActions = game.FilterByInputState(ratedActions, inputState, numberOfActions);
+            game.DrawBoard(context, inputState, state, filteredActions);
         }
 
-        public GameResult HandleInput(double x, double y)
+        public GameResult HandleInput(double x, double y, bool isPlayer2Ai)
         {
             var (newInputState, action) = game.HandleInput(x, y, inputState, state);
             inputState = newInputState;
+            GameResult gameResult = GameResult.InProgress;
             if (action is not null)
             {
                 state = game.PerformAction(action, state);
-                ratedActions = ai.MoveAssessment(state);
+                gameResult = game.Result(state);
+                if (gameResult == GameResult.InProgress)
+                {
+                    if (isPlayer2Ai)
+                    {
+                        state = game.PerformAction(ai.ChooseAction(state), state);
+                        gameResult = game.Result(state);
+                    }
+                    ratedActions = ai.MoveAssessment(state);
+                }
             }
-            return game.Result(state);
+            return gameResult;
         }
     }
 }
