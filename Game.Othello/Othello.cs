@@ -1,7 +1,5 @@
 ﻿using Cairo;
 using Game.IGame;
-using Gdk;
-using Gtk;
 using LanguageExt;
 using static Game.Othello.OthelloState;
 
