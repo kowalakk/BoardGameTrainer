@@ -1,6 +1,7 @@
 ﻿using Cairo;
 using Game.IGame;
 using Gtk;
+
 using LanguageExt;
 using static Game.Othello.OthelloState;
 
@@ -201,8 +202,6 @@ namespace Game.Othello
                 return (new LanguageExt.Unit(), null);
             Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             return (new LanguageExt.Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
-        }
-
         public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState)
         {
             return ratedActions;
@@ -287,6 +286,8 @@ namespace Game.Othello
                 }
             }
             return (up, down, left, right);
+        }
+            throw new NotImplementedException();
         }
     }
 }

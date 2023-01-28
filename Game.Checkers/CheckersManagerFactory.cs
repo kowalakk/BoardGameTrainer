@@ -6,7 +6,7 @@ namespace Game.Checkers
     {
         public IGameManager CreateGameManager(IAiFactory aiFactory, IStopCondition stopCondition)
         {
-            return new GameManager<CheckersAction, CheckersState, ICheckersInputState>(
+            return new GameManager<ICheckersAction, CheckersState, ICheckersInputState>(
                 new Checkers(), 
                 aiFactory,
                 stopCondition);

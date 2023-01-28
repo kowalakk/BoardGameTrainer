@@ -4,9 +4,9 @@ using Gtk;
 
 namespace Game.Checkers
 {
-    public partial class Checkers : IGame<CheckersAction, CheckersState, ICheckersInputState>
+    public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
-        public CheckersState PerformAction(CheckersAction action, CheckersState state)
+        public CheckersState PerformAction(ICheckersAction action, CheckersState state)
         {
             return action.PerformOn(state);
         }

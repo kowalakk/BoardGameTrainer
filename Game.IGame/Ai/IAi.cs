@@ -5,6 +5,6 @@
         where State : IEquatable<State>
     {
         List<(Action, double)> MoveAssessment(State state);
-        Action ChooseMove(State state);
+        Action ChooseAction(State state);
     }
 }
