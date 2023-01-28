@@ -58,7 +58,7 @@ namespace Game.Othello
             OthelloFullAction fullAction = (OthelloFullAction) action.Item1;
             int rating = (int)((action.Item2 + 1) * 50);
             context.Translate(fullAction.Position.Item2, fullAction.Position.Item1);
-            context.SetSourceRGB(0.5, 0.5 + action.Item2 / 2, 0);
+            context.SetSourceRGB(0.4, 0.5 + action.Item2 / 2, 0);
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
             context.SetSourceRGB(0, 0, 0);
