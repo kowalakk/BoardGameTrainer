@@ -191,14 +191,14 @@ namespace Game.Othello
         public (LanguageExt.Unit, OthelloAction?) HandleInput(double x, double y, LanguageExt.Unit inputState, OthelloState state)
         {
             if (x < 0 || x > 1 || y < 0 || y > 1)
-                return (new LanguageExt.Unit(), new OthelloEmptyAction());
+                return (new LanguageExt.Unit(), null);
             int col = (int)(x * boardSize);
             int row = (int)(y * boardSize);
             if (state.board[row, col] != Field.Empty)
-                return (new LanguageExt.Unit(), new OthelloEmptyAction());
+                return (new LanguageExt.Unit(), null);
             (int up, int down, int left, int right) potentialAction = GetPotentialAction(row, col, state);
             if(potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
-                return (new LanguageExt.Unit(), new OthelloEmptyAction());
+                return (new LanguageExt.Unit(), null);
             Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
             return (new LanguageExt.Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
         }
