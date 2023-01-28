@@ -3,8 +3,6 @@
 namespace Game.IGame
 {
     public class GameManager<Action, State, InputState> : IGameManager
-        where Action : IEquatable<Action>
-        where State : IEquatable<State>
     {
         public readonly IGame<Action, State, InputState> game;
         private State state;

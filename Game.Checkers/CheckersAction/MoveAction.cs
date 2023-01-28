@@ -14,12 +14,7 @@ namespace Game.Checkers
             Finish = finish;
         }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as ICheckersAction);
-        }
-
-        public bool Equals(ICheckersAction? other)
+        public override bool Equals(object? other)
         {
             if (other == null) return false;
             if (other is not MoveAction) return false;

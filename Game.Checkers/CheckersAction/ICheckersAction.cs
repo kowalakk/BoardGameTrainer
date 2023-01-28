@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
-namespace Game.Checkers
+﻿namespace Game.Checkers
 {
-    public interface ICheckersAction : IEquatable<ICheckersAction>
+    public interface ICheckersAction : IEquatable<object>
     {
         public abstract Field Start { get; }
         public abstract Field Finish { get; }

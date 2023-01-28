@@ -65,20 +65,6 @@ namespace Game.Checkers
             CapturesCount++;
         }
 
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as ICheckersAction);
-        }
-
-        public bool Equals(ICheckersAction? other)
-        {
-            if (other == null) return false;
-            if (other is not CaptureAction captureAction) return false;
-            if (!captureAction.Start.Equals(Start)) return false;
-            if (!captureAction.Captures.SequenceEqual(Captures)) return false;
-            return true;
-        }
-
         public CheckersState PerformOn(CheckersState state)
         {
             return PerformOn(state, Piece.None);
@@ -98,6 +84,15 @@ namespace Game.Checkers
             newState.LastAction = this;
 
             return newState;
+        }
+
+        public override bool Equals(object? other)
+        {
+            if (other == null) return false;
+            if (other is not CaptureAction captureAction) return false;
+            if (!captureAction.Start.Equals(Start)) return false;
+            if (!captureAction.Captures.SequenceEqual(Captures)) return false;
+            return true;
         }
     }
 }
