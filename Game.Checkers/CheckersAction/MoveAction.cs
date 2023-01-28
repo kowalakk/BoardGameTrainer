@@ -1,5 +1,4 @@
 ﻿using Game.IGame;
-using System.Text.RegularExpressions;
 
 namespace Game.Checkers
 {
@@ -12,16 +11,6 @@ namespace Game.Checkers
         {
             Start= start;
             Finish = finish;
-        }
-
-        public override bool Equals(object? other)
-        {
-            if (other == null) return false;
-            if (other is not MoveAction) return false;
-            MoveAction moveAction = (MoveAction)other;
-            if (!moveAction.Start.Equals(Start)) return false;
-            if (!moveAction.Finish.Equals(Finish)) return false;
-            return true;
         }
 
         public IEnumerable<int> GetParticipatingFields()
@@ -45,6 +34,21 @@ namespace Game.Checkers
             newState.LastAction = this;
 
             return newState;
+        }
+
+        public override bool Equals(object? other)
+        {
+            if (other == null) return false;
+            if (other is not MoveAction) return false;
+            MoveAction moveAction = (MoveAction)other;
+            if (!moveAction.Start.Equals(Start)) return false;
+            if (!moveAction.Finish.Equals(Finish)) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Start.GetHashCode() ^ Finish.GetHashCode();
         }
     }
 }

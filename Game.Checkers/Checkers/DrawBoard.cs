@@ -15,7 +15,7 @@ namespace Game.Checkers
         private static readonly Color brown = new(0.96, 0.85, 0.74);
         private static readonly Color beige = new(0.26, 0.13, 0);
         private static readonly Color purple = new (0.5, 0.4, 1);
-        private Field lastClickedField;
+        private (int col, int row) lastClickedField;
 
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
         {
@@ -37,16 +37,12 @@ namespace Game.Checkers
 
         private void MoveContextToField(Context context, int field)
         {
-            (int col, int row) = GetFieldCoordinates(field);
+            int col = (field % 8 * 2 + 1) % 9;
+            int row = field / 4;
             context.Translate(
-                (col - lastClickedField.Col) * fieldSize,
-                (row - lastClickedField.Row) * fieldSize);
-            lastClickedField = new(col, row);
-        }
-
-        private static (int col, int row) GetFieldCoordinates(int field)
-        {
-            return (((field % 8) * 2 + 1) % 9, field / 4);
+                (col - lastClickedField.col) * fieldSize,
+                (row - lastClickedField.row) * fieldSize);
+            lastClickedField = (col, row);
         }
 
         private void DrawField(Context context)

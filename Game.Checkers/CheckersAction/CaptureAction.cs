@@ -94,6 +94,11 @@ namespace Game.Checkers
             if (!captureAction.Captures.SequenceEqual(Captures)) return false;
             return true;
         }
+
+        public override int GetHashCode()
+        {
+            return Start.GetHashCode() ^ Finish.GetHashCode();
+        }
     }
 }
 
