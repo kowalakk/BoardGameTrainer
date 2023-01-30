@@ -221,14 +221,14 @@ namespace Game.Othello
             return (new Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
         }
 
-        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState, int numberOfActions)
+        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, Unit inputState, int numberOfActions)
         {
-            return ratedActions;
+            return ratedActions;//.Take(numberOfActions);
         }
 
-        public LanguageExt.Unit EmptyInputState()
+        public Unit EmptyInputState()
         {
-            return new LanguageExt.Unit();
+            return new Unit();
         }
 
         public OthelloState InitialState()
