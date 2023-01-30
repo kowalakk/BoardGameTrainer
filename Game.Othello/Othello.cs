@@ -5,7 +5,7 @@ using static Game.Othello.OthelloState;
 
 namespace Game.Othello
 {
-    public class Othello : IGame<OthelloAction, OthelloState, LanguageExt.Unit>
+    public class Othello : IGame<OthelloAction, OthelloState, Unit>
     {
         private const int boardSize = 8;
         private const double fieldSize = 1.0 / boardSize;
@@ -15,7 +15,7 @@ namespace Game.Othello
             return (state.BlacksTurn) ? Player.One : Player.Two;
         }
 
-        public void DrawBoard(Context context, LanguageExt.Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
+        public void DrawBoard(Context context, Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
         {
             context.SetSourceRGB(0.86, 0.85, 0.74);
             context.LineWidth = 0.001;
@@ -108,7 +108,7 @@ namespace Game.Othello
             }
         }
 
-        public IEnumerable<OthelloAction> FilterByInputState(IEnumerable<OthelloAction> actions, LanguageExt.Unit u)
+        public IEnumerable<OthelloAction> FilterByInputState(IEnumerable<OthelloAction> actions, Unit u)
         {
             return actions;
         }
@@ -223,7 +223,7 @@ namespace Game.Othello
 
         public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, Unit inputState, int numberOfActions)
         {
-            return ratedActions;//.Take(numberOfActions);
+            return ratedActions.Take(numberOfActions);
         }
 
         public Unit EmptyInputState()
