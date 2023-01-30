@@ -7,5 +7,10 @@
         {
             return Equals(obj as OthelloAction);
         }
+
+        public override int GetHashCode()
+        {
+            return 0;
+        }
     }
 }

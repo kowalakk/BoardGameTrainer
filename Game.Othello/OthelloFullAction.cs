@@ -36,5 +36,10 @@ namespace Game.Othello
                 return false;
             return true;
         }
+
+        public override int GetHashCode()
+        {
+            return Position.Item1 + 8 * Position.Item2 + 8 * 8 * left + 8 * 8 * 8 * right + 8 * 8 * 8 * 8 * up + 8 * 8 * 8 * 8 * 8 * down;
+        }
     }
 }

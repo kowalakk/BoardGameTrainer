@@ -6,10 +6,7 @@ namespace Game.Othello
     {
         public IGameManager CreateGameManager(IAiFactory aiFactory, IStopCondition stopCondition)
         {
-            return new GameManager<OthelloAction, OthelloState, LanguageExt.Unit>(
-                new Othello(), 
-                aiFactory,
-                stopCondition);
+            return new GameManager<OthelloAction, OthelloState, LanguageExt.Unit>(new Othello(), aiFactory, stopCondition);
         }
     }
 }
