@@ -1,6 +1,5 @@
 ﻿using Cairo;
 using Game.IGame;
-using Gtk;
 using LanguageExt;
 using static Game.Othello.OthelloState;
 
@@ -166,8 +165,9 @@ namespace Game.Othello
                             continue;
                         actions.Add(new OthelloFullAction((i, j), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
                     }
-            if(actions.Count == 0)
+            if (!actions.Any())
                 actions.Add(new OthelloEmptyAction());
+
             return actions;
         }
 
@@ -203,7 +203,7 @@ namespace Game.Othello
             return (new LanguageExt.Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
         }
 
-        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState)
+        public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState, int numberOfActions)
         {
             return ratedActions;
         }

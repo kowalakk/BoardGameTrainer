@@ -36,7 +36,10 @@ namespace Game.IGame
 
         public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state);
 
-        public IEnumerable<(Action, double)> FilterByInputState(IEnumerable<(Action, double)> ratedActions, InputState inputState);
+        public IEnumerable<(Action, double)> FilterByInputState(
+            IEnumerable<(Action, double)> ratedActions, 
+            InputState inputState,
+            int numberOfActions);
     }
 
 }

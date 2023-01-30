@@ -16,12 +16,14 @@ namespace Game.Checkers
         }
     }
 
-    public class CaptureAction : CheckersAction
+    public class CaptureAction : ICheckersAction
     {
-        public override Field Start { get => Captures.First!.Value.Start; }
-        public override Field Finish { get => Captures.Last!.Value.Finish; }
+        public Field Start { get => Captures.First!.Value.Start; }
+
+        public Field Finish { get => Captures.Last!.Value.Finish; }
 
         public LinkedList<SimpleCapture> Captures { get; private set; }
+
         public int CapturesCount { get; private set; }
 
         public CaptureAction(Field start, Field capture, Field finish)
@@ -30,7 +32,8 @@ namespace Game.Checkers
             Captures = new LinkedList<SimpleCapture>();
             Captures.AddFirst(new SimpleCapture(start, capture, finish));
         }
-        public override IEnumerable<Field> GetParticipatingFields()
+
+        public IEnumerable<Field> GetParticipatingFields()
         {
             yield return Start;
             foreach(SimpleCapture capture in Captures)
@@ -38,13 +41,23 @@ namespace Game.Checkers
                 yield return capture.Finish;
             }
         }
-        public override IEnumerable<Field> GetPlayableFields()
+
+        public IEnumerable<Field> GetPlayableFields()
         {
             foreach (SimpleCapture capture in Captures)
             {
                 yield return capture.Finish;
             }
         }
+
+        internal IEnumerable<Field> GetCapturedFields()
+        {
+            foreach (SimpleCapture capture in Captures)
+            {
+                yield return capture.Captured;
+            }
+        }
+
         public void CombineCapture(Field start, Field firstCapture)
         {
             SimpleCapture simpleCapture = new(start, firstCapture, Start);
@@ -52,7 +65,7 @@ namespace Game.Checkers
             CapturesCount++;
         }
 
-        public override bool Equals(CheckersAction? other)
+        public bool Equals(ICheckersAction? other)
         {
             if (other == null) return false;
             if (other is not CaptureAction) return false;
@@ -62,12 +75,12 @@ namespace Game.Checkers
             return true;
         }
 
-        public override CheckersState PerformOn(CheckersState state)
+        public CheckersState PerformOn(CheckersState state)
         {
-            return PerformOn(state);
+            return PerformOn(state, Piece.None);
         }
 
-        public CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith = Piece.None)
+        public CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith)
         {
             Piece capturer = state.GetPieceAt(Start);
             CheckersState newState = new(state);
@@ -78,6 +91,8 @@ namespace Game.Checkers
             }
             newState.SetPieceAtWithPossiblePromotion(Finish, capturer);
             newState.CurrentPlayer = state.CurrentPlayer == Player.One ? Player.Two : Player.One;
+            newState.LastAction = this;
+
             return newState;
         }
     }

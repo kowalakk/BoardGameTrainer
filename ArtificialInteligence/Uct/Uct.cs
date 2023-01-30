@@ -23,7 +23,7 @@ namespace Ai
             return root.ExpandedChildren.Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount)).ToList();
         }
 
-        public Action ChooseMove(State state)
+        public Action ChooseAction(State state)
         {
             return MoveAssessment(state).MaxBy(action => { return action.Item2; }).Item1;
         }
