@@ -43,8 +43,15 @@ namespace Game.Othello
             for (int i = 0; i < boardSize; i++)
                 for (int j = 0; j < boardSize; j++)
                     board[i, j] = Field.Empty;
-            board[3, 3] = board[4, 4] = Field.White;
-            board[3, 4] = board[4, 3] = Field.Black;
+            //board[3, 3] = board[4, 4] = Field.White;
+            //board[3, 4] = board[4, 3] = Field.Black;
+
+            board[3, 2] = board[3, 3] = board[3, 4] = Field.Black;
+            board[4, 3] = Field.White;
+            board[4, 2] = board[4, 4] = Field.Black;
+            board[5, 2] = board[5, 3] = Field.Black;
+
+
 
             return new OthelloState(board, 30, 30, true);
         }

@@ -8,6 +8,7 @@ namespace Game.Othello
     public class Othello : IGame<OthelloAction, OthelloState, LanguageExt.Unit>
     {
         private const int boardSize = 8;
+        private const double fieldSize = 1.0 / boardSize;
 
         public Player CurrentPlayer(OthelloState state)
         {
@@ -21,7 +22,6 @@ namespace Game.Othello
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
             context.SetSourceRGB(0, 0, 0);
-            const double fieldSize = 1.0 / boardSize;
             
             for (double position = 0; position <= 1; position += 0.125)
             {
@@ -50,14 +50,30 @@ namespace Game.Othello
             context.Scale(1 / fieldSize, 1/ fieldSize);
         }
 
-        private void DrawRatedAction(Context context, (OthelloAction, double) action)
+        private void DrawRatedAction(Context context, (OthelloAction, double) ratedAction)
         {
-            if (action.Item1 is OthelloEmptyAction)
+            if (ratedAction.Item1 is OthelloEmptyAction)
+            {
+                context.SetSourceRGBA(0.9, 0.8, 0.6, 0.7);
+                context.Rectangle(2, 3, 4, 2);
+                context.Fill();
+
+                context.SetSourceRGBA(0,0,0, 0.6);
+
+                context.SelectFontFace("Sans", FontSlant.Normal, FontWeight.Normal);
+                context.SetFontSize(0.34);
+                context.MoveTo(2.05, 3.7);
+                context.ShowText($"You have no legal moves!");
+                context.MoveTo(2.8, 4.5);
+                context.ShowText($"Click to skip turn");
+                context.Stroke();
+
                 return;
-            OthelloFullAction fullAction = (OthelloFullAction) action.Item1;
-            int rating = (int)((action.Item2 + 1) * 50);
+            }
+            OthelloFullAction fullAction = (OthelloFullAction) ratedAction.Item1;
+            int rating = (int)((ratedAction.Item2 + 1) * 50);
             context.Translate(fullAction.Position.Item2, fullAction.Position.Item1);
-            context.SetSourceRGB(0.4, 0.5 + action.Item2 / 2, 0);
+            context.SetSourceRGB(0.4, 0.5 + ratedAction.Item2 / 2, 0);
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
             context.SetSourceRGB(0, 0, 0);
@@ -188,19 +204,21 @@ namespace Game.Othello
             return (blackCount > whiteCount) ? IGame.GameResult.PlayerOneWins : IGame.GameResult.PlayerTwoWins;
         }
 
-        public (LanguageExt.Unit, OthelloAction?) HandleInput(double x, double y, LanguageExt.Unit inputState, OthelloState state)
+        public (Unit, OthelloAction?) HandleInput(double x, double y, Unit inputState, OthelloState state)
         {
+            if (PossibleActions(state).First() is OthelloEmptyAction action)
+                return (new Unit(), action);
             if (x < 0 || x > 1 || y < 0 || y > 1)
-                return (new LanguageExt.Unit(), null);
+                return (new Unit(), null);
             int col = (int)(x * boardSize);
             int row = (int)(y * boardSize);
             if (state.board[row, col] != Field.Empty)
-                return (new LanguageExt.Unit(), null);
+                return (new Unit(), null);
             (int up, int down, int left, int right) potentialAction = GetPotentialAction(row, col, state);
             if(potentialAction.up == 0 && potentialAction.down == 0 && potentialAction.left == 0 && potentialAction.right == 0)
-                return (new LanguageExt.Unit(), null);
+                return (new Unit(), null);
             Field playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
-            return (new LanguageExt.Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
+            return (new Unit(), new OthelloFullAction((row, col), playersColor, potentialAction.up, potentialAction.down, potentialAction.left, potentialAction.right));
         }
 
         public IEnumerable<(OthelloAction, double)> FilterByInputState(IEnumerable<(OthelloAction, double)> ratedActions, LanguageExt.Unit inputState, int numberOfActions)

@@ -5,7 +5,7 @@ namespace Game.Checkers
 {
     public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
-        private static readonly double fieldSize = 0.125;
+        private static readonly double fieldSize = 1.0 / CheckersState.boardSize;
         private static readonly Color white = new(0.9, 0.9, 0.9);
         private static readonly Color grey = new(0.5, 0.5, 0.5);
         private static readonly Color black = new(0.1, 0.1, 0.1);
