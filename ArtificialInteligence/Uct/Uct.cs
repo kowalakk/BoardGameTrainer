@@ -28,12 +28,21 @@ namespace Ai
 
         private void UCTSearch(Node<Action, State> root)
         {
+            var watch = new System.Diagnostics.Stopwatch();
+            int iterations = 0;
+            watch.Start();
+
             while (!StopCondition.StopConditionOccured())
             {
                 Node<Action, State> node = TreePolicy(root);
                 GameResult gameResult = DefaultPolicy(node.CorespondingState);
                 Backup(node, gameResult);
+                iterations++;
             }
+
+            watch.Stop();
+            Console.WriteLine($"UCT search execution time: {watch.ElapsedMilliseconds} ms" +
+                $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
         }
 
         private Node<Action, State> TreePolicy(Node<Action, State> node)
