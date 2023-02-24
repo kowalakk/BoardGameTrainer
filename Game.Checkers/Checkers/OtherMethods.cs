@@ -1,5 +1,4 @@
 ﻿using Game.IGame;
-using Gdk;
 
 namespace Game.Checkers
 {
@@ -28,7 +27,7 @@ namespace Game.Checkers
             if (inputState is DefaultInputState)
                 return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(numberOfActions);
             if (inputState is MarkedPieceInputState cIS1)
-                return ratedActions.Where(tuple => tuple.Item1.Start.Equals(cIS1.MarkedField));
+                return ratedActions.Where(tuple => tuple.Item1.Start.Equals(cIS1.MarkedField)).Take(numberOfActions);
             if (inputState is CaptureActionInProgressInputState cIS2)
                 return ratedActions.Where(tuple =>
                 {

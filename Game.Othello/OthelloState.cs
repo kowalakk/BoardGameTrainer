@@ -1,4 +1,6 @@
-﻿namespace Game.Othello
+﻿using LanguageExt;
+
+namespace Game.Othello
 {
     public class OthelloState : IEquatable<OthelloState>
     {
@@ -11,7 +13,8 @@
         public bool BlacksTurn { get; set; }
         public OthelloState(Field[,] board, int whiteHandCount, int blackHandCount, bool blacksTurn)
         {
-            this.board = board;
+            this.board = new Field[boardSize, boardSize];
+            Array.Copy(board, this.board, board.Length);
             WhiteHandCount = whiteHandCount;
             BlackHandCount = blackHandCount;
             BlacksTurn = blacksTurn;

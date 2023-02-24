@@ -42,7 +42,7 @@ namespace Ai
 
             watch.Stop();
             Console.WriteLine($"UCT search execution time: {watch.ElapsedMilliseconds} ms" +
-                $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
+                $" - {(double)watch.ElapsedMilliseconds/iterations} ms/iteration");
         }
 
         private Node<Action, State> TreePolicy(Node<Action, State> node)

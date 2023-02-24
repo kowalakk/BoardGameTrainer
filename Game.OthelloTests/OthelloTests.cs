@@ -78,7 +78,7 @@ namespace Game.Othello.Tests
         }
 
         [Fact]
-        void PossibleActionsShouldReturnListContainingOneOthelloEmptyAction()
+        void PossibleActionsShouldReturnOthelloEmptyAction()
         {
             Field[,] board = new Field[boardSize, boardSize];
             for (int i = 0; i < boardSize; i++)
@@ -86,7 +86,7 @@ namespace Game.Othello.Tests
                     board[i, j] = Field.Empty;
             board[0, 0] = Field.White;
             OthelloState state = new OthelloState(board, 23, 22, false);
-            Assert.Equal(new List<OthelloAction> { new OthelloEmptyAction() }, othello.PossibleActions(state));
+            Assert.Equal(new List<OthelloAction>() { new OthelloEmptyAction() }, othello.PossibleActions(state));
         }
 
         [Fact]
