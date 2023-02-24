@@ -13,9 +13,13 @@ namespace Game.Checkers
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.WhitePawn)
-                        UpdateActions(ref possibleActions, PossibleWhitePawnActions(state, field, possibleActions.maxCapturesCount));
+                        possibleActions = UpdateActions(
+                            possibleActions,
+                            PossibleWhitePawnActions(state, field, possibleActions.maxCapturesCount));
                     else if (piece == Piece.WhiteCrowned)
-                        UpdateActions(ref possibleActions, PossibleCrownedActions(state, field, possibleActions.maxCapturesCount));
+                        possibleActions = UpdateActions(
+                            possibleActions,
+                            PossibleCrownedActions(state, field, possibleActions.maxCapturesCount));
                 }
             }
             else //state.CurrentPlayer == Player.Black
@@ -24,9 +28,15 @@ namespace Game.Checkers
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.BlackPawn)
-                        UpdateActions(ref possibleActions, PossibleBlackPawnActions(state, field, possibleActions.maxCapturesCount));
+                        possibleActions = UpdateActions(
+                            possibleActions,
+                            PossibleBlackPawnActions(state, field, possibleActions.maxCapturesCount)
+                            );
                     else if (piece == Piece.BlackCrowned)
-                        UpdateActions(ref possibleActions, PossibleCrownedActions(state, field, possibleActions.maxCapturesCount));
+                        possibleActions = UpdateActions(
+                            possibleActions,
+                            PossibleCrownedActions(state, field, possibleActions.maxCapturesCount)
+                            );
                 }
             }
             return possibleActions.list;
@@ -78,10 +88,9 @@ namespace Game.Checkers
             return (possibleMoves, 0);
         }
 
-        private (List<ICheckersAction>, int) PossiblePawnCaptures(
-            CheckersState state, int field, int minCapturesCount)
+        private (List<ICheckersAction>, int) PossiblePawnCaptures(CheckersState state, int field, int capturesCount)
         {
-            (List<ICheckersAction>, int) possibleCaptures = (new(), minCapturesCount);
+            (List<ICheckersAction>, int) possibleCaptures = (new(), capturesCount);
 
             Piece capturer = state.GetPieceAt(field);
             int?[] neighbours = CheckersState.neighbours[field];
@@ -98,9 +107,9 @@ namespace Game.Checkers
                     {
                         CaptureAction action = new(field, neighbour, (int)finish);
                         CheckersState tmpState = PerformTemporaryCapture(action, state);
-                        (List<ICheckersAction>, int) furtherCaptures = PossiblePawnCaptures(tmpState, (int)finish, minCapturesCount - 1);
-                        CombineCaptures(action, ref furtherCaptures);
-                        UpdateActions(ref possibleCaptures, furtherCaptures);
+                        (List<ICheckersAction>, int) furtherCaptures = PossiblePawnCaptures(tmpState, (int)finish, capturesCount - 1);
+                        furtherCaptures = CombineCaptures(action, furtherCaptures);
+                        possibleCaptures = UpdateActions(possibleCaptures, furtherCaptures);
                     }
                 }
             }
@@ -108,9 +117,9 @@ namespace Game.Checkers
         }
 
         private static (List<ICheckersAction>, int) PossibleCrownedActions(
-            CheckersState state, int field, int minCapturesCount)
+            CheckersState state, int field, int capturesCount)
         {
-            (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = (new(), minCapturesCount);
+            (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = (new(), capturesCount);
             List<ICheckersAction> possibleMoves = new();
 
             Piece movingPiece = state.GetPieceAt(field);
@@ -135,9 +144,9 @@ namespace Game.Checkers
                                 CaptureAction action = new(field, targetedField.Value, fieldBehindTarget.Value);
                                 CheckersState tmpState = PerformTemporaryCapture(action, state);
                                 (List<ICheckersAction>, int) furtherCaptures
-                                    = PossibleCrownedCaptures(tmpState, fieldBehindTarget.Value, minCapturesCount - 1);
-                                CombineCaptures(action, ref furtherCaptures);
-                                UpdateActions(ref possibleCaptures, furtherCaptures);
+                                    = PossibleCrownedCaptures(tmpState, fieldBehindTarget.Value, capturesCount - 1);
+                                furtherCaptures = CombineCaptures(action, furtherCaptures);
+                                possibleCaptures = UpdateActions(possibleCaptures, furtherCaptures);
 
                                 fieldBehindTarget = CheckersState.neighbours[fieldBehindTarget.Value][direction];
                             }
@@ -157,7 +166,7 @@ namespace Game.Checkers
         private static (List<ICheckersAction>, int) PossibleCrownedCaptures(
             CheckersState state, int field, int minCapturesCount)
         {
-            (List<ICheckersAction> list, int maxCapturesCount) possibleCaptures = (new(), minCapturesCount);
+            (List<ICheckersAction> list, int capturesCount) possibleCaptures = (new(), minCapturesCount);
 
             Piece movingPiece = state.GetPieceAt(field);
             int?[] neighbours = CheckersState.neighbours[field];
@@ -178,8 +187,8 @@ namespace Game.Checkers
                                 CheckersState tmpState = PerformTemporaryCapture(action, state);
                                 (List<ICheckersAction>, int) furtherCaptures
                                     = PossibleCrownedCaptures(tmpState, fieldBehindTarget.Value, minCapturesCount - 1);
-                                CombineCaptures(action, ref furtherCaptures);
-                                UpdateActions(ref possibleCaptures, furtherCaptures);
+                                furtherCaptures = CombineCaptures(action, furtherCaptures);
+                                possibleCaptures = UpdateActions(possibleCaptures, furtherCaptures);
 
                                 fieldBehindTarget = CheckersState.neighbours[fieldBehindTarget.Value][direction];
                             }
@@ -192,38 +201,39 @@ namespace Game.Checkers
             return possibleCaptures;
         }
 
-        private static bool CombineCaptures(CaptureAction action,
-            ref (List<ICheckersAction> list, int maxCapturesCount) furtherCaptures)
+        private static (List<ICheckersAction> list, int capturesCount) CombineCaptures(
+            CaptureAction action,
+            (List<ICheckersAction> list, int capturesCount) furtherCaptures
+            )
         {
             if (furtherCaptures.list.Any())
             {
-                    foreach (CaptureAction furtherCapture in furtherCaptures.list.Cast<CaptureAction>())
-                    {
-                        furtherCapture.CombineCapture(action.Start, action.Captures.First!.Value.Captured);
-                    }
-                    furtherCaptures.maxCapturesCount++;
-                    return true;
-// only MoveActions found
+                foreach (CaptureAction furtherCapture in furtherCaptures.list.Cast<CaptureAction>())
+                {
+                    furtherCapture.CombineCapture(action.Start, action.Captures.First!.Value.Captured);
+                }
+                furtherCaptures.capturesCount++;
+                return furtherCaptures;
             }
-            furtherCaptures = (new List<ICheckersAction>() { action }, 1);
-            return false;
+            // only MoveActions found
+            return (new List<ICheckersAction>() { action }, 1);
         }
 
-        private static bool UpdateActions(
-            ref (List<ICheckersAction> list, int maxCapturesCount) possibleActions,
-            (List<ICheckersAction> list, int maxCapturesCount) newActions)
+        private static (List<ICheckersAction> list, int capturesCount) UpdateActions(
+            (List<ICheckersAction> list, int capturesCount) possibleActions,
+            (List<ICheckersAction> list, int capturesCount) newActions)
         {
-            if (newActions.maxCapturesCount == possibleActions.maxCapturesCount) // add actions of same length
+            if (newActions.capturesCount == possibleActions.capturesCount) // add actions of same length
             {
                 possibleActions.list.AddRange(newActions.list);
-                return true;
+                return possibleActions;
             }
-            if (newActions.maxCapturesCount > possibleActions.maxCapturesCount) // trim to longest actions only
+            if (newActions.capturesCount > possibleActions.capturesCount) // trim to longest actions only
             {
-                possibleActions = newActions;
-                return true;
+                return newActions;
             }
-            return false; // no changes
+            // no changes
+            return possibleActions;
         }
 
         private static bool HaveOppositeColors(Piece capturer, Piece target)
