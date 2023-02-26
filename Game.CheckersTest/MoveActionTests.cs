@@ -5,23 +5,21 @@
         [Fact]
         public void EqualsShouldBeTrue()
         {
-            Field start = new(0, 0);
-            Field end = new(1, 1);
-            MoveAction action1 = new(start, end);
-            MoveAction action2 = new(start, end);
+            MoveAction action1 = new(28, 24);
+            MoveAction action2 = new(28, 24);
             Assert.Equal(action1, action2);
         }
         [Fact]
         public void NotEqualsShouldBeFalse()
         {
-            MoveAction action1 = new(new Field(2, 0), new Field(1, 1));
-            MoveAction action2 = new(new Field(2, 0), new Field(3, 1));
+            MoveAction action1 = new(29, 24);
+            MoveAction action2 = new(29, 25);
             Assert.NotEqual(action1, action2);
         }
         [Fact]
         public void EqualsWithNullShouldBeFalse()
         {
-            MoveAction action = new(new Field(2, 0), new Field(1, 1));
+            MoveAction action = new(29, 24);
             Assert.NotNull(action);
         }
     }

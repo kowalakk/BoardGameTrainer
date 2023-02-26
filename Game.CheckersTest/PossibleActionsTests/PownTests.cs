@@ -8,19 +8,19 @@
         public void PossibleActionsShouldBeSingleMove()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            state.SetPieceAt("A1", Piece.WhitePawn);
+            state.SetPieceAt(28, Piece.WhitePawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            MoveAction action = new(new Field("A1"), new Field("B2"));
+            MoveAction action = new(28, 24);
             Assert.Equal(action, possibleActions.First());
         }
         [Fact]
         public void PossibleActionsForBlockedPownShouldBeEmpty()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            state.SetPieceAt("A1", Piece.WhitePawn);
-            state.SetPieceAt("B2", Piece.BlackPawn);
-            state.SetPieceAt("C3", Piece.BlackPawn);
+            state.SetPieceAt(28, Piece.WhitePawn);
+            state.SetPieceAt(24, Piece.BlackPawn);
+            state.SetPieceAt(21, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Empty(possibleActions);
         }
@@ -28,73 +28,73 @@
         public void PossibleActionsShouldBeTwoMoves()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            state.SetPieceAt("C1", Piece.WhitePawn);
+            state.SetPieceAt(30, Piece.WhitePawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Equal(2, possibleActions.Count());
-            MoveAction action = new(new Field("C1"), new Field("B2"));
+            MoveAction action = new(30, 25);
             Assert.Contains(action, possibleActions);
-            action = new(new Field("C1"), new Field("D2"));
+            action = new(30, 26);
             Assert.Contains(action, possibleActions);
         }
         [Fact]
         public void PossibleActionsShouldBeSingleCapture()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            state.SetPieceAt("D4", Piece.WhitePawn);
-            state.SetPieceAt("C5", Piece.BlackPawn);
+            state.SetPieceAt(18, Piece.WhitePawn);
+            state.SetPieceAt(14, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            CaptureAction action = new(new Field("D4"), new Field("C5"), new Field("B6"));
+            CaptureAction action = new(18, 14, 9);
             Assert.Contains(action, possibleActions);
         }
         [Fact]
         public void PossibleActionsShouldBeTwoCaptures()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            state.SetPieceAt("D4", Piece.WhitePawn);
-            state.SetPieceAt("C5", Piece.BlackPawn);
-            state.SetPieceAt("E3", Piece.BlackPawn);
+            state.SetPieceAt(18, Piece.WhitePawn);
+            state.SetPieceAt(14, Piece.BlackPawn);
+            state.SetPieceAt(23, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Equal(2, possibleActions.Count());
-            CaptureAction action = new(new Field("D4"), new Field("C5"), new Field("B6"));
+            CaptureAction action = new(18, 14, 9);
             Assert.Contains(action, possibleActions);
-            action = new(new Field("D4"), new Field("E3"), new Field("F2"));
+            action = new(18, 23, 27);
             Assert.Contains(action, possibleActions);
         }
         [Fact]
         public void PossibleActionsShouldBeDoubleCaptureOnly()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
-            state.SetPieceAt("D4", Piece.WhitePawn);
-            state.SetPieceAt("C5", Piece.BlackPawn); 
-            state.SetPieceAt("E5", Piece.BlackPawn);
-            state.SetPieceAt("G5", Piece.BlackPawn);
+            state.SetPieceAt(17, Piece.WhitePawn);
+            state.SetPieceAt(13, Piece.BlackPawn); 
+            state.SetPieceAt(14, Piece.BlackPawn);
+            state.SetPieceAt(15, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Single(possibleActions);
-            CaptureAction action = new(new Field("F6"), new Field("G5"), new Field("H4"));
-            action.CombineCapture(new Field("D4"), new Field("E5"));
+            CaptureAction action = new(10, 15, 19);
+            action.CombineCapture(17, 14);
             Assert.Contains(action, possibleActions);
         }
         [Fact]
         public void AlreadyCapturedPieceShouldBeUncapturableButNotRemovedTillEndOfMove()
         {
             CheckersState state = CheckersState.GetEmptyBoardState(IGame.Player.Two);
-            state.SetPieceAt("B2", Piece.WhitePawn);
-            state.SetPieceAt("B4", Piece.WhitePawn);
-            state.SetPieceAt("D2", Piece.WhitePawn);
-            state.SetPieceAt("D4", Piece.WhitePawn);
-            state.SetPieceAt("E3", Piece.BlackPawn);
+            state.SetPieceAt(25, Piece.WhitePawn);
+            state.SetPieceAt(17, Piece.WhitePawn);
+            state.SetPieceAt(26, Piece.WhitePawn);
+            state.SetPieceAt(18, Piece.WhitePawn);
+            state.SetPieceAt(23, Piece.BlackPawn);
             var possibleActions = checkers.PossibleActions(state);
             Assert.Equal(2, possibleActions.Count());
-            CaptureAction action = new(new Field("C1"), new Field("D2"), new Field("E3"));
-            action.CombineCapture(new Field("A3"), new Field("B2"));
-            action.CombineCapture(new Field("C5"), new Field("B4"));
-            action.CombineCapture(new Field("E3"), new Field("D4"));
+            CaptureAction action = new(30, 26, 23);
+            action.CombineCapture(21, 25);
+            action.CombineCapture(14, 17);
+            action.CombineCapture(23, 18);
             Assert.Contains(action, possibleActions);
-            action = new(new Field("C5"), new Field("D4"), new Field("E3"));
-            action.CombineCapture(new Field("A3"), new Field("B4"));
-            action.CombineCapture(new Field("C1"), new Field("B2"));
-            action.CombineCapture(new Field("E3"), new Field("D2"));
+            action = new(14, 18, 23);
+            action.CombineCapture(21, 17);
+            action.CombineCapture(30, 25);
+            action.CombineCapture(23, 26);
             Assert.Contains(action, possibleActions);
         }
     }

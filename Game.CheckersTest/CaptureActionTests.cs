@@ -5,33 +5,33 @@
         [Fact]
         public void EqualsShouldBeTrue()
         {
-            CaptureAction action1 = new(new Field(0, 0), new Field(1, 1), new Field(2, 2));
-            CaptureAction action2 = new(new Field(0, 0), new Field(1, 1), new Field(2, 2));
+            CaptureAction action1 = new(29, 25, 22);
+            CaptureAction action2 = new(29, 25, 22);
             Assert.Equal(action1, action2);
         }
         [Fact]
         public void NotEqualsShouldBeFalse()
         {
-            CaptureAction action1 = new(new Field(0, 0), new Field(1, 1), new Field(2, 2));
-            CaptureAction action2 = new(new Field(2, 2), new Field(1, 1), new Field(0, 0));
+            CaptureAction action1 = new(29, 25, 22);
+            CaptureAction action2 = new(22, 25, 29);
             Assert.NotEqual(action1, action2);
         }
         [Fact]
         public void EqualsWithNullShouldBeFalse()
         {
-            CaptureAction action = new(new Field(0, 0), new Field(1, 1), new Field(2, 2));
+            CaptureAction action = new(29, 25, 22);
             Assert.NotNull(action);
         }
         [Fact]
         public void CombineCaptureTest()
         {
-            CaptureAction action = new(new Field(2, 2), new Field(1, 1), new Field(0, 0));
-            action.CombineCapture(new Field(4, 0), new Field(3, 1));
-            Assert.Equal(new Field(4, 0), action.Start);
+            CaptureAction action = new(22, 25, 29);
+            action.CombineCapture(31, 26);
+            Assert.Equal(31, action.Start);
             Assert.Equal(2, action.CapturesCount);
             LinkedList<SimpleCapture> captures = new();
-            captures.AddLast(new SimpleCapture(new Field(4, 0), new Field(3, 1), new Field(2, 2)));
-            captures.AddLast(new SimpleCapture(new Field(2, 2), new Field(1, 1), new Field(0, 0)));
+            captures.AddLast(new SimpleCapture(31, 26, 22));
+            captures.AddLast(new SimpleCapture(22, 25, 29));
             Assert.Equal(action.Captures, captures);
         }
     }
