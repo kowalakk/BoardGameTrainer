@@ -6,13 +6,54 @@ using System.Threading.Tasks;
 
 namespace Game.Othello
 {
+    public struct PotentialAction
+    {
+        public int up { get; set; }
+        public int down { get; set; }
+        public int left { get; set; }
+        public int right { get; set; }
+        public int upLeft { get; set; }
+        public int upRight { get; set; }
+        public int downLeft { get; set; }
+        public int downRight { get; set; }
+
+        public PotentialAction(int up, int down, int left, int right, int upLeft,
+            int upRight, int downLeft, int downRight)
+        {
+            this.up = up;
+            this.down = down;
+            this.left = left;
+            this.right = right;
+            this.upLeft = upLeft;
+            this.upRight = upRight;
+            this.downLeft = downLeft;
+            this.downRight = downRight;
+        }
+
+        public bool IsPotentialActionEmpty()
+        {
+            if (up == 0 && down == 0 && left == 0 && right == 0 && upLeft == 0 && upRight == 0
+                && downLeft == 0 && downRight == 0)
+                return true;
+            return false;
+        }
+    }
+
     public class OthelloFullAction : OthelloAction
     {
-        public OthelloFullAction((int, int) position, OthelloState.Field fieldContent, int up, int down, int left, int right)
+        public OthelloFullAction((int, int) position, OthelloState.Field fieldContent, 
+            PotentialAction potentialAction)
         {
             Position = position;
             FieldContent = fieldContent;
-            this.up = up; this.down = down; this.left = left; this.right = right;
+            this.up = potentialAction.up;
+            this.down = potentialAction.down;
+            this.left = potentialAction.left; 
+            this.right = potentialAction.right;
+            this.upLeft = potentialAction.upLeft;
+            this.upRight = potentialAction.upRight;
+            this.downLeft = potentialAction.downLeft;
+            this.downRight = potentialAction.downRight;
         }
 
         public (int, int) Position { get; set; }
@@ -21,6 +62,10 @@ namespace Game.Othello
         public int down { get; set; }
         public int left { get; set; }
         public int right { get; set; }
+        public int upLeft { get; set; }
+        public int upRight { get; set; }
+        public int downLeft { get; set; }
+        public int downRight { get; set; }
 
         public override bool Equals(OthelloAction? other)
         {
@@ -32,7 +77,9 @@ namespace Game.Othello
                 return false;
             if (this.FieldContent != action.FieldContent)
                 return false;
-            if (this.left != action.left || this.right != action.right || this.up != action.up || this.down != action.down)
+            if (this.left != action.left || this.right != action.right || this.up != action.up 
+                || this.down != action.down || this.upLeft != action.upLeft || this.upRight != action.upRight
+                || this.downLeft != action.downLeft || this.downRight != action.downRight)
                 return false;
             return true;
         }
