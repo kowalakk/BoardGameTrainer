@@ -16,12 +16,17 @@ namespace Game.Checkers
                 return (new DefaultInputState(), null);
             }
             int col = (int)(8 * x);
-            int row = CheckersState.boardSize - 1 - (int)(8 * y);
-            Piece piece = state.GetPieceAt(col, row);
-            Field clickedField = new Field(col, row);
+            int row = (int)(8 * y);
+            int clickedField = -1;
+            Piece piece = Piece.None;
+            if (col % 2 != row % 2)
+            {
+                clickedField = col / 2 + 4 * row;
+                piece = state.GetPieceAt(clickedField);
+            }
             if (inputState is DefaultInputState)
             {
-                return HandleFirstClick(piece, clickedField, inputState, state);
+                return HandleFirstClick(piece, clickedField, state);
             }
             if (inputState is MarkedPieceInputState mpInputState)
             {
@@ -30,12 +35,12 @@ namespace Game.Checkers
                     .FirstOrDefault(action => action.GetPlayableFields().Contains(clickedField));
                 if (nextAction == default) // unrelated field got chosen
                 {
-                    return HandleFirstClick(piece, clickedField, inputState, state);
+                    return HandleFirstClick(piece, clickedField, state);
                 }
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
                     return (new DefaultInputState(), nextAction);
                 // part of action chosen
-                IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields()
+                IEnumerable<int> visitedFields = nextAction.GetParticipatingFields()
                     .TakeWhile(field => !field.Equals(clickedField));
                 return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
             }
@@ -54,20 +59,19 @@ namespace Game.Checkers
                 if (nextAction.Finish.Equals(clickedField)) // whole action chosen
                     return (new DefaultInputState(), nextAction);
                 // part of action chosen
-                IEnumerable<Field> visitedFields = nextAction.GetParticipatingFields().TakeWhile(field => !field.Equals(clickedField));
+                IEnumerable<int> visitedFields = nextAction.GetParticipatingFields().TakeWhile(field => !field.Equals(clickedField));
                 return (new CaptureActionInProgressInputState(visitedFields.Append(clickedField)), null);
             }
 
         }
 
         private (ICheckersInputState, ICheckersAction?) HandleFirstClick(
-            Piece piece, 
-            Field clickedField, 
-            ICheckersInputState inputState, 
+            Piece piece,
+            int clickedField,
             CheckersState state)
         {
             if ((state.CurrentPlayer == Player.One && (piece == Piece.WhitePawn || piece == Piece.WhiteCrowned))
-    || (state.CurrentPlayer == Player.Two && (piece == Piece.BlackPawn || piece == Piece.BlackCrowned)))
+                || (state.CurrentPlayer == Player.Two && (piece == Piece.BlackPawn || piece == Piece.BlackCrowned)))
             {
                 return (new MarkedPieceInputState(clickedField), null);
             }

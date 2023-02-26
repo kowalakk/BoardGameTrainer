@@ -3,8 +3,6 @@
 namespace Ai
 {
     public class Uct<Action, State, InputState> : IAi<Action, State, InputState>
-        where Action : IEquatable<Action>
-        where State : IEquatable<State>
     {
         private IStopCondition StopCondition { get; set; }
         private double UCTConstant { get; }

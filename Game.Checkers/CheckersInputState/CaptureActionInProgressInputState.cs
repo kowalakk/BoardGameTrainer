@@ -2,11 +2,11 @@
 {
     public class CaptureActionInProgressInputState : ICheckersInputState
     {
-        public List<Field> VisitedFields { get; }
+        public List<int> VisitedFields { get; }
 
-        public CaptureActionInProgressInputState(IEnumerable<Field> visitedFields)
+        public CaptureActionInProgressInputState(IEnumerable<int> visitedFields)
         {
-            VisitedFields = new List<Field>(visitedFields);
+            VisitedFields = new List<int>(visitedFields);
         }
     }
 }
