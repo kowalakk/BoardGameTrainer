@@ -7,13 +7,14 @@ namespace Ai
         private IStopCondition StopCondition { get; set; }
         private double UCTConstant { get; }
         private IGame<Action, State, InputState> Game { get; }
+
         public Uct(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
         {
             UCTConstant = uCTConstant;
             Game = game;
             StopCondition = condition;
         }
-
+        
         public List<(Action, double)> MoveAssessment(State state)
         {
             Node<Action, State> root = new(state);
