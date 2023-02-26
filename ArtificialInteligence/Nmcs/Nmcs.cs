@@ -3,15 +3,13 @@
 namespace Ai
 {
     internal class NMCS<Action, State, InputState> : IAi<Action, State, InputState>
-        where Action : IEquatable<Action>
-        where State : IEquatable<State>
     {
-        public Action ChooseAction( State state)
+        public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
         {
             throw new NotImplementedException();
         }
 
-        public List<(Action, double)> MoveAssessment(State state)
+        public Action ChooseAction(GameTree<Action, State> gameTree)
         {
             throw new NotImplementedException();
         }

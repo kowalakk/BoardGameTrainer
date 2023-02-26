@@ -5,44 +5,48 @@ namespace Game.IGame
     public class GameManager<Action, State, InputState> : IGameManager
     {
         public readonly IGame<Action, State, InputState> game;
-        private State state;
-        private InputState inputState;
-        private IAi<Action, State, InputState> ai;
+        private readonly IAi<Action, State, InputState> ai;
+        private State currentState;
+        private InputState currentInputState;
+        private GameTree<Action, State> gameTree;
         private List<(Action, double)> ratedActions;
 
         public GameManager(IGame<Action, State, InputState> game, IAiFactory aiFactory, IStopCondition stopCondition)
         {
             this.game = game;
-            state = game.InitialState();
-            inputState = game.EmptyInputState();
             ai = aiFactory.CreateAi(game, stopCondition);
-            ratedActions = ai.MoveAssessment(state);
+            currentState = game.InitialState();
+            currentInputState = game.EmptyInputState();
+            gameTree = new GameTree<Action, State>(currentState);
+            ratedActions = ai.MoveAssessment(gameTree);
         }
 
         public void DrawBoard(Context context, (int, int) numberOfHints)
         {
-            int numberOfActions = game.CurrentPlayer(state) == Player.One? numberOfHints.Item1 :  numberOfHints.Item2;
-            IEnumerable<(Action, double)> filteredActions = game.FilterByInputState(ratedActions, inputState, numberOfActions);
-            game.DrawBoard(context, inputState, state, filteredActions);
+            int numberOfActions = game.CurrentPlayer(currentState) == Player.One ? numberOfHints.Item1 : numberOfHints.Item2;
+            IEnumerable<(Action, double)> filteredActions = game.FilterByInputState(ratedActions, currentInputState, numberOfActions);
+            game.DrawBoard(context, currentInputState, currentState, filteredActions);
         }
 
         public GameResult HandleInput(double x, double y, bool isPlayer2Ai)
         {
-            var (newInputState, action) = game.HandleInput(x, y, inputState, state);
-            inputState = newInputState;
+            (currentInputState, Action? nextAction) = game.HandleInput(x, y, currentInputState, currentState);
             GameResult gameResult = GameResult.InProgress;
-            if (action is not null)
+            if (nextAction is not null)
             {
-                state = game.PerformAction(action, state);
-                gameResult = game.Result(state);
+                gameTree.SelectChildNode(nextAction);
+                currentState = game.PerformAction(nextAction, currentState);
+                gameResult = game.Result(currentState);
                 if (gameResult == GameResult.InProgress)
                 {
                     if (isPlayer2Ai)
                     {
-                        state = game.PerformAction(ai.ChooseAction(state), state);
-                        gameResult = game.Result(state);
+                        nextAction = ai.ChooseAction(gameTree);
+                        gameTree.SelectChildNode(nextAction);
+                        currentState = game.PerformAction(nextAction, currentState);
+                        gameResult = game.Result(currentState);
                     }
-                    ratedActions = ai.MoveAssessment(state);
+                    ratedActions = ai.MoveAssessment(gameTree);
                 }
             }
             return gameResult;
