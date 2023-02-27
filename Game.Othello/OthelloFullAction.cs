@@ -56,6 +56,21 @@ namespace Game.Othello
             this.downRight = potentialAction.downRight;
         }
 
+        public OthelloFullAction((int, int) position, OthelloState.Field fieldContent, int up, int down, int left, int right, 
+            int upLeft, int upRight, int downLeft, int downRight)
+        {
+            Position = position;
+            FieldContent = fieldContent;
+            this.up = up;
+            this.down = down;
+            this.left = left;
+            this.right = right;
+            this.upLeft = upLeft;
+            this.upRight = upRight;
+            this.downLeft = downLeft;
+            this.downRight = downRight;
+        }
+
         public (int, int) Position { get; set; }
         public OthelloState.Field FieldContent { get; set; }
         public int up { get; set; }
