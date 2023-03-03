@@ -194,64 +194,32 @@ namespace Game.Othello
             int oponentsPiecesCount = 0;
             for (int ii = x - 1; ii >= 0; ii--)
             {
-                if (state.board[ii, y] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref up, state, ii, y, opponentsColor, playersColor))
                     break;
-                if (state.board[ii, y] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[ii, y] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        up = oponentsPiecesCount;
-                    break;
-                }
             }
 
             // down
             oponentsPiecesCount = 0;
             for (int ii = x + 1; ii < boardSize; ii++)
             {
-                if (state.board[ii, y] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref down, state, ii, y, opponentsColor, playersColor))
                     break;
-                if (state.board[ii, y] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[ii, y] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        down = oponentsPiecesCount;
-                    break;
-                }
             }
 
             // left
             oponentsPiecesCount = 0;
             for (int jj = y - 1; jj >= 0; jj--)
             {
-                if (state.board[x, jj] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref left, state, x, jj, opponentsColor, playersColor))
                     break;
-                if (state.board[x, jj] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[x, jj] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        left = oponentsPiecesCount;
-                    break;
-                }
             }
 
             // right
             oponentsPiecesCount = 0;
             for (int jj = y + 1; jj < boardSize; jj++)
             {
-                if (state.board[x, jj] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref right, state, x, jj, opponentsColor, playersColor))
                     break;
-                if (state.board[x, jj] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[x, jj] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        right = oponentsPiecesCount;
-                    break;
-                }
             }
 
             // upLeft
@@ -260,16 +228,8 @@ namespace Game.Othello
             int j = y - 1;
             while(i >= 0 && j >= 0)
             {
-                if (state.board[i, j] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref upLeft, state, i, j, opponentsColor, playersColor))
                     break;
-                if (state.board[i, j] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[i, j] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        upLeft = oponentsPiecesCount;
-                    break;
-                }
                 i--;
                 j--;
             }
@@ -280,16 +240,8 @@ namespace Game.Othello
             j = y + 1;
             while (i >= 0 && j < boardSize)
             {
-                if (state.board[i, j] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref upRight, state, i, j, opponentsColor, playersColor))
                     break;
-                if (state.board[i, j] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[i, j] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        upRight = oponentsPiecesCount;
-                    break;
-                }
                 i--;
                 j++;
             }
@@ -300,16 +252,8 @@ namespace Game.Othello
             j = y - 1;
             while (i < boardSize && j >= 0)
             {
-                if (state.board[i, j] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref downLeft, state, i, j, opponentsColor, playersColor))
                     break;
-                if (state.board[i, j] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[i, j] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        downLeft = oponentsPiecesCount;
-                    break;
-                }
                 i++;
                 j--;
             }
@@ -320,20 +264,27 @@ namespace Game.Othello
             j = y + 1;
             while (i < boardSize && j < boardSize)
             {
-                if (state.board[i, j] == Field.Empty)
+                if (!ExploreDirection(ref oponentsPiecesCount, ref downRight, state, i, j, opponentsColor, playersColor))
                     break;
-                if (state.board[i, j] == opponentsColor)
-                    oponentsPiecesCount++;
-                if (state.board[i, j] == playersColor)
-                {
-                    if (oponentsPiecesCount > 0)
-                        downRight = oponentsPiecesCount;
-                    break;
-                }
                 i++;
                 j++;
             }
             return new PotentialAction(up, down, left, right, upLeft, upRight, downLeft, downRight);
+        }
+
+        private bool ExploreDirection(ref int oponentsPiecesCount, ref int direction, OthelloState state, int i, int j, OthelloState.Field opponentsColor, OthelloState.Field playersColor)
+        {
+            if (state.board[i, j] == Field.Empty)
+                return false;
+            if (state.board[i, j] == opponentsColor)
+                oponentsPiecesCount++;
+            if (state.board[i, j] == playersColor)
+            {
+                if (oponentsPiecesCount > 0)
+                    direction = oponentsPiecesCount;
+                return false;
+            }
+            return true;
         }
     }
 }
