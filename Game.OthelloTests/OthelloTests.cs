@@ -68,7 +68,7 @@ namespace Game.Othello.Tests
         [Fact]
         void PossibleActionsFromInitialState()
         {
-            List<OthelloAction> actions = new List<OthelloAction>();
+            List<IOthelloAction> actions = new List<IOthelloAction>();
             actions.Add(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0));
             actions.Add(new OthelloFullAction((3, 2), Field.Black, 0, 0, 0, 1));
             actions.Add(new OthelloFullAction((4, 5), Field.Black, 0, 0, 1, 0));
@@ -86,13 +86,13 @@ namespace Game.Othello.Tests
                     board[i, j] = Field.Empty;
             board[0, 0] = Field.White;
             OthelloState state = new OthelloState(board, 23, 22, false);
-            Assert.Equal(new List<OthelloAction>() { new OthelloEmptyAction() }, othello.PossibleActions(state));
+            Assert.Equal(new List<IOthelloAction>() { new OthelloEmptyAction() }, othello.PossibleActions(state));
         }
 
         [Fact]
         void PossibleActionsShouldReturnListContainingOneOthelloEmptyActionIfCurrentPlayerHasNoPieces()
         {
-            List<OthelloAction> actionsEmpty = new List<OthelloAction>();
+            List<IOthelloAction> actionsEmpty = new List<IOthelloAction>();
             actionsEmpty.Add(new OthelloEmptyAction());
             OthelloState state = GenerateInitialOthelloState();
             state.BlackHandCount = 0;

@@ -5,9 +5,9 @@ using static Game.Othello.OthelloState;
 
 namespace Game.Othello
 {
-    public partial class Othello : IGame<OthelloAction, OthelloState, Unit>
+    public partial class Othello : IGame<IOthelloAction, OthelloState, Unit>
     {
-        public void DrawBoard(Context context, Unit u, OthelloState state, IEnumerable<(OthelloAction, double)> ratedActions)
+        public void DrawBoard(Context context, Unit u, OthelloState state, IEnumerable<(IOthelloAction, double)> ratedActions)
         {
             context.SetSourceRGB(0.86, 0.85, 0.74);
             context.LineWidth = 0.001;
@@ -42,7 +42,7 @@ namespace Game.Othello
             context.Scale(1 / fieldSize, 1 / fieldSize);
         }
 
-        private void DrawRatedAction(Context context, (OthelloAction, double) ratedAction)
+        private void DrawRatedAction(Context context, (IOthelloAction, double) ratedAction)
         {
             if (ratedAction.Item1 is OthelloEmptyAction)
             {
