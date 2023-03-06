@@ -11,11 +11,6 @@
             SelectedNode = Root;
         }
 
-        public void Reset()
-        {
-            SelectedNode = Root;
-        }
-
         public bool SelectChildNode(Action action)
         {
             foreach (Node<Action, State> child in SelectedNode.ExpandedChildren)
@@ -37,6 +32,11 @@
                 return true;
             }
             return false;
+        }
+
+        public void Reset()
+        {
+            SelectedNode = Root;
         }
     }
 }

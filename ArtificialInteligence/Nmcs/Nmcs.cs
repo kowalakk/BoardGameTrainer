@@ -22,5 +22,20 @@ namespace Ai
         {
             throw new NotImplementedException();
         }
+
+        public bool MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetGame(GameTree<Action, State> gameTree)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

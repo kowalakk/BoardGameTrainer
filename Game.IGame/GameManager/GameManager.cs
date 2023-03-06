@@ -4,7 +4,7 @@ namespace Game.IGame
 {
     public class GameManager<Action, State, InputState> : IGameManager
     {
-        public readonly IGame<Action, State, InputState> game;
+        private readonly IGame<Action, State, InputState> game;
         private readonly IAi<Action, State, InputState> ai;
         private State currentState;
         private InputState currentInputState;
@@ -34,7 +34,7 @@ namespace Game.IGame
             GameResult gameResult = GameResult.InProgress;
             if (nextAction is not null)
             {
-                gameTree.SelectChildNode(nextAction);
+                ai.MoveGameToNextState(gameTree, nextAction);
                 currentState = game.PerformAction(nextAction, currentState);
                 gameResult = game.Result(currentState);
                 if (gameResult == GameResult.InProgress)
@@ -42,7 +42,7 @@ namespace Game.IGame
                     if (isPlayer2Ai)
                     {
                         nextAction = ai.ChooseAction(gameTree);
-                        gameTree.SelectChildNode(nextAction);
+                        ai.MoveGameToNextState(gameTree, nextAction);
                         currentState = game.PerformAction(nextAction, currentState);
                         gameResult = game.Result(currentState);
                     }
