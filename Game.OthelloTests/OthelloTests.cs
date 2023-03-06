@@ -52,7 +52,7 @@ namespace Game.Othello.Tests
             board[2, 3] = board[3,3] = board[3, 4] = board[4, 3] = Field.Black;
             board[4, 4] = Field.White;
             OthelloState expected = new OthelloState(board, 30, 29, false);
-            OthelloState actual = othello.PerformAction(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0), OthelloState.GenerateInitialOthelloState());
+            OthelloState actual = othello.PerformAction(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0, 0, 0, 0, 0), OthelloState.GenerateInitialOthelloState());
             Assert.Equal(expected, actual);
 
         }
@@ -69,10 +69,10 @@ namespace Game.Othello.Tests
         void PossibleActionsFromInitialState()
         {
             List<IOthelloAction> actions = new List<IOthelloAction>();
-            actions.Add(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0));
-            actions.Add(new OthelloFullAction((3, 2), Field.Black, 0, 0, 0, 1));
-            actions.Add(new OthelloFullAction((4, 5), Field.Black, 0, 0, 1, 0));
-            actions.Add(new OthelloFullAction((5, 4), Field.Black, 1, 0, 0, 0));
+            actions.Add(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0, 0, 0, 0, 0));
+            actions.Add(new OthelloFullAction((3, 2), Field.Black, 0, 0, 0, 1, 0, 0, 0, 0));
+            actions.Add(new OthelloFullAction((4, 5), Field.Black, 0, 0, 1, 0, 0, 0, 0, 0));
+            actions.Add(new OthelloFullAction((5, 4), Field.Black, 1, 0, 0, 0, 0, 0, 0, 0));
 
             Assert.Equivalent(actions, othello.PossibleActions(OthelloState.GenerateInitialOthelloState()));
         }
@@ -107,10 +107,10 @@ namespace Game.Othello.Tests
         void FilterByInputStateShouldntChangeAnything()
         {
             List<OthelloFullAction> actions = new();
-            actions.Add(new OthelloFullAction((0, 2), Field.Black, 1, 2, 1, 0));
-            actions.Add(new OthelloFullAction((0, 2), Field.Black, 1, 3, 0, 0));
-            actions.Add(new OthelloFullAction((1, 4), Field.Black, 4, 1, 1, 1));
-            actions.Add(new OthelloFullAction((0, 7), Field.White, 0, 0, 1, 0));
+            actions.Add(new OthelloFullAction((0, 2), Field.Black, 1, 2, 1, 0, 0, 0, 0, 0));
+            actions.Add(new OthelloFullAction((0, 2), Field.Black, 1, 3, 0, 0, 0, 0, 0, 0));
+            actions.Add(new OthelloFullAction((1, 4), Field.Black, 4, 1, 1, 1, 0, 0, 0, 0));
+            actions.Add(new OthelloFullAction((0, 7), Field.White, 0, 0, 1, 0, 0, 0, 0, 0));
             Assert.Equal(actions, othello.FilterByInputState(actions, new LanguageExt.Unit()));
         }
 
