@@ -2,36 +2,36 @@
 {
     public class PotentialAction
     {
-        public int[] piecesToFlip;
-
-        public PotentialAction(PotentialAction potentialAction) : this(potentialAction.piecesToFlip) { }
+        public int[] PiecesToFlip { get; }
 
         public PotentialAction(int[] piecesToFlip)
         {
-            this.piecesToFlip = new int[8];
-            Array.Copy(piecesToFlip, this.piecesToFlip, 8);
+            this.PiecesToFlip = new int[8];
+            Array.Copy(piecesToFlip, this.PiecesToFlip, 8);
         }
 
         public bool IsEmpty()
         {
             for (int i = 0; i < 8; i++)
-                if (piecesToFlip[i] != 0)
+                if (PiecesToFlip[i] != 0)
                     return false;
             return true;
         }
     }
 
-    public class OthelloFullAction : PotentialAction, IOthelloAction
+    public class OthelloFullAction : IOthelloAction
     {
         public (int, int) Position { get; set; }
         public OthelloState.Field FieldContent { get; set; }
+        public int[] PiecesToFlip { get; }
 
         public OthelloFullAction((int, int) position,
             OthelloState.Field fieldContent,
-            PotentialAction potentialAction) : base(potentialAction)
+            PotentialAction potentialAction)
         {
             Position = position;
             FieldContent = fieldContent;
+            PiecesToFlip = potentialAction.PiecesToFlip;
         }
 
         public bool Equals(IOthelloAction? other)
@@ -44,12 +44,12 @@
                 return false;
             if (FieldContent != action.FieldContent)
                 return false;
-            return piecesToFlip.SequenceEqual(action.piecesToFlip);
+            return PiecesToFlip.SequenceEqual(action.PiecesToFlip);
         }
 
         public override int GetHashCode()
         {
-            return Position.Item1 + 8 * Position.Item2;
+            return Position.GetHashCode() + FieldContent.GetHashCode() + PiecesToFlip.GetHashCode();
         }
     }
 }
