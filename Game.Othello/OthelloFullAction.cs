@@ -1,6 +1,6 @@
 ﻿namespace Game.Othello
 {
-    public class PotentialAction
+    public struct PotentialAction
     {
         public int[] PiecesToFlip { get; }
 
