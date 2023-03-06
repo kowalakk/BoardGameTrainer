@@ -4,11 +4,11 @@ namespace Game.Checkers
 {
     public struct SimpleCapture
     {
-        public Field Start { get; private set; }
-        public Field Captured { get; private set; }
-        public Field Finish { get; private set; }
+        public int Start { get; private set; }
+        public int Captured { get; private set; }
+        public int Finish { get; private set; }
 
-        public SimpleCapture(Field start, Field captured, Field finish)
+        public SimpleCapture(int start, int captured, int finish)
         {
             Start = start;
             Captured = captured;
@@ -18,22 +18,22 @@ namespace Game.Checkers
 
     public class CaptureAction : ICheckersAction
     {
-        public Field Start { get => Captures.First!.Value.Start; }
+        public int Start { get => Captures.First!.Value.Start; }
 
-        public Field Finish { get => Captures.Last!.Value.Finish; }
+        public int Finish { get => Captures.Last!.Value.Finish; }
 
         public LinkedList<SimpleCapture> Captures { get; private set; }
 
         public int CapturesCount { get; private set; }
 
-        public CaptureAction(Field start, Field capture, Field finish)
+        public CaptureAction(int start, int capture, int finish)
         {
             CapturesCount = 1;
             Captures = new LinkedList<SimpleCapture>();
             Captures.AddFirst(new SimpleCapture(start, capture, finish));
         }
 
-        public IEnumerable<Field> GetParticipatingFields()
+        public IEnumerable<int> GetParticipatingFields()
         {
             yield return Start;
             foreach(SimpleCapture capture in Captures)
@@ -42,7 +42,7 @@ namespace Game.Checkers
             }
         }
 
-        public IEnumerable<Field> GetPlayableFields()
+        public IEnumerable<int> GetPlayableFields()
         {
             foreach (SimpleCapture capture in Captures)
             {
@@ -50,7 +50,7 @@ namespace Game.Checkers
             }
         }
 
-        internal IEnumerable<Field> GetCapturedFields()
+        internal IEnumerable<int> GetCapturedFields()
         {
             foreach (SimpleCapture capture in Captures)
             {
@@ -58,21 +58,11 @@ namespace Game.Checkers
             }
         }
 
-        public void CombineCapture(Field start, Field firstCapture)
+        public void CombineCapture(int start, int firstCapture)
         {
             SimpleCapture simpleCapture = new(start, firstCapture, Start);
             Captures.AddFirst(simpleCapture);
             CapturesCount++;
-        }
-
-        public bool Equals(ICheckersAction? other)
-        {
-            if (other == null) return false;
-            if (other is not CaptureAction) return false;
-            CaptureAction moveAction = (CaptureAction)other;
-            if (!moveAction.Start.Equals(Start)) return false;
-            if (!moveAction.Captures.SequenceEqual(Captures)) return false;
-            return true;
         }
 
         public CheckersState PerformOn(CheckersState state)
@@ -94,6 +84,20 @@ namespace Game.Checkers
             newState.LastAction = this;
 
             return newState;
+        }
+
+        public override bool Equals(object? other)
+        {
+            if (other == null) return false;
+            if (other is not CaptureAction captureAction) return false;
+            if (!captureAction.Start.Equals(Start)) return false;
+            if (!captureAction.Captures.SequenceEqual(Captures)) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Start.GetHashCode() ^ Finish.GetHashCode();
         }
     }
 }

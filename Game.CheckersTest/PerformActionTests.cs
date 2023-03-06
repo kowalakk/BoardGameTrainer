@@ -7,23 +7,23 @@
         public void StateAfterMoveActionIsCorrect()
         {
             CheckersState actual = CheckersState.GetEmptyBoardState();
-            actual.SetPieceAt("B4", Piece.WhitePawn);
-            MoveAction action = new(new("B4"), new("C5"));
+            actual.SetPieceAt(17, Piece.WhitePawn);
+            MoveAction action = new(17, 14);
             actual = checkers.PerformAction(action, actual);
             CheckersState expected = CheckersState.GetEmptyBoardState(IGame.Player.Two);
-            expected.SetPieceAt("C5", Piece.WhitePawn);
+            expected.SetPieceAt(14, Piece.WhitePawn);
             Assert.Equal(expected, actual);
         }
         [Fact]
         public void StateAfterCaptureActionIsCorrect()
         {
             CheckersState actual = CheckersState.GetEmptyBoardState();
-            actual.SetPieceAt("B4", Piece.WhitePawn);
-            actual.SetPieceAt("C5", Piece.BlackPawn);
-            CaptureAction action = new(new("B4"), new("C5"),new("D6"));
+            actual.SetPieceAt(17, Piece.WhitePawn);
+            actual.SetPieceAt(14, Piece.BlackPawn);
+            CaptureAction action = new(17, 14, 10);
             actual = checkers.PerformAction(action, actual);
             CheckersState expected = CheckersState.GetEmptyBoardState(IGame.Player.Two);
-            expected.SetPieceAt("D6", Piece.WhitePawn);
+            expected.SetPieceAt(10, Piece.WhitePawn);
             Assert.Equal(expected, actual);
         }
     }
