@@ -57,7 +57,7 @@ namespace Game.Othello
                 var (dCol, dRow, _) = directions[i];
                 int col = x;
                 int row = y;
-                for (int j = 0; j < fullAction.piecesToFlip[i]; j++)
+                for (int j = 0; j < fullAction.PiecesToFlip[i]; j++)
                 {
                     col += dCol;
                     row += dRow;
