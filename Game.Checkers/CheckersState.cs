@@ -93,20 +93,20 @@ namespace Game.Checkers
             board[index] = piece;
         }
 
-        public void SetPieceAtWithPossiblePromotion(int field, Piece piece)
+        public void SetPieceAtWithPossiblePromotion(int index, Piece piece)
         {
 
-            if (piece == Piece.WhitePawn && field < boardSize / 2)
+            if (piece == Piece.WhitePawn && index < boardSize / 2)
             {
-                SetPieceAt(field, Piece.WhiteCrowned);
+                SetPieceAt(index, Piece.WhiteCrowned);
                 return;
             }
-            if (piece == Piece.BlackPawn && field >= fieldCount - boardSize / 2)
+            if (piece == Piece.BlackPawn && index >= fieldCount - boardSize / 2)
             {
-                SetPieceAt(field, Piece.BlackCrowned);
+                SetPieceAt(index, Piece.BlackCrowned);
                 return;
             }
-            SetPieceAt(field, piece);
+            SetPieceAt(index, piece);
         }
         public static CheckersState GetInitialState()
         {
