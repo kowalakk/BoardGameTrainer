@@ -6,8 +6,8 @@
 
         public PotentialAction(int[] piecesToFlip)
         {
-            this.PiecesToFlip = new int[8];
-            Array.Copy(piecesToFlip, this.PiecesToFlip, 8);
+            PiecesToFlip = new int[8];
+            Array.Copy(piecesToFlip, PiecesToFlip, 8);
         }
 
         public bool IsEmpty()
@@ -32,6 +32,14 @@
             Position = position;
             FieldContent = fieldContent;
             PiecesToFlip = potentialAction.PiecesToFlip;
+        }
+        public OthelloFullAction((int, int) position,
+            OthelloState.Field fieldContent,
+            params int[] piecesToFlip)
+        {
+            Position = position;
+            FieldContent = fieldContent;
+            PiecesToFlip = piecesToFlip;
         }
 
         public bool Equals(IOthelloAction? other)

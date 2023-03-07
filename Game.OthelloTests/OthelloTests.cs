@@ -1,10 +1,4 @@
 ﻿using Game.IGame;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using static Game.Othello.OthelloState;
 
 namespace Game.Othello.Tests
@@ -52,7 +46,7 @@ namespace Game.Othello.Tests
             board[2, 3] = board[3, 3] = board[3, 4] = board[4, 3] = Field.Black;
             board[4, 4] = Field.White;
             OthelloState expected = new OthelloState(board, 30, 29, false);
-            OthelloState actual = othello.PerformAction(new OthelloFullAction((2, 3), Field.Black, 0, 1, 0, 0, 0, 0, 0, 0), OthelloState.GenerateInitialOthelloState());
+            OthelloState actual = othello.PerformAction(new OthelloFullAction((2, 3), Field.Black, 0, 0, 0, 1, 0, 0, 0, 0), OthelloState.GenerateInitialOthelloState());
             Assert.Equal(expected, actual);
 
         }
@@ -86,23 +80,26 @@ namespace Game.Othello.Tests
                     board[i, j] = Field.Empty;
             board[0, 0] = Field.White;
             OthelloState state = new OthelloState(board, 23, 22, false);
-            Assert.Equal(new List<IOthelloAction>() { new OthelloEmptyAction() }, othello.PossibleActions(state));
+            IEnumerable<IOthelloAction> possibleActions = othello.PossibleActions(state);
+            Assert.Single(possibleActions);
+            Assert.Equal( new OthelloEmptyAction(), possibleActions.First());
         }
 
         [Fact]
         void PossibleActionsShouldReturnListContainingOneOthelloEmptyActionIfCurrentPlayerHasNoPieces()
         {
-            List<OthelloAction> actionsEmpty = new List<OthelloAction>
-            {
-                new OthelloEmptyAction()
-            };
             OthelloState state = GenerateInitialOthelloState();
             state.BlackHandCount = 0;
-            Assert.Equal(actionsEmpty, othello.PossibleActions(state));
+            IEnumerable<IOthelloAction> possibleActions = othello.PossibleActions(state);
+            Assert.Single(possibleActions);
+            Assert.Equal(new OthelloEmptyAction(), possibleActions.First());
+
             state.BlacksTurn = false;
             state.BlackHandCount = 1;
             state.WhiteHandCount = 0;
-            Assert.Equal(actionsEmpty, othello.PossibleActions(state));
+            possibleActions = othello.PossibleActions(state);
+            Assert.Single(possibleActions);
+            Assert.Equal(new OthelloEmptyAction(), possibleActions.First());
         }
 
         [Fact]
