@@ -9,7 +9,5 @@
         bool MoveGameToNextState(GameTree<Action, State> gameTree, Action action);
 
         bool MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action);
-
-        void ResetGame(GameTree<Action, State> gameTree);
     }
 }

@@ -132,10 +132,5 @@ namespace Ai
         {
             return gameTree.SelectParentNode();
         }
-
-        public void ResetGame(GameTree<Action, State> gameTree)
-        {
-            gameTree.Reset();
-        }
     }
 }

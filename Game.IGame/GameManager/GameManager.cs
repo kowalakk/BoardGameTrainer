@@ -35,7 +35,7 @@ namespace Game.IGame
             if (nextAction is not null)
             {
                 ai.MoveGameToNextState(gameTree, nextAction);
-                currentState = game.PerformAction(nextAction, currentState);
+                currentState = gameTree.SelectedNode.CorespondingState;
                 gameResult = game.Result(currentState);
                 if (gameResult == GameResult.InProgress)
                 {
@@ -43,7 +43,7 @@ namespace Game.IGame
                     {
                         nextAction = ai.ChooseAction(gameTree);
                         ai.MoveGameToNextState(gameTree, nextAction);
-                        currentState = game.PerformAction(nextAction, currentState);
+                        currentState = gameTree.SelectedNode.CorespondingState;
                         gameResult = game.Result(currentState);
                     }
                     ratedActions = ai.MoveAssessment(gameTree);

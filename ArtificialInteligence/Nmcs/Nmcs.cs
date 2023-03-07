@@ -32,10 +32,5 @@ namespace Ai
         {
             throw new NotImplementedException();
         }
-
-        public void ResetGame(GameTree<Action, State> gameTree)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
