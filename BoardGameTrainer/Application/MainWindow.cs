@@ -4,11 +4,21 @@ using Gtk;
 
 namespace BoardGameTrainer
 {
+    enum WindowState
+    {
+        Idle, ProcessMovement, ComputeHints
+    }
     internal class MainWindow : Gtk.Window
     {
+        
+        WindowState windowState;
+        Gtk.DrawingArea boardImage;
+        GameTrainerApplication application;
+
         // TODO: refactor
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
+            this.application = application;
             string title = "New Game";
             this.DefaultSize = new Gdk.Size(700, 500);
 
@@ -18,7 +28,7 @@ namespace BoardGameTrainer
 
             var contentHBox = new Gtk.HBox();
 
-            var boardImage = new Gtk.DrawingArea();
+            boardImage = new Gtk.DrawingArea();
             boardImage.Drawn += (sender, args) =>
             {
                 var context = args.Cr;
@@ -34,20 +44,7 @@ namespace BoardGameTrainer
             };
 
             boardImage.AddEvents((int)EventMask.ButtonPressMask);
-            boardImage.ButtonPressEvent += delegate (object sender, ButtonPressEventArgs args)
-            {
-                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
-                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
-                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
-                double x = (args.Event.X - xOffset) / minDimention;
-                double y = (args.Event.Y - yOffset) / minDimention;
-                Console.WriteLine($"Button Pressed at {x}, {y}");
-
-                GameResult gameResult = application.gameManager.HandleInput(x, y, application.isPlayer2Ai);
-                if (gameResult != GameResult.InProgress)
-                    application.gameManager = new DefaultGameManager(gameResult);
-                boardImage.QueueDraw();
-            };
+            boardImage.ButtonPressEvent += BoardImageClickHandler;
 
             contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
@@ -72,8 +69,22 @@ namespace BoardGameTrainer
             this.Add(mainVBox);
             mainVBox.Show();
             newGameButton.Show();
-            restartButton.Show();
-            
+            restartButton.Show();          
+        }
+
+        private async void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
+        {
+            int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+            int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+            int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+            double x = (args.Event.X - xOffset) / minDimention;
+            double y = (args.Event.Y - yOffset) / minDimention;
+            Console.WriteLine($"Button Pressed at {x}, {y}");
+
+            GameResult gameResult = application.gameManager.HandleInput(x, y, application.isPlayer2Ai);
+            if (gameResult != GameResult.InProgress)
+                application.gameManager = new DefaultGameManager(gameResult);
+            boardImage.QueueDraw();
         }
     }
 }
