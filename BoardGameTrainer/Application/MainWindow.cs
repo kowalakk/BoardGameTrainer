@@ -1,6 +1,7 @@
 ﻿using Game.IGame;
 using Gdk;
 using Gtk;
+using System.Reflection.Emit;
 
 namespace BoardGameTrainer
 {
@@ -14,6 +15,8 @@ namespace BoardGameTrainer
         WindowState windowState;
         Gtk.DrawingArea boardImage;
         GameTrainerApplication application;
+        double x;
+        double y;
 
         // TODO: refactor
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
@@ -72,19 +75,34 @@ namespace BoardGameTrainer
             restartButton.Show();          
         }
 
-        private async void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
+        private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
-            int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
-            int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
-            double x = (args.Event.X - xOffset) / minDimention;
-            double y = (args.Event.Y - yOffset) / minDimention;
-            Console.WriteLine($"Button Pressed at {x}, {y}");
+            if(windowState == WindowState.Idle)
+            {
+                windowState = WindowState.ProcessMovement;
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                x = (args.Event.X - xOffset) / minDimention;
+                y = (args.Event.Y - yOffset) / minDimention;
+                Console.WriteLine($"Button Pressed at {x}, {y}");
 
+                Thread thr = new Thread(new ThreadStart(ThreadComputation));
+                thr.Start();
+            }
+            
+            
+        }
+
+        private void ThreadComputation()
+        {
             GameResult gameResult = application.gameManager.HandleInput(x, y, application.isPlayer2Ai);
             if (gameResult != GameResult.InProgress)
                 application.gameManager = new DefaultGameManager(gameResult);
-            boardImage.QueueDraw();
+            Gtk.Application.Invoke(delegate {
+                boardImage.QueueDraw();
+                windowState = WindowState.Idle;
+            });
         }
     }
 }
