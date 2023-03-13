@@ -11,32 +11,27 @@
             SelectedNode = Root;
         }
 
-        public bool SelectChildNode(Action action)
+        public void SelectChildNode(Action action)
         {
             foreach (Node<Action, State> child in SelectedNode.ExpandedChildren)
             {
                 if (action!.Equals(child.CorespondingAction))
                 {
                     SelectedNode = child;
-                    return true;
+                    return;
                 }
             }
-            return false;
+            throw new ArgumentException();
         }
 
-        public bool SelectParentNode()
+        public void SelectParentNode()
         {
             if (SelectedNode.Parent is not null)
             {
                 SelectedNode = SelectedNode.Parent;
-                return true;
+                return;
             }
-            return false;
-        }
-
-        public void Reset()
-        {
-            SelectedNode = Root;
+            throw new InvalidOperationException();
         }
     }
 }

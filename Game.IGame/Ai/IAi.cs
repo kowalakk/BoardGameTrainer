@@ -6,8 +6,8 @@
 
         Action ChooseAction(GameTree<Action, State> gameTree);
 
-        bool MoveGameToNextState(GameTree<Action, State> gameTree, Action action);
+        void MoveGameToNextState(GameTree<Action, State> gameTree, Action action);
 
-        bool MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action);
+        void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action);
     }
 }

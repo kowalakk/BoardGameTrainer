@@ -23,12 +23,12 @@ namespace Ai
             throw new NotImplementedException();
         }
 
-        public bool MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
         {
             throw new NotImplementedException();
         }
 
-        public bool MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
+        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
         {
             throw new NotImplementedException();
         }

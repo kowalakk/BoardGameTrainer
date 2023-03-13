@@ -123,14 +123,14 @@ namespace Ai
             return (double)node.SuccessCount / node.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
         }
 
-        public bool MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
         {
-            return gameTree.SelectChildNode(action);
+            gameTree.SelectChildNode(action);
         }
 
-        public bool MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
+        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
         {
-            return gameTree.SelectParentNode();
+            gameTree.SelectParentNode();
         }
     }
 }
