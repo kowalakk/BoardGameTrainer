@@ -31,7 +31,6 @@
                 SelectedNode = SelectedNode.Parent;
                 return;
             }
-            throw new InvalidOperationException();
         }
     }
 }

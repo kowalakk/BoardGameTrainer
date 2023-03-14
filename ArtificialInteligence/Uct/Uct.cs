@@ -5,19 +5,19 @@ namespace Ai
     public class Uct<Action, State, InputState> : IAi<Action, State, InputState>
     {
         private IStopCondition StopCondition { get; set; }
-        private double UCTConstant { get; }
+        private double UctConstant { get; }
         private IGame<Action, State, InputState> Game { get; }
 
-        public Uct(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
+        public Uct(double uctConstant, IGame<Action, State, InputState> game, IStopCondition condition)
         {
-            UCTConstant = uCTConstant;
+            UctConstant = uctConstant;
             Game = game;
             StopCondition = condition;
         }
         
         public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
         {
-            UCTSearch(gameTree.SelectedNode);
+            UctSearch(gameTree.SelectedNode);
             return gameTree.SelectedNode.ExpandedChildren
                 .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
                 .ToList();
@@ -30,7 +30,7 @@ namespace Ai
                 .Item1;
         }
 
-        private void UCTSearch(Node<Action, State> root)
+        private void UctSearch(Node<Action, State> root)
         {
             var watch = new System.Diagnostics.Stopwatch();
             int iterations = 0;
@@ -120,7 +120,7 @@ namespace Ai
 
         private double ArgMax(Node<Action, State> node)
         {
-            return (double)node.SuccessCount / node.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
+            return (double)node.SuccessCount / node.VisitCount + UctConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
         }
 
         public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)

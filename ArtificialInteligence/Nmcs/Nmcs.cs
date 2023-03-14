@@ -2,8 +2,24 @@
 
 namespace Ai
 {
-    internal class NMCS<Action, State, InputState> : IAi<Action, State, InputState>
+    internal class Nmcs<Action, State, InputState> : IAi<Action, State, InputState>
     {
+        private IStopCondition StopCondition { get; set; }
+        private int Nesting { get; }
+        private IGame<Action, State, InputState> Game { get; }
+
+        private Dictionary<Player, Func<double, double, double>> TurnFunction = new()
+        {
+            { Player.One, double.Min },
+            { Player.Two, double.Max },
+        };
+
+        public Nmcs(int nesting, IGame<Action, State, InputState> game, IStopCondition condition)
+        {
+            Nesting = nesting;
+            Game = game;
+            StopCondition = condition;
+        }
         public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
         {
             throw new NotImplementedException();
@@ -14,12 +30,31 @@ namespace Ai
             throw new NotImplementedException();
         }
 
-        void NMCSearch(Node<Action, State> root, int level, int timeInterval)
+        void NmcSearch(Node<Action, State> root, int level, int timeInterval)
         {
-            throw new NotImplementedException();
+            var watch = new System.Diagnostics.Stopwatch();
+            int iterations = 0;
+            watch.Start();
+
+            while (!StopCondition.StopConditionOccured())
+            {
+                Nested(Nesting, root, 0, 1.0);
+                iterations++;
+            }
+
+            watch.Stop();
+            Console.WriteLine($"UCT search execution time: {watch.ElapsedMilliseconds} ms" +
+                $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
         }
-        List<Action> Nested(Node<Action, State> node, int level)
+
+        double Nested(int nesting, Node<Action, State> node, int depth, double bound)
         {
+            while (Game.Result(node.CorespondingState) == GameResult.InProgress)
+            {
+                Node<Action, State> bestChild = node.ExpandedChildren.RandomElement();//TODO
+
+
+            }
             throw new NotImplementedException();
         }
 
