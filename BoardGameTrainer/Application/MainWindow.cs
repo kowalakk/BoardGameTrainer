@@ -77,7 +77,7 @@ namespace BoardGameTrainer
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if(windowState == WindowState.Idle)
+            if(windowState != WindowState.ProcessMovement)
             {
                 windowState = WindowState.ProcessMovement;
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
@@ -89,17 +89,27 @@ namespace BoardGameTrainer
 
                 Thread thr = new Thread(new ThreadStart(ThreadComputation));
                 thr.Start();
-            }
-            
-            
+            }    
         }
 
         private void ThreadComputation()
         {
-            GameResult gameResult = application.gameManager.HandleInput(x, y, application.isPlayer2Ai);
+            GameResult gameResult = application.gameManager.HandleMovement(x, y, application.isPlayer2Ai);
             if (gameResult != GameResult.InProgress)
                 application.gameManager = new DefaultGameManager(gameResult);
             Gtk.Application.Invoke(delegate {
+                boardImage.QueueDraw();
+                windowState = WindowState.ComputeHints;
+                Thread computeHintsThread = new Thread(new ThreadStart(ThreadComputeHints));
+                computeHintsThread.Start();
+            });
+        }
+
+        private void ThreadComputeHints()
+        {
+            application.gameManager.ComputeHints();
+            Gtk.Application.Invoke(delegate
+            {
                 boardImage.QueueDraw();
                 windowState = WindowState.Idle;
             });

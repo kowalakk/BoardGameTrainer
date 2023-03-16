@@ -26,7 +26,7 @@ namespace Game.IGame
             game.DrawBoard(context, inputState, state, filteredActions);
         }
 
-        public GameResult HandleInput(double x, double y, bool isPlayer2Ai)
+        public GameResult HandleMovement(double x, double y, bool isPlayer2Ai)
         {
             var (newInputState, action) = game.HandleInput(x, y, inputState, state);
             inputState = newInputState;
@@ -35,6 +35,7 @@ namespace Game.IGame
             {
                 state = game.PerformAction(action, state);
                 gameResult = game.Result(state);
+                ratedActions = new List<(Action, double)>();
                 if (gameResult == GameResult.InProgress)
                 {
                     if (isPlayer2Ai)
@@ -42,10 +43,14 @@ namespace Game.IGame
                         state = game.PerformAction(ai.ChooseAction(state), state);
                         gameResult = game.Result(state);
                     }
-                    ratedActions = ai.MoveAssessment(state);
                 }
             }
             return gameResult;
+        }
+
+        public void ComputeHints()
+        {
+            ratedActions = ai.MoveAssessment(state);
         }
     }
 }
