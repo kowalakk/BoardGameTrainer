@@ -1,7 +1,10 @@
 ﻿using Game.IGame;
 using Gdk;
 using Gtk;
+using System;
+using System.Collections.Concurrent;
 using System.Reflection.Emit;
+using Action = System.Action;
 
 namespace BoardGameTrainer
 {
@@ -11,7 +14,9 @@ namespace BoardGameTrainer
     }
     internal class MainWindow : Gtk.Window
     {
-        
+        Thread handleEventThread;
+        bool nextHintsAreComputed = false;
+        ConcurrentQueue<Action> eventsQueue;
         WindowState windowState;
         Gtk.DrawingArea boardImage;
         GameTrainerApplication application;
@@ -30,6 +35,10 @@ namespace BoardGameTrainer
             var titleAndContentVBox = new Gtk.VBox();
 
             var contentHBox = new Gtk.HBox();
+
+            eventsQueue = new ConcurrentQueue<Action>();
+            handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
+            handleEventThread.Start();
 
             boardImage = new Gtk.DrawingArea();
             boardImage.Drawn += (sender, args) =>
@@ -87,12 +96,11 @@ namespace BoardGameTrainer
                 y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                Thread thr = new Thread(new ThreadStart(ThreadComputation));
-                thr.Start();
-            }    
+                eventsQueue.Enqueue(PerformMovement);
+            }
         }
 
-        private void ThreadComputation()
+        private void PerformMovement()
         {
             GameResult gameResult = application.gameManager.HandleMovement(x, y, application.isPlayer2Ai);
             if (gameResult != GameResult.InProgress)
@@ -100,19 +108,34 @@ namespace BoardGameTrainer
             Gtk.Application.Invoke(delegate {
                 boardImage.QueueDraw();
                 windowState = WindowState.ComputeHints;
-                Thread computeHintsThread = new Thread(new ThreadStart(ThreadComputeHints));
-                computeHintsThread.Start();
+                eventsQueue.Enqueue(ComputeHints);
+                nextHintsAreComputed = true;
             });
         }
 
-        private void ThreadComputeHints()
+        private void ComputeHints()
         {
             application.gameManager.ComputeHints();
             Gtk.Application.Invoke(delegate
             {
                 boardImage.QueueDraw();
                 windowState = WindowState.Idle;
+                nextHintsAreComputed = false;
             });
+        }
+
+        private void ThreadHandleEvents()
+        {
+            Action job;
+            while (true) 
+            {
+                if(!eventsQueue.TryDequeue(out job))
+                {
+                    Thread.Sleep(10);
+                    continue;
+                }
+                job(); 
+            }
         }
     }
 }
