@@ -1,6 +1,6 @@
 ﻿namespace Game.Checkers.Tests
 {
-    public class PownsTests
+    public class PawnTests
     {
         readonly Checkers checkers = new();
 
@@ -15,7 +15,7 @@
             Assert.Equal(action, possibleActions.First());
         }
         [Fact]
-        public void PossibleActionsForBlockedPownShouldBeEmpty()
+        public void PossibleActionsForBlockedPawnShouldBeEmpty()
         {
             CheckersState state = CheckersState.GetEmptyBoardState();
             state.SetPieceAt(28, Piece.WhitePawn);

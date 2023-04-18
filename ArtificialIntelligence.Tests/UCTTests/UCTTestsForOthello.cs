@@ -1,3 +1,4 @@
+using Game.IGame;
 using Game.Othello;
 
 namespace Ai.Tests.UCT
@@ -9,16 +10,16 @@ namespace Ai.Tests.UCT
         [Fact]
         public void MoveAssessmentReturns4Moves()
         {
-            var assesments = uct.MoveAssessment(OthelloState.GenerateInitialOthelloState());
+            var assesments = uct.MoveAssessment(new GameTree<OthelloAction, OthelloState>(OthelloState.GenerateInitialOthelloState()));
             Assert.Equal(4, assesments.Count);
         }
 
         [Fact]
         public void ChooseMoveReturnsAnObviouslyBestMove()
         {
-            var assesments = uct.MoveAssessment(OthelloState.GenerateInitialOthelloState());
+            var assesments = uct.MoveAssessment(new GameTree<OthelloAction, OthelloState>(OthelloState.GenerateInitialOthelloState()));
             var bestMove = assesments.MaxBy(action => { return action.Item2; }).Item1;
-            Assert.Equal(bestMove, uct.ChooseAction(OthelloState.GenerateInitialOthelloState()));
+            Assert.Equal(bestMove, uct.ChooseAction(new GameTree<OthelloAction, OthelloState>(OthelloState.GenerateInitialOthelloState())));
         }
 
 
