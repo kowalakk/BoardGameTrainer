@@ -18,7 +18,7 @@ namespace Ai
         
         public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
-            UCTSearch(gameTree.SelectedNode);
+            UCTSearch(gameTree.SelectedNode, token);
             return gameTree.SelectedNode.ExpandedChildren
                 .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
                 .ToList();

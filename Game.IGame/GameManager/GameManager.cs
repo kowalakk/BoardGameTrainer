@@ -49,7 +49,6 @@ namespace Game.IGame
                         currentState = gameTree.SelectedNode.CorespondingState;
                         gameResult = game.Result(currentState);
                     }
-                    ratedActions = ai.MoveAssessment(gameTree);
                 }
             }
             return gameResult;
@@ -57,7 +56,7 @@ namespace Game.IGame
 
         public void ComputeHints(CancellationToken token)
         {
-            ratedActions = ai.MoveAssessment(state, token);
+            ratedActions = ai.MoveAssessment(gameTree, token);
         }
     }
 }
