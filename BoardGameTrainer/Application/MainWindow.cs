@@ -14,9 +14,11 @@ namespace BoardGameTrainer
     }
     internal class MainWindow : Gtk.Window
     {
+        CancellationTokenSource tokenSource;
+        CancellationToken token;
         Thread handleEventThread;
         bool nextHintsAreComputed = false;
-        ConcurrentQueue<Action> eventsQueue;
+        BlockingCollection<Action> eventsQueue = new BlockingCollection<System.Action>(new ConcurrentQueue<Action>());
         WindowState windowState;
         Gtk.DrawingArea boardImage;
         GameTrainerApplication application;
@@ -36,7 +38,9 @@ namespace BoardGameTrainer
 
             var contentHBox = new Gtk.HBox();
 
-            eventsQueue = new ConcurrentQueue<Action>();
+            tokenSource = new CancellationTokenSource();
+            token = tokenSource.Token;
+
             handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
             handleEventThread.Start();
 
@@ -96,7 +100,7 @@ namespace BoardGameTrainer
                 y = (args.Event.Y - yOffset) / minDimention;
                 Console.WriteLine($"Button Pressed at {x}, {y}");
 
-                eventsQueue.Enqueue(PerformMovement);
+                eventsQueue.Add(PerformMovement);
             }
         }
 
@@ -108,14 +112,17 @@ namespace BoardGameTrainer
             Gtk.Application.Invoke(delegate {
                 boardImage.QueueDraw();
                 windowState = WindowState.ComputeHints;
-                eventsQueue.Enqueue(ComputeHints);
+                eventsQueue.Add(ComputeHints);
                 nextHintsAreComputed = true;
             });
         }
 
         private void ComputeHints()
         {
-            application.gameManager.ComputeHints();
+            tokenSource.Cancel();
+            tokenSource = new CancellationTokenSource();
+            token = tokenSource.Token;
+            application.gameManager.ComputeHints(token);
             Gtk.Application.Invoke(delegate
             {
                 boardImage.QueueDraw();
@@ -129,11 +136,7 @@ namespace BoardGameTrainer
             Action job;
             while (true) 
             {
-                if(!eventsQueue.TryDequeue(out job))
-                {
-                    Thread.Sleep(10);
-                    continue;
-                }
+                job = eventsQueue.Take();
                 job(); 
             }
         }

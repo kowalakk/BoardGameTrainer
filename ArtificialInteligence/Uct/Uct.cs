@@ -14,25 +14,25 @@ namespace Ai
             StopCondition = condition;
         }
 
-        public List<(Action, double)> MoveAssessment(State state)
+        public List<(Action, double)> MoveAssessment(State state, CancellationToken token)
         {
             Node<Action, State> root = new(state);
-            UCTSearch(root);
+            UCTSearch(root, token);
             return root.ExpandedChildren.Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount)).ToList();
         }
 
-        public Action ChooseAction(State state)
+        public Action ChooseAction(State state, CancellationToken token)
         {
-            return MoveAssessment(state).MaxBy(action => { return action.Item2; }).Item1;
+            return MoveAssessment(state, token).MaxBy(action => { return action.Item2; }).Item1;
         }
 
-        private void UCTSearch(Node<Action, State> root)
+        private void UCTSearch(Node<Action, State> root, CancellationToken token)
         {
             var watch = new System.Diagnostics.Stopwatch();
             int iterations = 0;
             watch.Start();
 
-            while (!StopCondition.StopConditionOccured())
+            while (!StopCondition.StopConditionOccured() && !token.IsCancellationRequested)
             {
                 Node<Action, State> node = TreePolicy(root);
                 GameResult gameResult = DefaultPolicy(node.CorespondingState);

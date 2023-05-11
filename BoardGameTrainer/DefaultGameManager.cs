@@ -13,7 +13,7 @@ namespace BoardGameTrainer
             this.gameResult = gameResult;
         }
 
-        public void ComputeHints()
+        public void ComputeHints(CancellationToken token)
         {
         }
 

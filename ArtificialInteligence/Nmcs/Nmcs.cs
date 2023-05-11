@@ -6,12 +6,12 @@ namespace Ai
         where Action : IEquatable<Action>
         where State : IEquatable<State>
     {
-        public Action ChooseAction( State state)
+        public Action ChooseAction( State state, CancellationToken token)
         {
             throw new NotImplementedException();
         }
 
-        public List<(Action, double)> MoveAssessment(State state)
+        public List<(Action, double)> MoveAssessment(State state, CancellationToken token)
         {
             throw new NotImplementedException();
         }

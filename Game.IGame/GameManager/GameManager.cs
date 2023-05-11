@@ -16,7 +16,8 @@ namespace Game.IGame
             state = game.InitialState();
             inputState = game.EmptyInputState();
             ai = aiFactory.CreateAi(game, stopCondition);
-            ratedActions = ai.MoveAssessment(state);
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
+            ratedActions = ai.MoveAssessment(state, tokenSource.Token);
         }
 
         public void DrawBoard(Context context, (int, int) numberOfHints)
@@ -40,7 +41,8 @@ namespace Game.IGame
                 {
                     if (isPlayer2Ai)
                     {
-                        state = game.PerformAction(ai.ChooseAction(state), state);
+                        CancellationToken token = new CancellationToken();
+                        state = game.PerformAction(ai.ChooseAction(state, token), state);
                         gameResult = game.Result(state);
                     }
                 }
@@ -48,9 +50,9 @@ namespace Game.IGame
             return gameResult;
         }
 
-        public void ComputeHints()
+        public void ComputeHints(CancellationToken token)
         {
-            ratedActions = ai.MoveAssessment(state);
+            ratedActions = ai.MoveAssessment(state, token);
         }
     }
 }
