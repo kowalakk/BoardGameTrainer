@@ -1,17 +1,16 @@
 ﻿using Game.IGame;
+using System.Threading;
 
 namespace Ai
 {
     internal class NMCS<Action, State, InputState> : IAi<Action, State, InputState>
-        where Action : IEquatable<Action>
-        where State : IEquatable<State>
     {
-        public Action ChooseAction( State state, CancellationToken token)
+        public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
             throw new NotImplementedException();
         }
 
-        public List<(Action, double)> MoveAssessment(State state, CancellationToken token)
+        public Action ChooseAction(GameTree<Action, State> gameTree, CancellationToken token)
         {
             throw new NotImplementedException();
         }
@@ -21,6 +20,16 @@ namespace Ai
             throw new NotImplementedException();
         }
         List<Action> Nested(Node<Action, State> node, int level)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
         {
             throw new NotImplementedException();
         }

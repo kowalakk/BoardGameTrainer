@@ -7,7 +7,7 @@ namespace Ai
         public NmcsFactory() { }
 
         public IAi<Action, State, InputState> CreateAi<Action, State, InputState>(
-            IGame<Action, State, InputState> game, 
+            IGame<Action, State, InputState> game,
             IStopCondition stopCondition)
         {
             throw new NotImplementedException();

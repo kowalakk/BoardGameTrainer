@@ -1,4 +1,5 @@
 ﻿using Game.IGame;
+using System.Threading;
 
 namespace Ai
 {
@@ -7,23 +8,27 @@ namespace Ai
         private IStopCondition StopCondition { get; set; }
         private double UCTConstant { get; }
         private IGame<Action, State, InputState> Game { get; }
+
         public Uct(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
         {
             UCTConstant = uCTConstant;
             Game = game;
             StopCondition = condition;
         }
-
-        public List<(Action, double)> MoveAssessment(State state, CancellationToken token)
+        
+        public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
-            Node<Action, State> root = new(state);
-            UCTSearch(root, token);
-            return root.ExpandedChildren.Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount)).ToList();
+            UCTSearch(gameTree.SelectedNode);
+            return gameTree.SelectedNode.ExpandedChildren
+                .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
+                .ToList();
         }
 
-        public Action ChooseAction(State state, CancellationToken token)
+        public Action ChooseAction(GameTree<Action, State> gameTree, CancellationToken token)
         {
-            return MoveAssessment(state, token).MaxBy(action => { return action.Item2; }).Item1;
+            return MoveAssessment(gameTree, token)
+                .MaxBy(action => { return action.Item2; })
+                .Item1;
         }
 
         private void UCTSearch(Node<Action, State> root, CancellationToken token)
@@ -78,6 +83,7 @@ namespace Ai
                 node.UnexpandedChildren = new Queue<Node<Action, State>>(unexpandedChildren);
             }
         }
+
         private GameResult DefaultPolicy(State state)
         {
             GameResult gameResult = Game.Result(state);
@@ -90,6 +96,7 @@ namespace Ai
             }
             return gameResult;
         }
+
         private void Backup(Node<Action, State> node, GameResult gameResult)
         {
             int delta = -1;
@@ -106,13 +113,25 @@ namespace Ai
                 predecessor = predecessor.Parent;
             }
         }
+
         private Node<Action, State>? BestChild(Node<Action, State> node)
         {
             return node.ExpandedChildren.MaxBy(ArgMax);
         }
+
         private double ArgMax(Node<Action, State> node)
         {
             return (double)node.SuccessCount / node.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
+        }
+
+        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        {
+            gameTree.SelectChildNode(action);
+        }
+
+        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
+        {
+            gameTree.SelectParentNode();
         }
     }
 }
