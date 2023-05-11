@@ -4,15 +4,14 @@ namespace Ai
 {
     internal class Nmcs<Action, State, InputState> : IAi<Action, State, InputState>
     {
-        private IStopCondition StopCondition { get; set; }
-        private int Nesting { get; }
-        private IGame<Action, State, InputState> Game { get; }
-
-        private Dictionary<Player, Func<double, double, double>> TurnFunction = new()
+        private static Dictionary<Player, Func<double, double, double>> TurnFunction = new()
         {
             { Player.One, double.Min },
             { Player.Two, double.Max },
         };
+        private IStopCondition StopCondition { get; set; }
+        private int Nesting { get; }
+        private IGame<Action, State, InputState> Game { get; }
 
         public Nmcs(int nesting, IGame<Action, State, InputState> game, IStopCondition condition)
         {

@@ -9,7 +9,7 @@ namespace Game.Checkers
             (List<ICheckersAction> list, int maxCapturesCount) possibleActions = (new(), 0);
             if (state.CurrentPlayer == Player.One)
             {
-                for (int field = 0; field < CheckersState.fieldCount; field++)
+                for (int field = 0; field < CheckersState.FieldCount; field++)
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.WhitePawn)
@@ -24,7 +24,7 @@ namespace Game.Checkers
             }
             else //state.CurrentPlayer == Player.Black
             {
-                for (int field = 0; field < CheckersState.fieldCount; field++)
+                for (int field = 0; field < CheckersState.FieldCount; field++)
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.BlackPawn)
@@ -54,11 +54,11 @@ namespace Game.Checkers
                 return (new List<ICheckersAction>(), 0);
             List<ICheckersAction> possibleMoves = new();
 
-            int? neighbour = CheckersState.neighbours[field][0];
+            int? neighbour = CheckersState.Neighbours[field][0];
             if (neighbour is not null && state.GetPieceAt((int)neighbour) == Piece.None)
                 possibleMoves.Add(new MoveAction(field, (int)neighbour));
 
-            neighbour = CheckersState.neighbours[field][1];
+            neighbour = CheckersState.Neighbours[field][1];
             if (neighbour is not null && state.GetPieceAt((int)neighbour) == Piece.None)
                 possibleMoves.Add(new MoveAction(field, (int)neighbour));
 
@@ -77,11 +77,11 @@ namespace Game.Checkers
                 return (new List<ICheckersAction>(), 0);
             List<ICheckersAction> possibleMoves = new();
 
-            int? neighbour = CheckersState.neighbours[field][2];
+            int? neighbour = CheckersState.Neighbours[field][2];
             if (neighbour is not null && state.GetPieceAt((int)neighbour) == Piece.None)
                 possibleMoves.Add(new MoveAction(field, (int)neighbour));
 
-            neighbour = CheckersState.neighbours[field][3];
+            neighbour = CheckersState.Neighbours[field][3];
             if (neighbour is not null && state.GetPieceAt((int)neighbour) == Piece.None)
                 possibleMoves.Add(new MoveAction(field, (int)neighbour));
 
@@ -93,7 +93,7 @@ namespace Game.Checkers
             (List<ICheckersAction>, int) possibleCaptures = (new(), capturesCount);
 
             Piece capturer = state.GetPieceAt(field);
-            int?[] neighbours = CheckersState.neighbours[field];
+            int?[] neighbours = CheckersState.Neighbours[field];
             for (int direction = 0; direction < 4; direction++)
             {
                 if (neighbours[direction] is null)
@@ -102,7 +102,7 @@ namespace Game.Checkers
                 Piece target = state.GetPieceAt(neighbour);
                 if (HaveOppositeColors(capturer, target))
                 {
-                    int? finish = CheckersState.neighbours[neighbour][direction];
+                    int? finish = CheckersState.Neighbours[neighbour][direction];
                     if (finish != null && state.GetPieceAt((int)finish) == Piece.None)
                     {
                         CaptureAction action = new(field, neighbour, (int)finish);
@@ -123,7 +123,7 @@ namespace Game.Checkers
             List<ICheckersAction> possibleMoves = new();
 
             Piece movingPiece = state.GetPieceAt(field);
-            int?[] neighbours = CheckersState.neighbours[field];
+            int?[] neighbours = CheckersState.Neighbours[field];
             for (int direction = 0; direction < 4; direction++)
             {
                 int? targetedField = neighbours[direction];
@@ -138,7 +138,7 @@ namespace Game.Checkers
                     {
                         if (HaveOppositeColors(movingPiece, target)) // there is some piece to capture
                         {
-                            int? fieldBehindTarget = CheckersState.neighbours[targetedField.Value][direction];
+                            int? fieldBehindTarget = CheckersState.Neighbours[targetedField.Value][direction];
                             while (fieldBehindTarget.HasValue && state.GetPieceAt(fieldBehindTarget.Value) == Piece.None)
                             {
                                 CaptureAction action = new(field, targetedField.Value, fieldBehindTarget.Value);
@@ -148,12 +148,12 @@ namespace Game.Checkers
                                 furtherCaptures = CombineCaptures(action, furtherCaptures);
                                 possibleCaptures = UpdateActions(possibleCaptures, furtherCaptures);
 
-                                fieldBehindTarget = CheckersState.neighbours[fieldBehindTarget.Value][direction];
+                                fieldBehindTarget = CheckersState.Neighbours[fieldBehindTarget.Value][direction];
                             }
                         }
                         break;
                     }
-                    targetedField = CheckersState.neighbours[targetedField.Value][direction];
+                    targetedField = CheckersState.Neighbours[targetedField.Value][direction];
                 }
             }
             if (possibleCaptures.list.Any())
@@ -169,7 +169,7 @@ namespace Game.Checkers
             (List<ICheckersAction> list, int capturesCount) possibleCaptures = (new(), minCapturesCount);
 
             Piece movingPiece = state.GetPieceAt(field);
-            int?[] neighbours = CheckersState.neighbours[field];
+            int?[] neighbours = CheckersState.Neighbours[field];
             for (int direction = 0; direction < 4; direction++)
             {
                 int? targetedField = neighbours[direction];
@@ -180,7 +180,7 @@ namespace Game.Checkers
                     {
                         if (HaveOppositeColors(movingPiece, target)) // there is some piece to capture
                         {
-                            int? fieldBehindTarget = CheckersState.neighbours[targetedField.Value][direction];
+                            int? fieldBehindTarget = CheckersState.Neighbours[targetedField.Value][direction];
                             while (fieldBehindTarget.HasValue && state.GetPieceAt(fieldBehindTarget.Value) == Piece.None)
                             {
                                 CaptureAction action = new(field, targetedField.Value, fieldBehindTarget.Value);
@@ -190,12 +190,12 @@ namespace Game.Checkers
                                 furtherCaptures = CombineCaptures(action, furtherCaptures);
                                 possibleCaptures = UpdateActions(possibleCaptures, furtherCaptures);
 
-                                fieldBehindTarget = CheckersState.neighbours[fieldBehindTarget.Value][direction];
+                                fieldBehindTarget = CheckersState.Neighbours[fieldBehindTarget.Value][direction];
                             }
                         }
                         break;
                     }
-                    targetedField = CheckersState.neighbours[targetedField.Value][direction];
+                    targetedField = CheckersState.Neighbours[targetedField.Value][direction];
                 }
             }
             return possibleCaptures;
