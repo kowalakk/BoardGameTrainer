@@ -1,8 +1,3 @@
-using Ai;
-using Game.Checkers;
-using Game.IGame;
-using Game.Othello;
-using Gdk;
 using Gtk;
 
 namespace BoardGameTrainer

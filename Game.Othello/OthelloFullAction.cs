@@ -1,45 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game.Othello
+﻿namespace Game.Othello
 {
-    public class OthelloFullAction : OthelloAction
+    public readonly struct PotentialAction
     {
-        public OthelloFullAction((int, int) position, OthelloState.Field fieldContent, int up, int down, int left, int right)
+        public int[] PiecesToFlip { get; }
+
+        public PotentialAction(int[] piecesToFlip)
+        {
+            PiecesToFlip = new int[8];
+            Array.Copy(piecesToFlip, PiecesToFlip, 8);
+        }
+
+        public bool IsEmpty()
+        {
+            for (int i = 0; i < 8; i++)
+                if (PiecesToFlip[i] != 0)
+                    return false;
+            return true;
+        }
+    }
+
+    public class OthelloFullAction : IOthelloAction
+    {
+        public (int, int) Position { get; set; }
+        public OthelloState.Field FieldContent { get; set; }
+        public int[] PiecesToFlip { get; }
+
+        public OthelloFullAction((int, int) position,
+            OthelloState.Field fieldContent,
+            PotentialAction potentialAction)
         {
             Position = position;
             FieldContent = fieldContent;
-            this.up = up; this.down = down; this.left = left; this.right = right;
+            PiecesToFlip = potentialAction.PiecesToFlip;
+        }
+        public OthelloFullAction((int, int) position,
+            OthelloState.Field fieldContent,
+            params int[] piecesToFlip)
+        {
+            Position = position;
+            FieldContent = fieldContent;
+            PiecesToFlip = piecesToFlip;
         }
 
-        public (int, int) Position { get; set; }
-        public OthelloState.Field FieldContent { get; set; }
-        public int up { get; set; }
-        public int down { get; set; }
-        public int left { get; set; }
-        public int right { get; set; }
-
-        public override bool Equals(OthelloAction? other)
+        public bool Equals(IOthelloAction? other)
         {
-            if(other == null) return false;
+            if (other == null) return false;
             if (other is OthelloEmptyAction)
                 return false;
-            OthelloFullAction action = (OthelloFullAction) other;
-            if (this.Position != action.Position)
+            OthelloFullAction action = (OthelloFullAction)other;
+            if (Position != action.Position)
                 return false;
-            if (this.FieldContent != action.FieldContent)
+            if (FieldContent != action.FieldContent)
                 return false;
-            if (this.left != action.left || this.right != action.right || this.up != action.up || this.down != action.down)
-                return false;
-            return true;
+            return PiecesToFlip.SequenceEqual(action.PiecesToFlip);
         }
 
         public override int GetHashCode()
         {
-            return Position.Item1 + 8 * Position.Item2 + 8 * 8 * left + 8 * 8 * 8 * right + 8 * 8 * 8 * 8 * up + 8 * 8 * 8 * 8 * 8 * down;
+            return Position.GetHashCode() + FieldContent.GetHashCode() + PiecesToFlip.GetHashCode();
         }
     }
 }

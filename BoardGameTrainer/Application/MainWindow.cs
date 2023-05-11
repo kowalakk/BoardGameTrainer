@@ -41,7 +41,6 @@ namespace BoardGameTrainer
                 int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
                 double x = (args.Event.X - xOffset) / minDimention;
                 double y = (args.Event.Y - yOffset) / minDimention;
-                Console.WriteLine($"Button Pressed at {x}, {y}");
 
                 GameResult gameResult = application.gameManager.HandleInput(x, y, application.isPlayer2Ai);
                 if (gameResult != GameResult.InProgress)

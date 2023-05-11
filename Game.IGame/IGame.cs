@@ -30,7 +30,11 @@ namespace Game.IGame
 
         public GameResult Result(State state);
 
-        public void DrawBoard(Context context, InputState inputState, State state, IEnumerable<(Action, double)> ratedActions);
+        public void DrawBoard(
+            Context context, 
+            InputState inputState, 
+            State state, 
+            IEnumerable<(Action, double)> ratedActions);
 
         public (InputState, Action?) HandleInput(double x, double y, InputState inputState, State state);
 

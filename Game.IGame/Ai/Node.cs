@@ -1,4 +1,4 @@
-﻿namespace Ai
+﻿namespace Game.IGame
 {
     public record Node<Action, State>
     {
