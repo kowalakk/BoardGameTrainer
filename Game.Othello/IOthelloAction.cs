@@ -1,4 +1,4 @@
 ﻿namespace Game.Othello
 {
-    public interface IOthelloAction : IEquatable<IOthelloAction> { }
+    public interface IOthelloAction : IEquatable<object> { }
 }
