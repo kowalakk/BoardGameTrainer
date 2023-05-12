@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game.Othello
+﻿namespace Game.Othello
 {
     public class OthelloEmptyAction : IOthelloAction
     {
-        public bool Equals(IOthelloAction? other)
+        public override bool Equals(object? other)
         {
             if (other is OthelloEmptyAction)
                 return true;
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

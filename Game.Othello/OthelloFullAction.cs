@@ -42,7 +42,7 @@
             PiecesToFlip = piecesToFlip;
         }
 
-        public bool Equals(IOthelloAction? other)
+        public override bool Equals(object? other)
         {
             if (other == null) return false;
             if (other is OthelloEmptyAction)
