@@ -1,35 +1,53 @@
 ﻿using Game.IGame;
+using Gtk;
 
 namespace Ai
 {
-    internal class Nmcs<Action, State, InputState> : IAi<Action, State, InputState>
+    public class Nmcs<Action, State, InputState> : Ai<Action, State, InputState>
     {
-        private static Dictionary<Player, Func<double, double, double>> TurnFunction = new()
-        {
-            { Player.One, double.Min },
-            { Player.Two, double.Max },
-        };
-        private IStopCondition StopCondition { get; set; }
-        private int Nesting { get; }
-        private IGame<Action, State, InputState> Game { get; }
+        private int Depth { get; }
 
-        public Nmcs(int nesting, IGame<Action, State, InputState> game, IStopCondition condition)
+        public Nmcs(int depth, IGame<Action, State, InputState> game, IStopCondition stopCondition)
+            : base(game, stopCondition)
         {
-            Nesting = nesting;
-            Game = game;
-            StopCondition = condition;
-        }
-        public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
-        {
-            throw new NotImplementedException();
+            Depth = depth;
         }
 
-        public Action ChooseAction(GameTree<Action, State> gameTree)
+        public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
         {
-            throw new NotImplementedException();
+            List<Node<Action, State>> leaves = new();
+            Nesting(Depth, gameTree.SelectedNode, leaves);
+            NmcSearch(leaves.ToArray());
+            Backup(leaves);
+            return gameTree.SelectedNode.ExpandedChildren
+                .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
+                .ToList();
         }
 
-        void NmcSearch(Node<Action, State> root, int level, int timeInterval)
+        private void Nesting(int depth, Node<Action, State> node, List<Node<Action, State>> leaves)
+        {
+            if (depth == 0)
+            {
+                leaves.Add(node);
+                return;
+            }
+            if (!node.ExpandedChildren.Any())
+            {
+                IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
+                foreach (Action action in possibleActions)
+                {
+                    State childState = Game.PerformAction(action, node.CorespondingState);
+                    Node<Action, State> childNode = new(action, childState, node);
+                    node.ExpandedChildren.Add(childNode);
+                }
+            }
+            foreach (Node<Action, State> child in node.ExpandedChildren)
+            {
+                Nesting(depth - 1, child, leaves);
+            }
+        }
+
+        private void NmcSearch(Node<Action, State>[] leaves)
         {
             var watch = new System.Diagnostics.Stopwatch();
             int iterations = 0;
@@ -37,32 +55,42 @@ namespace Ai
 
             while (!StopCondition.StopConditionOccured())
             {
-                Nested(Nesting, root, 0, 1.0);
-                iterations++;
+                Node<Action, State> randomLeaf = leaves.RandomElement();
+                GameResult gameResult = DefaultPolicy(randomLeaf.CorespondingState);
+                int delta = Delta(randomLeaf.CorespondingState, gameResult);
+                randomLeaf.VisitCount++;
+                randomLeaf.SuccessCount += delta;
+
+                iterations++;//for tests
             }
 
             watch.Stop();
-            Console.WriteLine($"UCT search execution time: {watch.ElapsedMilliseconds} ms" +
+            Console.WriteLine($"NMC search execution time: {watch.ElapsedMilliseconds} ms" +
                 $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
         }
 
-        double Nested(int nesting, Node<Action, State> node, int depth, double bound)
+        private static void Backup(List<Node<Action, State>> leaves)
         {
-            while (Game.Result(node.CorespondingState) == GameResult.InProgress)
+            foreach(Node<Action,State> leaf in leaves) 
             {
-                Node<Action, State> bestChild = node.ExpandedChildren.RandomElement();//TODO
-
-
+                Node<Action, State>? predecessor = leaf.Parent;
+                long successCount = -leaf.SuccessCount;
+                while (predecessor != null)
+                {
+                    predecessor.VisitCount += leaf.VisitCount;
+                    predecessor.SuccessCount += successCount;
+                    successCount = -successCount;
+                    predecessor = predecessor.Parent;
+                }
             }
-            throw new NotImplementedException();
         }
 
-        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        public override void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
         {
             throw new NotImplementedException();
         }
 
-        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
+        public override void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
         {
             throw new NotImplementedException();
         }

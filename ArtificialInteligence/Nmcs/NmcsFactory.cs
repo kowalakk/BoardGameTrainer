@@ -4,13 +4,18 @@ namespace Ai
 {
     public class NmcsFactory : IAiFactory
     {
-        public NmcsFactory() { }
+        private int Depth { get; }
+
+        public NmcsFactory(int depth)
+        {
+            Depth = depth;
+        }
 
         public IAi<Action, State, InputState> CreateAi<Action, State, InputState>(
             IGame<Action, State, InputState> game,
             IStopCondition stopCondition)
         {
-            throw new NotImplementedException();
+            return new Nmcs<Action, State, InputState>(Depth, game, stopCondition);
         }
     }
 }

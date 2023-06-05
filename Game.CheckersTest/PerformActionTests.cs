@@ -12,7 +12,7 @@
             actual = checkers.PerformAction(action, actual);
             CheckersState expected = CheckersState.GetEmptyBoardState(IGame.Player.Two);
             expected.SetPieceAt(14, Piece.WhitePawn);
-            Assert.Equal(expected, actual);
+            Assert.True(expected.Equals(actual));
         }
         [Fact]
         public void StateAfterCaptureActionIsCorrect()
@@ -24,7 +24,7 @@
             actual = checkers.PerformAction(action, actual);
             CheckersState expected = CheckersState.GetEmptyBoardState(IGame.Player.Two);
             expected.SetPieceAt(10, Piece.WhitePawn);
-            Assert.Equal(expected, actual);
+            Assert.True(expected.Equals(actual));
         }
     }
 }
