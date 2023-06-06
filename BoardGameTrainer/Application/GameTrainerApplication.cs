@@ -33,7 +33,8 @@ namespace BoardGameTrainer
             if (gameNum == 0)
             {
                 gameManager = new CheckersManagerFactory()
-                    .CreateGameManager(new UctFactory(1.41), new IterationStopCondition(iterationsNumber));
+                    //.CreateGameManager(new UctFactory(1.41), new IterationStopCondition(iterationsNumber));
+                    .CreateGameManager(new NmcsFactory(3), new IterationStopCondition(iterationsNumber));
             }
             if (gameNum == 1)
             {

@@ -1,5 +1,4 @@
 ﻿using Game.IGame;
-using Gtk;
 
 namespace Ai
 {
