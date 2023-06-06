@@ -95,15 +95,5 @@ namespace Ai
         {
             return (double)node.SuccessCount / node.VisitCount + UctConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
         }
-
-        public override void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
-        {
-            gameTree.SelectChildNode(action);
-        }
-
-        public override void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
-        {
-            gameTree.SelectParentNode();
-        }
     }
 }

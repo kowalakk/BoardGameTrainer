@@ -17,8 +17,11 @@ namespace Ai
         {
             List<Node<Action, State>> leaves = new();
             Nesting(Depth, gameTree.SelectedNode, leaves);
-            NmcSearch(leaves.ToArray());
-            Backup(leaves);
+            if (leaves.Count > 0)
+            {
+                NmcSearch(leaves.ToArray());
+                Backup(leaves);
+            }
             return gameTree.SelectedNode.ExpandedChildren
                 .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
                 .ToList();
@@ -26,7 +29,7 @@ namespace Ai
 
         private void Nesting(int depth, Node<Action, State> node, List<Node<Action, State>> leaves)
         {
-            if (depth == 0)
+            if (depth == 1)
             {
                 leaves.Add(node);
                 return;
@@ -34,6 +37,11 @@ namespace Ai
             if (!node.ExpandedChildren.Any())
             {
                 IEnumerable<Action> possibleActions = Game.PossibleActions(node.CorespondingState);
+                if (!possibleActions.Any())
+                {
+                    leaves.Add(node);
+                    return;
+                }
                 foreach (Action action in possibleActions)
                 {
                     State childState = Game.PerformAction(action, node.CorespondingState);
@@ -69,9 +77,9 @@ namespace Ai
                 $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
         }
 
-        private static void Backup(List<Node<Action, State>> leaves)
+        private void Backup(List<Node<Action, State>> leaves)
         {
-            foreach(Node<Action,State> leaf in leaves) 
+            foreach (Node<Action, State> leaf in leaves)
             {
                 Node<Action, State>? predecessor = leaf.Parent;
                 long successCount = -leaf.SuccessCount;
@@ -83,16 +91,6 @@ namespace Ai
                     predecessor = predecessor.Parent;
                 }
             }
-        }
-
-        public override void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
-        {
-            throw new NotImplementedException();
         }
     }
 }

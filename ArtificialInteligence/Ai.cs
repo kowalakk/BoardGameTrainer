@@ -21,10 +21,6 @@ namespace Ai
 
         public abstract List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree);
 
-        public abstract void MoveGameToNextState(GameTree<Action, State> gameTree, Action action);
-
-        public abstract void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action);
-
         protected GameResult DefaultPolicy(State state)
         {
             GameResult gameResult = Game.Result(state);
@@ -45,6 +41,15 @@ namespace Ai
             if (gameResult == (GameResult)Game.CurrentPlayer(state))
                 return 1;
             return -1;
+        }
+        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
+        {
+            gameTree.SelectChildNode(action);
+        }
+
+        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
+        {
+            gameTree.SelectParentNode();
         }
     }
 }

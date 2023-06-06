@@ -3,7 +3,7 @@ using Game.IGame;
 using System.Reflection;
 using Assert = Xunit.Assert;
 
-namespace Ai.Tests.UCT
+namespace Ai.Tests.Uct
 {
     public class PrivateMethodsTests
     {
