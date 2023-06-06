@@ -17,7 +17,6 @@ namespace BoardGameTrainer
         CancellationTokenSource tokenSource;
         CancellationToken token;
         Thread handleEventThread;
-        bool nextHintsAreComputed = false;
         BlockingCollection<Action> eventsQueue = new BlockingCollection<System.Action>(new ConcurrentQueue<Action>());
         WindowState windowState;
         Gtk.DrawingArea boardImage;
@@ -66,9 +65,9 @@ namespace BoardGameTrainer
             boardImage.Show();
 
             var newGameButton = new Button("New Game");
-            newGameButton.Clicked += (s, e) => { application.AddWindow(new ConfigWindow(application)); };
+            newGameButton.Clicked += (s, e) => { application.AddWindow(new ConfigWindow(application)); windowState = WindowState.Idle;};
             var restartButton = new Button("Restart");
-            restartButton.Clicked += (s, e) => { application.CreateNewGame(); };
+            restartButton.Clicked += (s, e) => { application.CreateNewGame(); windowState = WindowState.Idle; };
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
 
@@ -106,14 +105,32 @@ namespace BoardGameTrainer
 
         private void PerformMovement()
         {
-            GameResult gameResult = application.gameManager.HandleMovement(x, y, application.isPlayer2Ai);
+            tokenSource.Cancel();
+            tokenSource = new CancellationTokenSource();
+            token = tokenSource.Token;
+            (GameResult gameResult, bool actionPerformed) = application.gameManager.HandleMovement(x, y, application.isPlayer2Ai);
             if (gameResult != GameResult.InProgress)
                 application.gameManager = new DefaultGameManager(gameResult);
             Gtk.Application.Invoke(delegate {
                 boardImage.QueueDraw();
-                windowState = WindowState.ComputeHints;
-                eventsQueue.Add(ComputeHints);
-                nextHintsAreComputed = true;
+                if (actionPerformed)
+                {
+                    if(application.isPlayer2Ai)
+                    {
+                        gameResult = application.gameManager.PerformOponentsMovement(gameResult);
+                        boardImage.QueueDraw();
+                    }
+
+                    if(gameResult == GameResult.InProgress)
+                    {
+                        windowState = WindowState.ComputeHints;
+                        eventsQueue.Add(ComputeHints);
+                    }
+                    else
+                        application.gameManager = new DefaultGameManager(gameResult);
+                }
+                else
+                    windowState = WindowState.Idle;
             });
         }
 
@@ -127,7 +144,6 @@ namespace BoardGameTrainer
             {
                 boardImage.QueueDraw();
                 windowState = WindowState.Idle;
-                nextHintsAreComputed = false;
             });
         }
 

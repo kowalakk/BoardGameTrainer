@@ -45,7 +45,12 @@ namespace BoardGameTrainer
             context.Stroke();
         }
 
-        public GameResult HandleMovement(double x, double y, bool isPlayer2Ai)
+        public (GameResult, bool) HandleMovement(double x, double y, bool isPlayer2Ai)
+        {
+            return (GameResult.InProgress, false);
+        }
+
+        public GameResult PerformOponentsMovement(GameResult gameResult)
         {
             return GameResult.InProgress;
         }

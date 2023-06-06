@@ -1,4 +1,5 @@
 ﻿using Cairo;
+using Game.IGame;
 using System.Threading;
 
 namespace Game.IGame
@@ -30,7 +31,7 @@ namespace Game.IGame
             game.DrawBoard(context, currentInputState, currentState, filteredActions);
         }
 
-        public GameResult HandleMovement(double x, double y, bool isPlayer2Ai)
+        public (GameResult result, bool actionPerformed) HandleMovement(double x, double y, bool isPlayer2Ai)
         {
             (currentInputState, Action? nextAction) = game.HandleInput(x, y, currentInputState, currentState);
             GameResult gameResult = GameResult.InProgress;
@@ -39,18 +40,18 @@ namespace Game.IGame
                 ai.MoveGameToNextState(gameTree, nextAction);
                 currentState = gameTree.SelectedNode.CorespondingState;
                 gameResult = game.Result(currentState);
-                if (gameResult == GameResult.InProgress)
-                {
-                    if (isPlayer2Ai)
-                    {
-                        CancellationToken token = new CancellationToken();
-                        nextAction = ai.ChooseAction(gameTree, token);
-                        ai.MoveGameToNextState(gameTree, nextAction);
-                        currentState = gameTree.SelectedNode.CorespondingState;
-                        gameResult = game.Result(currentState);
-                    }
-                }
+                ratedActions = new List<(Action, double)>();
             }
+            return (gameResult, nextAction != null);
+        }
+
+        public GameResult PerformOponentsMovement(GameResult gameResult)
+        {
+            CancellationToken token = new CancellationToken();
+            Action nextAction = ai.ChooseAction(gameTree, token);
+            ai.MoveGameToNextState(gameTree, nextAction);
+            currentState = gameTree.SelectedNode.CorespondingState;
+            gameResult = game.Result(currentState);
             return gameResult;
         }
 
