@@ -113,25 +113,29 @@ namespace BoardGameTrainer
                 application.gameManager = new DefaultGameManager(gameResult);
             Gtk.Application.Invoke(delegate {
                 boardImage.QueueDraw();
-                if (actionPerformed)
+                
+            });
+            if (actionPerformed)
+            {
+                if (application.isPlayer2Ai)
                 {
-                    if(application.isPlayer2Ai)
-                    {
-                        gameResult = application.gameManager.PerformOponentsMovement(gameResult);
+                    gameResult = application.gameManager.PerformOponentsMovement(gameResult);
+                    Gtk.Application.Invoke(delegate {
                         boardImage.QueueDraw();
-                    }
 
-                    if(gameResult == GameResult.InProgress)
-                    {
-                        windowState = WindowState.ComputeHints;
-                        eventsQueue.Add(ComputeHints);
-                    }
-                    else
-                        application.gameManager = new DefaultGameManager(gameResult);
+                    });
+                }
+
+                if (gameResult == GameResult.InProgress)
+                {
+                    windowState = WindowState.ComputeHints;
+                    eventsQueue.Add(ComputeHints);
                 }
                 else
-                    windowState = WindowState.Idle;
-            });
+                    application.gameManager = new DefaultGameManager(gameResult);
+            }
+            else
+                windowState = WindowState.Idle;
         }
 
         private void ComputeHints()
