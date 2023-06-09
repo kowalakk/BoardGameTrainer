@@ -15,7 +15,6 @@ namespace BoardGameTrainer
     internal class MainWindow : Gtk.Window
     {
         CancellationTokenSource tokenSource;
-        CancellationToken token;
         Thread handleEventThread;
         BlockingCollection<Action> eventsQueue = new BlockingCollection<System.Action>(new ConcurrentQueue<Action>());
         WindowState windowState;
@@ -38,7 +37,6 @@ namespace BoardGameTrainer
             var contentHBox = new Gtk.HBox();
 
             tokenSource = new CancellationTokenSource();
-            token = tokenSource.Token;
 
             handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
             handleEventThread.Start();
@@ -105,9 +103,7 @@ namespace BoardGameTrainer
 
         private void PerformMovement()
         {
-            tokenSource.Cancel();
-            tokenSource = new CancellationTokenSource();
-            token = tokenSource.Token;
+            CancellationToken token = ResetToken();
             (GameResult gameResult, bool actionPerformed) = application.gameManager.HandleMovement(x, y, application.isPlayer2Ai);
             if (gameResult != GameResult.InProgress)
                 application.gameManager = new DefaultGameManager(gameResult);
@@ -122,7 +118,6 @@ namespace BoardGameTrainer
                     gameResult = application.gameManager.PerformOponentsMovement(gameResult);
                     Gtk.Application.Invoke(delegate {
                         boardImage.QueueDraw();
-
                     });
                 }
 
@@ -140,9 +135,7 @@ namespace BoardGameTrainer
 
         private void ComputeHints()
         {
-            tokenSource.Cancel();
-            tokenSource = new CancellationTokenSource();
-            token = tokenSource.Token;
+            CancellationToken token = ResetToken();
             application.gameManager.ComputeHints(token);
             Gtk.Application.Invoke(delegate
             {
@@ -159,6 +152,13 @@ namespace BoardGameTrainer
                 job = eventsQueue.Take();
                 job(); 
             }
+        }
+
+        private CancellationToken ResetToken()
+        {
+            tokenSource.Cancel();
+            tokenSource = new CancellationTokenSource();
+            return tokenSource.Token;
         }
     }
 }
