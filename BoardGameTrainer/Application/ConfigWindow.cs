@@ -13,6 +13,19 @@ namespace BoardGameTrainer
             configWindow.Show();
             var contentVbox = new Gtk.VBox();
 
+            var aiHBox = new Gtk.HBox();
+            var aiDropDown = new Gtk.ComboBox(new string[] { "Upper Confidence Bounds for Trees", "Nested Monte Carlo Search" })
+            {
+                Active = 0
+            };
+            aiDropDown.Changed += (sender, args) => { application.aiNum = aiDropDown.Active; };
+            var aiLabel = new Gtk.Label("AI Module");
+            aiHBox.PackStart(aiLabel, false, false, 3);
+            aiHBox.PackStart(aiDropDown, false, false, 3);
+            aiLabel.Show();
+            aiDropDown.Show();
+            aiHBox.Show();
+
             var gameHBox = new Gtk.HBox();
             var gamesDropDown = new Gtk.ComboBox(application.games);
             gamesDropDown.Active = 0;
@@ -48,6 +61,7 @@ namespace BoardGameTrainer
             newGameButton.Show();
             newGameButton.Clicked += (sender, args) => { application.CreateNewGame(); configWindow.Close(); };
 
+            contentVbox.PackStart(aiHBox, false, false, 3);
             contentVbox.PackStart(gameHBox, false, false, 3);
             contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
             contentVbox.PackStart(showHintsFrame, false, false, 3);
