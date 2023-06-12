@@ -20,7 +20,7 @@ namespace Game.Checkers
         {
             if (state.CurrentPlayer == Player.One)
             {
-                for (int field = 0; field < CheckersState.fieldCount; field++)
+                for (int field = 0; field < CheckersState.FieldCount; field++)
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.WhitePawn && PossibleWhitePawnActions(state, field, 0).Item1.Any())
@@ -35,7 +35,7 @@ namespace Game.Checkers
             }
             else //state.CurrentPlayer == Player.Black
             {
-                for (int field = 0; field < CheckersState.fieldCount; field++)
+                for (int field = 0; field < CheckersState.FieldCount; field++)
                 {
                     Piece piece = state.GetPieceAt(field);
                     if (piece == Piece.BlackPawn && PossibleBlackPawnActions(state, field, 0).Item1.Any())

@@ -1,9 +1,9 @@
 using Game.IGame;
 using Game.Othello;
 
-namespace Ai.Tests.UCT
+namespace Ai.Tests.Uct
 {
-    public class UCTTestsForOthello
+    public class TestsForOthello
     {
         private Uct<IOthelloAction, OthelloState, LanguageExt.Unit> uct = new Uct<IOthelloAction, OthelloState, LanguageExt.Unit>(1.414, new Othello(), new IterationStopCondition(10));
 
