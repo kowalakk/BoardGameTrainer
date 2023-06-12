@@ -5,7 +5,7 @@ namespace Game.Checkers
 {
     public partial class Checkers : IGame<ICheckersAction, CheckersState, ICheckersInputState>
     {
-        private static readonly double fieldSize = 1.0 / CheckersState.boardSize;
+        private static readonly double fieldSize = 1.0 / CheckersState.BoardSize;
         private static readonly Color white = new(0.9, 0.9, 0.9);
         private static readonly Color grey = new(0.5, 0.5, 0.5);
         private static readonly Color black = new(0.1, 0.1, 0.1);
@@ -25,7 +25,7 @@ namespace Game.Checkers
             context.Rectangle(0, 0, 1, 1);
             context.Fill();
 
-            for (int field = 0; field < CheckersState.fieldCount; field++)
+            for (int field = 0; field < CheckersState.FieldCount; field++)
             {
                 MoveContextToField(context, field);
                 DrawField(context);

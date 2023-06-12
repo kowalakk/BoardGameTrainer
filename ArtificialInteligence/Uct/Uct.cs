@@ -2,35 +2,25 @@
 
 namespace Ai
 {
-    public class Uct<Action, State, InputState> : IAi<Action, State, InputState>
+    public class Uct<Action, State, InputState> : Ai<Action, State, InputState>
     {
-        private IStopCondition StopCondition { get; set; }
-        private double UCTConstant { get; }
-        private IGame<Action, State, InputState> Game { get; }
+        private double UctConstant { get; }
 
-        public Uct(double uCTConstant, IGame<Action, State, InputState> game, IStopCondition condition)
+        public Uct(double uctConstant, IGame<Action, State, InputState> game, IStopCondition stopCondition)
+            : base(game, stopCondition)
         {
-            UCTConstant = uCTConstant;
-            Game = game;
-            StopCondition = condition;
+            UctConstant = uctConstant;
         }
-        
-        public List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
+
+        public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
         {
-            UCTSearch(gameTree.SelectedNode);
+            UctSearch(gameTree.SelectedNode);
             return gameTree.SelectedNode.ExpandedChildren
                 .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
                 .ToList();
         }
 
-        public Action ChooseAction(GameTree<Action, State> gameTree)
-        {
-            return MoveAssessment(gameTree)
-                .MaxBy(action => { return action.Item2; })
-                .Item1;
-        }
-
-        private void UCTSearch(Node<Action, State> root)
+        private void UctSearch(Node<Action, State> root)
         {
             var watch = new System.Diagnostics.Stopwatch();
             int iterations = 0;
@@ -46,7 +36,7 @@ namespace Ai
 
             watch.Stop();
             Console.WriteLine($"UCT search execution time: {watch.ElapsedMilliseconds} ms" +
-                $" - {(double)watch.ElapsedMilliseconds/iterations} ms/iteration");
+                $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
         }
 
         private Node<Action, State> TreePolicy(Node<Action, State> node)
@@ -60,7 +50,7 @@ namespace Ai
                     node.ExpandedChildren.Add(unexpandedChild);
                     return unexpandedChild;
                 }
-                 // game is InProgress so a child exists
+                // game is InProgress so a child exists
                 return TreePolicy(BestChild(node)!);
             }
             return node;
@@ -83,26 +73,9 @@ namespace Ai
             }
         }
 
-        private GameResult DefaultPolicy(State state)
-        {
-            GameResult gameResult = Game.Result(state);
-            while (gameResult == GameResult.InProgress)
-            {
-                IEnumerable<Action> possibleActions = Game.PossibleActions(state);
-                Action randomAction = possibleActions.RandomElement();
-                state = Game.PerformAction(randomAction, state);
-                gameResult = Game.Result(state);
-            }
-            return gameResult;
-        }
-
         private void Backup(Node<Action, State> node, GameResult gameResult)
         {
-            int delta = -1;
-            if (gameResult == GameResult.Draw)
-                delta = 0;
-            if (gameResult == (GameResult)Game.CurrentPlayer(node.CorespondingState))
-                delta = 1;
+            int delta = Delta(node.CorespondingState, gameResult);
             Node<Action, State>? predecessor = node;
             while (predecessor != null)
             {
@@ -120,17 +93,7 @@ namespace Ai
 
         private double ArgMax(Node<Action, State> node)
         {
-            return (double)node.SuccessCount / node.VisitCount + UCTConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
-        }
-
-        public void MoveGameToNextState(GameTree<Action, State> gameTree, Action action)
-        {
-            gameTree.SelectChildNode(action);
-        }
-
-        public void MoveGameToPreviousState(GameTree<Action, State> gameTree, Action action)
-        {
-            gameTree.SelectParentNode();
+            return (double)node.SuccessCount / node.VisitCount + UctConstant * Math.Sqrt(2 * Math.Log(node.Parent!.VisitCount) / node.VisitCount);
         }
     }
 }

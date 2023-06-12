@@ -1,9 +1,9 @@
 ﻿using Game.Checkers;
 using Game.IGame;
 
-namespace Ai.Tests.UCT
+namespace Ai.Tests.Uct
 {
-    public class UCTTestsForCheckers
+    public class TestsForCheckers
     {
         private const int iterations = 10;
 

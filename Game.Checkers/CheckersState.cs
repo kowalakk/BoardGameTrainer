@@ -14,11 +14,11 @@ namespace Game.Checkers
 
     public class CheckersState : IEquatable<CheckersState>
     {
-        public const int boardSize = 8;
+        public static int BoardSize { get; } = 8;
 
-        public const int fieldCount = boardSize * boardSize / 2;
+        public static int FieldCount { get; } = BoardSize * BoardSize / 2;
 
-        public static readonly int?[][] neighbours = new int?[][]
+        public static int?[][] Neighbours { get; } = new int?[][]
         {
             new int?[] { null, null,    5,    4 },
             new int?[] { null, null,    6,    5 },
@@ -61,7 +61,7 @@ namespace Game.Checkers
             new int?[] {   26,   27, null, null },
         };
 
-    private readonly Piece[] board;
+        private Piece[] Board { get; }
 
         public Player CurrentPlayer { get; set; }
 
@@ -69,39 +69,37 @@ namespace Game.Checkers
 
         private CheckersState(Piece[] board, Player currentPlayer, ICheckersAction? lastAction = null)
         {
-            this.board = new Piece[fieldCount];
-            Array.Copy(board, this.board, board.Length);
+            Board = (Piece[])board.Clone();
             CurrentPlayer = currentPlayer;
             LastAction = lastAction;
         }
 
         public CheckersState(CheckersState state)
         {
-            board = new Piece[fieldCount];
-            Array.Copy(state.board, board, state.board.Length);
+            Board = (Piece[])state.Board.Clone();
             CurrentPlayer = state.CurrentPlayer;
             LastAction = state.LastAction;
         }
 
         public Piece GetPieceAt(int index)
         {
-            return board[index];
+            return Board[index];
         }
 
         public void SetPieceAt(int index, Piece piece)
         {
-            board[index] = piece;
+            Board[index] = piece;
         }
 
         public void SetPieceAtWithPossiblePromotion(int index, Piece piece)
         {
 
-            if (piece == Piece.WhitePawn && index < boardSize / 2)
+            if (piece == Piece.WhitePawn && index < BoardSize / 2)
             {
                 SetPieceAt(index, Piece.WhiteCrowned);
                 return;
             }
-            if (piece == Piece.BlackPawn && index >= fieldCount - boardSize / 2)
+            if (piece == Piece.BlackPawn && index >= FieldCount - BoardSize / 2)
             {
                 SetPieceAt(index, Piece.BlackCrowned);
                 return;
@@ -127,7 +125,7 @@ namespace Game.Checkers
 
         public static CheckersState GetEmptyBoardState(Player player = Player.One)
         {
-            Piece[] emptyBoard = new Piece[fieldCount];
+            Piece[] emptyBoard = new Piece[FieldCount];
             for (int i = 0; i < emptyBoard.Length; i++)
                 emptyBoard[i] = Piece.None;
 
@@ -138,7 +136,7 @@ namespace Game.Checkers
         {
             if (other == null) return false;
             if (CurrentPlayer != other.CurrentPlayer) return false;
-            return board.SequenceEqual(other.board);
+            return Board.SequenceEqual(other.Board);
         }
     }
 }
