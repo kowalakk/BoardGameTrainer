@@ -1,6 +1,4 @@
 ﻿using Cairo;
-using Game.IGame;
-using System.Threading;
 
 namespace Game.IGame
 {
@@ -20,7 +18,7 @@ namespace Game.IGame
             currentState = game.InitialState();
             currentInputState = game.EmptyInputState();
             gameTree = new GameTree<Action, State>(currentState);
-            CancellationTokenSource tokenSource = new CancellationTokenSource();
+            CancellationTokenSource tokenSource = new();
             ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
         }
 
@@ -47,7 +45,7 @@ namespace Game.IGame
 
         public GameResult PerformOponentsMovement(GameResult gameResult)
         {
-            CancellationToken token = new CancellationToken();
+            CancellationToken token = new();
             Action nextAction = ai.ChooseAction(gameTree, token);
             ai.MoveGameToNextState(gameTree, nextAction);
             currentState = gameTree.SelectedNode.CorespondingState;
