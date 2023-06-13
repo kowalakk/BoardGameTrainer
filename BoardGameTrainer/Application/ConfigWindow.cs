@@ -1,4 +1,5 @@
-﻿using Gtk;
+﻿using Game.IGame;
+using Gtk;
 
 namespace BoardGameTrainer
 {
@@ -7,30 +8,21 @@ namespace BoardGameTrainer
         // TODO: refactor
         public ConfigWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
-            application.gameNum = 0;
+            application.CurrentManagerFactory = application.GameFactories.FirstOrDefault().Value;
+            application.CurrentAiFactory = application.AiFactories.FirstOrDefault().Value;
+
             var configWindow = new Gtk.Window(Gtk.WindowType.Toplevel);
 
             configWindow.Show();
             var contentVbox = new Gtk.VBox();
 
-            DropDownFrame aiFrame = new("AI Module", new string[] { "Upper Confidence Bounds for Trees", "Nested Monte Carlo Search" });
-            aiFrame.Changed += (sender, args) => { application.aiNum = aiFrame.Active; };
-            aiFrame.Show();
-
-            //var gameHBox = new Gtk.HBox();
-            //var gamesDropDown = new Gtk.ComboBox(application.games);
-            //gamesDropDown.Active = 0;
-            //gamesDropDown.Changed += (sender, args) => { application.gameNum = gamesDropDown.Active; };
-            //var gameLabel = new Gtk.Label("Game");
-            //gameHBox.PackStart(gameLabel, false, false, 3);
-            //gameHBox.PackStart(gamesDropDown, false, false, 3);
-            //gameLabel.Show();
-            //gamesDropDown.Show();
-            //gameHBox.Show();
-
-            DropDownFrame gamesFrame = new("Game", application.games);
-            gamesFrame.Changed += (sender, args) => { application.gameNum = gamesFrame.Active; };
+            DropDownFrame<IGameManagerFactory> gamesFrame = new("Game", application.GameFactories);
+            gamesFrame.Changed += (sender, args) => { application.CurrentManagerFactory = gamesFrame.Active; Console.WriteLine(application.CurrentManagerFactory); };
             gamesFrame.Show();
+
+            DropDownFrame<IAiFactory> aiFrame = new("AI Module", application.AiFactories);
+            aiFrame.Changed += (sender, args) => { application.CurrentAiFactory = aiFrame.Active; };
+            aiFrame.Show();
 
             NumberOfPlayersFrame numOfPlayersFrame = new();
             numOfPlayersFrame.FirstClicked += (sender, args) => { application.isPlayer2Ai = true; };
@@ -47,9 +39,9 @@ namespace BoardGameTrainer
             //computationTimeFrame.Changed += (sender, args) => { computationTime = computationTimeFrame.Value; };
             //computationTimeFrame.Show();
 
-            SpinButtonFrame iterationFrame = new("Number of iterations", 1000, 100000, 100, application.iterationsNumber, "iterations");
+            SpinButtonFrame iterationFrame = new("Number of iterations", 1000, 100000, 100, application.NumberOfIterations, "iterations");
+            iterationFrame.Changed += (sender, args) => { application.NumberOfIterations = (int)iterationFrame.Value; };
             iterationFrame.Show();
-            iterationFrame.Changed += (sender, args) => { application.iterationsNumber = (int)iterationFrame.Value; };
 
             Button newGameButton = new("Start new game");
             newGameButton.Show();

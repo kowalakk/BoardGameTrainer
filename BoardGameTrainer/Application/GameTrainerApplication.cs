@@ -8,14 +8,25 @@ namespace BoardGameTrainer
 {
     public class GameTrainerApplication : Application
     {
-        public IGameManager gameManager = new DefaultGameManager(GameResult.InProgress);
-        public string[] games = new string[] { "Checkers", "Othello" };
-        public int gameNum = -1;
-        public int aiNum = -1;
+        public Dictionary<string, IGameManagerFactory> GameFactories { get; } = new()
+        {
+            { "Checkers", new CheckersManagerFactory() },
+            { "Othello", new OthelloManagerFactory() }
+        };
+
+        public Dictionary<string, IAiFactory> AiFactories { get; } = new()
+        {
+            { "Upper Confidence Bounds for Trees", new UctFactory(1.41) },
+            { "Nested Monte Carlo Search", new NmcsFactory(3) }
+        };
+
+        public IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
+        public IAiFactory? CurrentAiFactory { get; set; } = null;
+        public IGameManager GameManager { get; set; } = new DefaultGameManager(GameResult.InProgress);
+
         public bool isPlayer2Ai = true;
-        public bool isAImoduleOne = true;
         public double computationTime;
-        public int iterationsNumber = 1000;
+        public int NumberOfIterations = 1000;
         public (int, int) numberOfHints = (int.MaxValue, int.MaxValue);
 
         public GameTrainerApplication() : base("x.y.z", GLib.ApplicationFlags.None)
@@ -31,26 +42,11 @@ namespace BoardGameTrainer
 
         public void CreateNewGame()
         {
-            IAiFactory aiFactory;
-            if (aiNum == 0)
-            {
-                aiFactory = new UctFactory(1.41);
-            }
-            else //if (aiNum == 1)
-            {
-                aiFactory = new NmcsFactory(3);
-            }
-            if (gameNum == 0)
-            {
-                gameManager = new CheckersManagerFactory()
-                    //.CreateGameManager(new UctFactory(1.41), new IterationStopCondition(iterationsNumber));
-                    .CreateGameManager(aiFactory, new IterationStopCondition(iterationsNumber));
-            }
-            else if (gameNum == 1)
-            {
-                gameManager = new OthelloManagerFactory()
-                    .CreateGameManager(aiFactory, new IterationStopCondition(iterationsNumber));
-            }
+            if (CurrentManagerFactory is null || CurrentAiFactory is null)
+                GameManager = new DefaultGameManager(GameResult.InProgress);
+            else
+                GameManager = CurrentManagerFactory
+                    .CreateGameManager(CurrentAiFactory, new IterationStopCondition(NumberOfIterations));
         }
     }
 }

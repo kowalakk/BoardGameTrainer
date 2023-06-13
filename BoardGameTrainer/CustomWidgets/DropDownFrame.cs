@@ -2,29 +2,32 @@
 
 namespace BoardGameTrainer
 {
-    public class DropDownFrame : Frame
+    public class DropDownFrame<T> : Frame
     {
-        private readonly ComboBox dropDown;
+        private Dictionary<string, T> Entries { get; }
+
+        private ComboBox DropDown { get; }
 
         public event EventHandler Changed
         {
-            add { dropDown.Changed += value; }
-            remove { dropDown.Changed -= value; }
+            add { DropDown.Changed += value; }
+            remove { DropDown.Changed -= value; }
         }
 
-        public int Active => dropDown.Active;
+        public T Active => Entries.ElementAt(DropDown.Active).Value;
 
-        public DropDownFrame(string label, string [] entries) : base(label) 
+        public DropDownFrame(string label, Dictionary<string, T> entries) : base(label)
         {
-            dropDown = new(entries)
+            Entries = entries;
+            DropDown = new(Entries.Keys.ToArray())
             {
                 Active = 0
             };
-            dropDown.Show();
+            DropDown.Show();
 
             HBox box = new();
             box.Show();
-            box.PackStart(dropDown, true, true, 5);
+            box.PackStart(DropDown, true, true, 5);
 
             Add(box);
         }
