@@ -61,17 +61,22 @@ namespace Game.Checkers
             new int?[] {   26,   27, null, null },
         };
 
+        public static int InsignificantActionsToDraw { get; } = 15;
+
         private Piece[] Board { get; }
 
         public Player CurrentPlayer { get; set; }
 
+        public int InsignificantActions { get; set; }
+
         public ICheckersAction? LastAction { get; set; } // for drawing purposes
 
-        private CheckersState(Piece[] board, Player currentPlayer, ICheckersAction? lastAction = null)
+        private CheckersState(Piece[] board, Player currentPlayer, ICheckersAction? lastAction = null, int insignificantActions = 0)
         {
             Board = (Piece[])board.Clone();
             CurrentPlayer = currentPlayer;
             LastAction = lastAction;
+            InsignificantActions = insignificantActions;
         }
 
         public CheckersState(CheckersState state)
@@ -79,6 +84,7 @@ namespace Game.Checkers
             Board = (Piece[])state.Board.Clone();
             CurrentPlayer = state.CurrentPlayer;
             LastAction = state.LastAction;
+            InsignificantActions = state.InsignificantActions;
         }
 
         public Piece GetPieceAt(int index)

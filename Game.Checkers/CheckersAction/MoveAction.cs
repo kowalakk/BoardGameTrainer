@@ -32,6 +32,10 @@ namespace Game.Checkers
             newState.SetPieceAtWithPossiblePromotion(Finish, movedPiece);
             newState.CurrentPlayer = state.CurrentPlayer == Player.One? Player.Two: Player.One;
             newState.LastAction = this;
+            if (movedPiece == Piece.WhiteCrowned || movedPiece == Piece.BlackCrowned)
+            {
+                newState.InsignificantActions++;
+            }
 
             return newState;
         }

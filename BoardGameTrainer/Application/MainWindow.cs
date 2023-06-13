@@ -1,9 +1,7 @@
 ﻿using Game.IGame;
 using Gdk;
 using Gtk;
-using System;
 using System.Collections.Concurrent;
-using System.Reflection.Emit;
 using Action = System.Action;
 
 namespace BoardGameTrainer

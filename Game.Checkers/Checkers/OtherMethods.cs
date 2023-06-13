@@ -19,10 +19,12 @@ namespace Game.Checkers
             return new DefaultInputState();
         }
 
-        public IEnumerable<(ICheckersAction, double)> FilterByInputState(
+        public IEnumerable<(ICheckersAction, double)> FilterByInputState
+        (
             IEnumerable<(ICheckersAction, double)> ratedActions,
             ICheckersInputState inputState,
-            int numberOfActions)
+            int numberOfActions
+        )
         {
             if (inputState is DefaultInputState)
                 return ratedActions.OrderByDescending(tuple => tuple.Item2).Take(numberOfActions);
