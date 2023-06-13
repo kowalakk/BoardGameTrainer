@@ -1,4 +1,5 @@
 ﻿using Game.IGame;
+using System.Threading;
 
 namespace Ai
 {
@@ -12,21 +13,21 @@ namespace Ai
             UctConstant = uctConstant;
         }
 
-        public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
+        public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
-            UctSearch(gameTree.SelectedNode);
+            UctSearch(gameTree.SelectedNode, token);
             return gameTree.SelectedNode.ExpandedChildren
                 .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
                 .ToList();
         }
 
-        private void UctSearch(Node<Action, State> root)
+        private void UctSearch(Node<Action, State> root, CancellationToken token)
         {
             var watch = new System.Diagnostics.Stopwatch();
             int iterations = 0;
             watch.Start();
 
-            while (!StopCondition.StopConditionOccured())
+            while (!StopCondition.StopConditionOccured() && !token.IsCancellationRequested)
             {
                 Node<Action, State> node = TreePolicy(root);
                 GameResult gameResult = DefaultPolicy(node.CorespondingState);

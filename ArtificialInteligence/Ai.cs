@@ -12,14 +12,14 @@ namespace Ai
             Game = game;
             StopCondition = stopCondition;
         }
-        public Action ChooseAction(GameTree<Action, State> gameTree)
+        public Action ChooseAction(GameTree<Action, State> gameTree, CancellationToken token)
         {
-            return MoveAssessment(gameTree)
+            return MoveAssessment(gameTree, token)
                 .MaxBy(action => { return action.Item2; })
                 .Item1;
         }
 
-        public abstract List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree);
+        public abstract List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token);
 
         protected GameResult DefaultPolicy(State state)
         {

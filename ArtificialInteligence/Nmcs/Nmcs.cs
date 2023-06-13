@@ -1,4 +1,5 @@
 ﻿using Game.IGame;
+using System.Threading;
 
 namespace Ai
 {
@@ -12,13 +13,13 @@ namespace Ai
             Depth = depth;
         }
 
-        public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree)
+        public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
             List<Node<Action, State>> leaves = new();
             Nesting(Depth, gameTree.SelectedNode, leaves);
             if (leaves.Count > 0)
             {
-                NmcSearch(leaves.ToArray());
+                NmcSearch(leaves.ToArray(), token);
                 Backup(leaves);
             }
             return gameTree.SelectedNode.ExpandedChildren
@@ -54,13 +55,13 @@ namespace Ai
             }
         }
 
-        private void NmcSearch(Node<Action, State>[] leaves)
+        private void NmcSearch(Node<Action, State>[] leaves, CancellationToken token)
         {
             var watch = new System.Diagnostics.Stopwatch();
             int iterations = 0;
             watch.Start();
 
-            while (!StopCondition.StopConditionOccured())
+            while (!StopCondition.StopConditionOccured() && !token.IsCancellationRequested)
             {
                 Node<Action, State> randomLeaf = leaves.RandomElement();
                 GameResult gameResult = DefaultPolicy(randomLeaf.CorespondingState);

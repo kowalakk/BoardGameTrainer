@@ -13,6 +13,10 @@ namespace BoardGameTrainer
             this.gameResult = gameResult;
         }
 
+        public void ComputeHints(CancellationToken token)
+        {
+        }
+
         public void DrawBoard(Context context, (int, int) numberOfHints)
         {
 
@@ -41,7 +45,12 @@ namespace BoardGameTrainer
             context.Stroke();
         }
 
-        public GameResult HandleInput(double x, double y, bool isPlayer2Ai)
+        public (GameResult, bool) HandleMovement(double x, double y, bool isPlayer2Ai)
+        {
+            return (GameResult.InProgress, false);
+        }
+
+        public GameResult PerformOponentsMovement(GameResult gameResult)
         {
             return GameResult.InProgress;
         }
