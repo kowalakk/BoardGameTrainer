@@ -36,6 +36,10 @@ namespace Game.Checkers
             {
                 newState.InsignificantActions++;
             }
+            else
+            {
+                newState.InsignificantActions = 0;
+            }
 
             return newState;
         }
