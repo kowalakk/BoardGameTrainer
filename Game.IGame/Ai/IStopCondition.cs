@@ -2,6 +2,8 @@ namespace Game.IGame
 {
     public interface IStopCondition
     {
-        public bool StopConditionOccured();
+        public void Start();
+        public void Advance();
+        public bool Occured();
     }
 }

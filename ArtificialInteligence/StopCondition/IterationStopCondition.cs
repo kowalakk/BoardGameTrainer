@@ -5,19 +5,22 @@ namespace Ai
     public class IterationStopCondition : IStopCondition
     {
         private int MaxIterations { get; set; }
-        private int CurrentIterations { get; set; }
+        private int LeftIterations { get; set; }
         public IterationStopCondition(int iterations)
         {
-            MaxIterations = CurrentIterations = iterations;
+            MaxIterations = LeftIterations = iterations;
         }
-        public bool StopConditionOccured()
+        public void Start()
         {
-            if (CurrentIterations-- == 0)
-            {
-                CurrentIterations = MaxIterations;
-                return true;
-            }
-            return false;
+            LeftIterations = MaxIterations;
+        }
+        public void Advance()
+        {
+            LeftIterations--;
+        }
+        public bool Occured()
+        {
+            return LeftIterations <= 0;
         }
     }
 }
