@@ -34,7 +34,7 @@ namespace BoardGameTrainer
             box.PackStart(spinButton, true, true, 5);
             box.PackStart(textLabel, false, false, 5);
 
-            this.Add(box);
+            Add(box);
         }
     }
 }
