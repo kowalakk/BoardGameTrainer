@@ -25,6 +25,7 @@ namespace BoardGameTrainer
             { "Time limit", new TimeStopConditionFactory() },
             { "Iterations limit", new IterationStopConditionFactory() }
         };
+
         public ConfigWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
             application.CurrentManagerFactory = GameFactories.FirstOrDefault().Value;
