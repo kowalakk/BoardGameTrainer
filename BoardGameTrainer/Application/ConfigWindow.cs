@@ -33,11 +33,6 @@ namespace BoardGameTrainer
             application.CurrentStopConditionFactory = StopConditions.FirstOrDefault().Value;
             application.StopConditionParam = 1000;
 
-            var configWindow = new Gtk.Window(Gtk.WindowType.Toplevel);
-
-            configWindow.Show();
-            var contentVbox = new Gtk.VBox();
-
             DropDownFrame<IGameManagerFactory> gamesFrame = new("Game", GameFactories);
             gamesFrame.Changed += (sender, args) => { application.CurrentManagerFactory = gamesFrame.Active; Console.WriteLine(application.CurrentManagerFactory); };
             gamesFrame.Show();
@@ -62,13 +57,14 @@ namespace BoardGameTrainer
             stopConditionFrame.Show();
 
             Button newGameButton = new("Start new game");
-            newGameButton.Clicked += (sender, args) => 
-            { 
+            newGameButton.Clicked += (sender, args) =>
+            {
                 application.CreateNewGame();
-                configWindow.Close();
+                Close();
             };
             newGameButton.Show();
 
+            VBox contentVbox = new();
             contentVbox.PackStart(gamesFrame, false, false, 3);
             contentVbox.PackStart(aiFrame, false, false, 3);
             contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
@@ -76,7 +72,7 @@ namespace BoardGameTrainer
             contentVbox.PackStart(stopConditionFrame, false, false, 3);
             contentVbox.PackStart(newGameButton, false, false, 3);
             contentVbox.Show();
-            configWindow.Add(contentVbox);
+            Add(contentVbox);
         }
 
     }

@@ -22,14 +22,13 @@ namespace Game.IGame
             ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
         }
 
-        public void DrawBoard(Context context, Dictionary<Player, bool> showHints, int numberOfHints)
+        public void DrawBoard(Context context, int numberOfHints)
         {
             GameResult gameResult = game.Result(currentState);
             if (gameResult == GameResult.InProgress)
             {
-                int numberOfHintsForPlayer = showHints[game.CurrentPlayer(currentState)] ? numberOfHints : 0;
                 IEnumerable<(Action, double)> filteredActions =
-                    game.FilterByInputState(ratedActions, currentInputState, numberOfHintsForPlayer);
+                    game.FilterByInputState(ratedActions, currentInputState, numberOfHints);
                 game.DrawBoard(context, currentInputState, currentState, filteredActions);
                 return;
             }
@@ -75,10 +74,15 @@ namespace Game.IGame
         public GameResult HandleAiMovement()
         {
             CancellationToken token = new();
+            GameResult gameResult = GameResult.InProgress;
             Action nextAction = ai.ChooseAction(gameTree, token);
-            ai.MoveGameToNextState(gameTree, nextAction);
-            currentState = gameTree.SelectedNode.CorespondingState;
-            GameResult gameResult = game.Result(currentState);
+            if (nextAction is not null)
+            {
+                ai.MoveGameToNextState(gameTree, nextAction);
+                currentState = gameTree.SelectedNode.CorespondingState;
+                gameResult = game.Result(currentState);
+                ratedActions = new List<(Action, double)>();
+            }
             return gameResult;
         }
 

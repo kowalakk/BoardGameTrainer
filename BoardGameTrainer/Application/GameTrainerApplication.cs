@@ -50,5 +50,10 @@ namespace BoardGameTrainer
         {
             GameManager?.Restart();
         }
+
+        internal bool ShowHintsForPlayer()
+        {
+            return HumanPlayers[GameManager!.CurrentPlayer()] && ShowHints[GameManager.CurrentPlayer()];
+        }
     }
 }
