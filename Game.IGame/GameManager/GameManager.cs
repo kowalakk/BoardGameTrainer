@@ -22,11 +22,40 @@ namespace Game.IGame
             ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
         }
 
-        public void DrawBoard(Context context, (int, int) numberOfHints)
+        public void DrawBoard(Context context, Dictionary<Player, bool> showHints, int numberOfHints)
         {
-            int numberOfActions = game.CurrentPlayer(currentState) == Player.One ? numberOfHints.Item1 : numberOfHints.Item2;
-            IEnumerable<(Action, double)> filteredActions = game.FilterByInputState(ratedActions, currentInputState, numberOfActions);
-            game.DrawBoard(context, currentInputState, currentState, filteredActions);
+            GameResult gameResult = game.Result(currentState);
+            if (gameResult == GameResult.InProgress)
+            {
+                int numberOfHintsForPlayer = showHints[game.CurrentPlayer(currentState)] ? numberOfHints : 0;
+                IEnumerable<(Action, double)> filteredActions =
+                    game.FilterByInputState(ratedActions, currentInputState, numberOfHintsForPlayer);
+                game.DrawBoard(context, currentInputState, currentState, filteredActions);
+                return;
+            }
+
+            game.DrawBoard(context, currentInputState, currentState, Enumerable.Empty<(Action, double)>());
+            string text = string.Empty;
+            if (gameResult == GameResult.PlayerOneWins)
+            {
+                text = "Player One Wins!";
+                context.MoveTo(0, 0.5);
+            }
+            else if (gameResult == GameResult.PlayerTwoWins)
+            {
+                text = "Player Two Wins!";
+                context.MoveTo(0, 0.5);
+            }
+            else if (gameResult == GameResult.Draw)
+            {
+                text = "A Draw!";
+                context.MoveTo(0.25, 0.5);
+            }
+            context.SetSourceRGBA(0.5, 0.5, 0, 0.7);
+            context.SelectFontFace("Sans", FontSlant.Italic, FontWeight.Bold);
+            context.SetFontSize(0.12);
+            context.ShowText(text);
+            context.Stroke();
         }
 
         public (GameResult result, bool actionPerformed) HandleMovement(double x, double y, bool isPlayer2Ai)

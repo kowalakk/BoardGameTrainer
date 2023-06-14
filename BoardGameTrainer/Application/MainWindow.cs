@@ -1,4 +1,5 @@
-﻿using Game.IGame;
+﻿using Cairo;
+using Game.IGame;
 using Gdk;
 using Gtk;
 using System.Collections.Concurrent;
@@ -51,7 +52,7 @@ namespace BoardGameTrainer
             boardImage = new DrawingArea();
             boardImage.Drawn += (sender, args) =>
             {
-                var context = args.Cr;
+                Context context = args.Cr;
 
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
                 int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
@@ -59,7 +60,7 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                application.GameManager.DrawBoard(context, application.numberOfHints);
+                application.GameManager?.DrawBoard(context, application.ShowHints, application.NumberOfHints);
 
             };
             boardImage.AddEvents((int)EventMask.ButtonPressMask);
@@ -103,15 +104,13 @@ namespace BoardGameTrainer
         private void PerformMovement()
         {
             CancellationToken token = ResetToken();
-            (GameResult gameResult, bool actionPerformed) = application.GameManager.HandleMovement(x, y, application.isPlayer2Ai);
-            if (gameResult != GameResult.InProgress)
-                application.GameManager = new DefaultGameManager(gameResult);
+            (GameResult gameResult, bool isActionPerformed) = application.GameManager!.HandleMovement(x, y, application.isPlayer2Ai);
             Gtk.Application.Invoke(delegate
             {
                 boardImage.QueueDraw();
 
             });
-            if (actionPerformed)
+            if (isActionPerformed)
             {
                 if (application.isPlayer2Ai)
                 {
@@ -128,16 +127,28 @@ namespace BoardGameTrainer
                     eventsQueue.Add(ComputeHints);
                 }
                 else
-                    application.GameManager = new DefaultGameManager(gameResult);
+                {
+                    windowState = WindowState.Idle;
+                    Gtk.Application.Invoke(delegate
+                    {
+                        boardImage.QueueDraw();
+                    });
+                }
             }
             else
+            {
                 windowState = WindowState.Idle;
+                Gtk.Application.Invoke(delegate
+                {
+                    boardImage.QueueDraw();
+                });
+            }
         }
 
         private void ComputeHints()
         {
             CancellationToken token = ResetToken();
-            application.GameManager.ComputeHints(token);
+            application.GameManager!.ComputeHints(token);
             Gtk.Application.Invoke(delegate
             {
                 boardImage.QueueDraw();

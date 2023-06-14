@@ -52,8 +52,8 @@ namespace BoardGameTrainer
             numOfPlayersFrame.Show();
 
             ShowHintsFrame showHintsFrame = new();
-            showHintsFrame.FirstClicked += (sender, args) => { application.numberOfHints.Item1 = showHintsFrame.FirstActive ? int.MaxValue : 0; };
-            showHintsFrame.SecondClicked += (sender, args) => { application.numberOfHints.Item2 = showHintsFrame.SecondActive ? int.MaxValue : 0; };
+            showHintsFrame.FirstClicked += (sender, args) => { application.ShowHints[Player.One] = showHintsFrame.FirstActive; };
+            showHintsFrame.SecondClicked += (sender, args) => { application.ShowHints[Player.Two] = showHintsFrame.SecondActive; };
             showHintsFrame.Show();
 
             StopConditionFrame stopConditionFrame = new(StopConditions);

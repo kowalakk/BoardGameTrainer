@@ -8,11 +8,16 @@ namespace BoardGameTrainer
         public IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
         public IAiFactory? CurrentAiFactory { get; set; } = null;
         public IStopConditionFactory? CurrentStopConditionFactory { get; set; } = null;
-        public IGameManager GameManager { get; set; } = new DefaultGameManager(GameResult.InProgress);
+        public IGameManager? GameManager { get; set; } = null;
         public int StopConditionParam { get; set; }
+        public Dictionary<Player, bool> ShowHints { get; } = new()
+        {
+            { Player.One, true },
+            { Player.Two, true }
+        };
+        public int NumberOfHints { get; set; } = (int.MaxValue);
 
         public bool isPlayer2Ai = true;
-        public (int, int) numberOfHints = (int.MaxValue, int.MaxValue);
 
         public GameTrainerApplication() : base("x.y.z", GLib.ApplicationFlags.None)
         {
@@ -27,17 +32,18 @@ namespace BoardGameTrainer
 
         public void CreateNewGame()
         {
-            if (CurrentManagerFactory is null || CurrentAiFactory is null || CurrentStopConditionFactory is null)
-                GameManager = new DefaultGameManager(GameResult.InProgress);
-            else
+            if (CurrentManagerFactory is not null
+                && CurrentAiFactory is not null
+                && CurrentStopConditionFactory is not null)
+            {
                 GameManager = CurrentManagerFactory
                     .Create(CurrentAiFactory, CurrentStopConditionFactory.Create(StopConditionParam));
-            Console.WriteLine(StopConditionParam);
+            }
         }
 
         internal void RestartGame()
         {
-            GameManager.Restart();
+            GameManager?.Restart();
         }
     }
 }
