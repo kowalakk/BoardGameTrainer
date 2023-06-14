@@ -4,9 +4,10 @@ namespace BoardGameTrainer
 {
     public class DropDownFrame<T> : Frame
     {
+        protected VBox Box { get; }
         private Dictionary<string, T> Entries { get; }
 
-        private ComboBox DropDown { get; }
+        protected ComboBox DropDown { get; }
 
         public event EventHandler Changed
         {
@@ -25,11 +26,11 @@ namespace BoardGameTrainer
             };
             DropDown.Show();
 
-            HBox box = new();
-            box.Show();
-            box.PackStart(DropDown, true, true, 5);
+            Box = new();
+            Box.PackStart(DropDown, true, true, 5);
+            Box.Show();
 
-            Add(box);
+            Add(Box);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace BoardGameTrainer
             else if (gameResult == GameResult.PlayerTwoWins)
             {
                 text = "Player Two Wins!";
-                context.MoveTo(0 , 0.5 );
+                context.MoveTo(0, 0.5);
             }
             else if (gameResult == GameResult.Draw)
             {
@@ -54,5 +54,7 @@ namespace BoardGameTrainer
         {
             return GameResult.InProgress;
         }
+
+        public void Restart() { }
     }
 }

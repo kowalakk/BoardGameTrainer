@@ -1,5 +1,4 @@
 ﻿using Cairo;
-using Game.IGame;
 
 namespace Game.IGame
 {
@@ -9,5 +8,6 @@ namespace Game.IGame
         public (GameResult result, bool actionPerformed) HandleMovement(double x, double y, bool isPlayer2Ai);
         public void ComputeHints(CancellationToken token);
         public GameResult PerformOponentsMovement(GameResult gameResult);
+        public void Restart();
     }
 }

@@ -14,32 +14,41 @@ namespace BoardGameTrainer
     {
         CancellationTokenSource tokenSource;
         Thread handleEventThread;
-        BlockingCollection<Action> eventsQueue = new BlockingCollection<System.Action>(new ConcurrentQueue<Action>());
+        BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
         WindowState windowState;
-        Gtk.DrawingArea boardImage;
+        DrawingArea boardImage;
         GameTrainerApplication application;
         double x;
         double y;
 
-        // TODO: refactor
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
             this.application = application;
-            string title = "New Game";
-            this.DefaultSize = new Gdk.Size(700, 500);
-
-            var mainVBox = new Gtk.VBox();
-            var panelHbox = new Gtk.HBox();
-            var titleAndContentVBox = new Gtk.VBox();
-
-            var contentHBox = new Gtk.HBox();
+            DefaultSize = new Gdk.Size(700, 500);
 
             tokenSource = new CancellationTokenSource();
 
             handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
             handleEventThread.Start();
 
-            boardImage = new Gtk.DrawingArea();
+            Button newGameButton = new("New Game");
+            newGameButton.Clicked += (s, e) => 
+            { 
+                application.AddWindow(new ConfigWindow(application)); 
+                windowState = WindowState.Idle; 
+            };
+            newGameButton.Show();
+
+            Button restartButton = new("Restart");
+            restartButton.Clicked += (s, e) => { application.RestartGame(); windowState = WindowState.Idle; };
+            restartButton.Show();
+
+            HBox panelHbox = new();
+            panelHbox.PackStart(newGameButton, false, false, 0);
+            panelHbox.PackStart(restartButton, false, false, 0);
+            panelHbox.Show();
+
+            boardImage = new DrawingArea();
             boardImage.Drawn += (sender, args) =>
             {
                 var context = args.Cr;
@@ -53,39 +62,32 @@ namespace BoardGameTrainer
                 application.GameManager.DrawBoard(context, application.numberOfHints);
 
             };
-
             boardImage.AddEvents((int)EventMask.ButtonPressMask);
             boardImage.ButtonPressEvent += BoardImageClickHandler;
-
-            contentHBox.PackStart(boardImage, true, true, 0);
             boardImage.Show();
 
-            var newGameButton = new Button("New Game");
-            newGameButton.Clicked += (s, e) => { application.AddWindow(new ConfigWindow(application)); windowState = WindowState.Idle;};
-            var restartButton = new Button("Restart");
-            restartButton.Clicked += (s, e) => { application.CreateNewGame(); windowState = WindowState.Idle; };
-            panelHbox.PackStart(newGameButton, false, false, 0);
-            panelHbox.PackStart(restartButton, false, false, 0);
-
-            var mainTitle = new Gtk.Label(title);
-            titleAndContentVBox.PackStart(mainTitle, false, false, 0);
-            titleAndContentVBox.PackStart(contentHBox, true, true, 0);
-            mainTitle.Show();
+            HBox contentHBox = new();
+            contentHBox.PackStart(boardImage, true, true, 0);
             contentHBox.Show();
 
-            mainVBox.PackStart(panelHbox, false, false, 0);
-            panelHbox.Show();
-            mainVBox.PackStart(titleAndContentVBox, true, true, 0);
+            Label mainTitle = new("New Game");
+            mainTitle.Show();
+
+            VBox titleAndContentVBox = new();
+            titleAndContentVBox.PackStart(mainTitle, false, false, 0);
+            titleAndContentVBox.PackStart(contentHBox, true, true, 0);
             titleAndContentVBox.Show();
-            this.Add(mainVBox);
+
+            VBox mainVBox = new();
+            mainVBox.PackStart(panelHbox, false, false, 0);
+            mainVBox.PackStart(titleAndContentVBox, true, true, 0);
             mainVBox.Show();
-            newGameButton.Show();
-            restartButton.Show();          
+            Add(mainVBox);
         }
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if(windowState != WindowState.ProcessMovement)
+            if (windowState != WindowState.ProcessMovement)
             {
                 windowState = WindowState.ProcessMovement;
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
@@ -93,7 +95,6 @@ namespace BoardGameTrainer
                 int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
                 x = (args.Event.X - xOffset) / minDimention;
                 y = (args.Event.Y - yOffset) / minDimention;
-                Console.WriteLine($"Button Pressed at {x}, {y}");
 
                 eventsQueue.Add(PerformMovement);
             }
@@ -105,16 +106,18 @@ namespace BoardGameTrainer
             (GameResult gameResult, bool actionPerformed) = application.GameManager.HandleMovement(x, y, application.isPlayer2Ai);
             if (gameResult != GameResult.InProgress)
                 application.GameManager = new DefaultGameManager(gameResult);
-            Gtk.Application.Invoke(delegate {
+            Gtk.Application.Invoke(delegate
+            {
                 boardImage.QueueDraw();
-                
+
             });
             if (actionPerformed)
             {
                 if (application.isPlayer2Ai)
                 {
                     gameResult = application.GameManager.PerformOponentsMovement(gameResult);
-                    Gtk.Application.Invoke(delegate {
+                    Gtk.Application.Invoke(delegate
+                    {
                         boardImage.QueueDraw();
                     });
                 }
@@ -145,10 +148,10 @@ namespace BoardGameTrainer
         private void ThreadHandleEvents()
         {
             Action job;
-            while (true) 
+            while (true)
             {
                 job = eventsQueue.Take();
-                job(); 
+                job();
             }
         }
 

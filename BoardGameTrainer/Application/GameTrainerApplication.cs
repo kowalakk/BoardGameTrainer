@@ -1,32 +1,17 @@
-﻿using Ai;
-using Game.Checkers;
-using Game.IGame;
-using Game.Othello;
+﻿using Game.IGame;
 using Gtk;
 
 namespace BoardGameTrainer
 {
     public class GameTrainerApplication : Application
     {
-        public Dictionary<string, IGameManagerFactory> GameFactories { get; } = new()
-        {
-            { "Checkers", new CheckersManagerFactory() },
-            { "Othello", new OthelloManagerFactory() }
-        };
-
-        public Dictionary<string, IAiFactory> AiFactories { get; } = new()
-        {
-            { "Upper Confidence Bounds for Trees", new UctFactory(1.41) },
-            { "Nested Monte Carlo Search", new NmcsFactory(3) }
-        };
-
         public IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
         public IAiFactory? CurrentAiFactory { get; set; } = null;
+        public IStopConditionFactory? CurrentStopConditionFactory { get; set; } = null;
         public IGameManager GameManager { get; set; } = new DefaultGameManager(GameResult.InProgress);
+        public int StopConditionParam { get; set; }
 
         public bool isPlayer2Ai = true;
-        public double computationTime;
-        public int NumberOfIterations = 1000;
         public (int, int) numberOfHints = (int.MaxValue, int.MaxValue);
 
         public GameTrainerApplication() : base("x.y.z", GLib.ApplicationFlags.None)
@@ -42,11 +27,17 @@ namespace BoardGameTrainer
 
         public void CreateNewGame()
         {
-            if (CurrentManagerFactory is null || CurrentAiFactory is null)
+            if (CurrentManagerFactory is null || CurrentAiFactory is null || CurrentStopConditionFactory is null)
                 GameManager = new DefaultGameManager(GameResult.InProgress);
             else
                 GameManager = CurrentManagerFactory
-                    .CreateGameManager(CurrentAiFactory, new IterationStopCondition(NumberOfIterations));
+                    .Create(CurrentAiFactory, CurrentStopConditionFactory.Create(StopConditionParam));
+            Console.WriteLine(StopConditionParam);
+        }
+
+        internal void RestartGame()
+        {
+            GameManager.Restart();
         }
     }
 }

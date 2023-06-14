@@ -2,6 +2,6 @@
 {
     public interface IGameManagerFactory
     {
-        public IGameManager CreateGameManager(IAiFactory aiFactory, IStopCondition stopCondition);
+        public IGameManager Create(IAiFactory aiFactory, IStopCondition stopCondition);
     }
 }

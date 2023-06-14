@@ -57,5 +57,14 @@ namespace Game.IGame
         {
             ratedActions = ai.MoveAssessment(gameTree, token);
         }
+
+        public void Restart()
+        {
+            currentState = game.InitialState();
+            currentInputState = game.EmptyInputState();
+            gameTree = new GameTree<Action, State>(currentState);
+            CancellationTokenSource tokenSource = new();
+            ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
+        }
     }
 }
