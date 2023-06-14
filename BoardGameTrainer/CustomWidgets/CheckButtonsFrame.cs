@@ -2,7 +2,7 @@
 
 namespace BoardGameTrainer
 {
-    internal class ShowHintsFrame : Frame
+    internal class CheckButtonsFrame : Frame
     {
         private readonly CheckButton firstCheckbox;
 
@@ -22,7 +22,7 @@ namespace BoardGameTrainer
             add { secondCheckbox.Clicked += value; }
             remove { secondCheckbox.Clicked -= value; }
         }
-        public ShowHintsFrame() : base("Show hints") 
+        public CheckButtonsFrame(string label) : base(label) 
         {
             firstCheckbox = new CheckButton("Player 1");
             firstCheckbox.Show();
@@ -37,7 +37,7 @@ namespace BoardGameTrainer
             box.PackStart(firstCheckbox, false, false, 5);
             box.PackStart(secondCheckbox, false, false, 5);
 
-            this.Add(box);
+            Add(box);
         }
     }
 }

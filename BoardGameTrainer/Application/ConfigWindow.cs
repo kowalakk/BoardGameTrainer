@@ -46,12 +46,12 @@ namespace BoardGameTrainer
             aiFrame.Changed += (sender, args) => { application.CurrentAiFactory = aiFrame.Active; };
             aiFrame.Show();
 
-            NumberOfPlayersFrame numOfPlayersFrame = new();
-            numOfPlayersFrame.FirstClicked += (sender, args) => { application.isPlayer2Ai = true; };
-            numOfPlayersFrame.SecondClicked += (sender, args) => { application.isPlayer2Ai = false; };
+            CheckButtonsFrame numOfPlayersFrame = new("Human players");
+            numOfPlayersFrame.FirstClicked += (sender, args) => { application.HumanPlayers[Player.One] = numOfPlayersFrame.FirstActive; };
+            numOfPlayersFrame.SecondClicked += (sender, args) => { application.HumanPlayers[Player.Two] = numOfPlayersFrame.SecondActive; };
             numOfPlayersFrame.Show();
 
-            ShowHintsFrame showHintsFrame = new();
+            CheckButtonsFrame showHintsFrame = new("Show hints");
             showHintsFrame.FirstClicked += (sender, args) => { application.ShowHints[Player.One] = showHintsFrame.FirstActive; };
             showHintsFrame.SecondClicked += (sender, args) => { application.ShowHints[Player.Two] = showHintsFrame.SecondActive; };
             showHintsFrame.Show();
@@ -62,7 +62,11 @@ namespace BoardGameTrainer
             stopConditionFrame.Show();
 
             Button newGameButton = new("Start new game");
-            newGameButton.Clicked += (sender, args) => { application.CreateNewGame(); configWindow.Close(); };
+            newGameButton.Clicked += (sender, args) => 
+            { 
+                application.CreateNewGame();
+                configWindow.Close();
+            };
             newGameButton.Show();
 
             contentVbox.PackStart(gamesFrame, false, false, 3);

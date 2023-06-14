@@ -33,15 +33,19 @@ namespace BoardGameTrainer
             handleEventThread.Start();
 
             Button newGameButton = new("New Game");
-            newGameButton.Clicked += (s, e) => 
-            { 
-                application.AddWindow(new ConfigWindow(application)); 
-                windowState = WindowState.Idle; 
+            newGameButton.Clicked += (s, e) =>
+            {
+                application.AddWindow(new ConfigWindow(application));
+                windowState = WindowState.Idle;
             };
             newGameButton.Show();
 
             Button restartButton = new("Restart");
-            restartButton.Clicked += (s, e) => { application.RestartGame(); windowState = WindowState.Idle; };
+            restartButton.Clicked += (s, e) =>
+            {
+                windowState = WindowState.Idle;
+                application.RestartGame();
+            };
             restartButton.Show();
 
             HBox panelHbox = new();
@@ -103,46 +107,58 @@ namespace BoardGameTrainer
 
         private void PerformMovement()
         {
+            //Player player = application.GameManager!.CurrentPlayer();
+            //if (application.HumanPlayers[player])
+            //{
             CancellationToken token = ResetToken();
-            (GameResult gameResult, bool isActionPerformed) = application.GameManager!.HandleMovement(x, y, application.isPlayer2Ai);
+            (GameResult gameResult, bool isActionPerformed) = application.GameManager!.HandleMovement(x, y);
             Gtk.Application.Invoke(delegate
             {
                 boardImage.QueueDraw();
-
             });
-            if (isActionPerformed)
+            Player opponent = application.GameManager!.CurrentPlayer();
+            if (!application.HumanPlayers[opponent])
             {
-                if (application.isPlayer2Ai)
-                {
-                    gameResult = application.GameManager.PerformOponentsMovement(gameResult);
-                    Gtk.Application.Invoke(delegate
-                    {
-                        boardImage.QueueDraw();
-                    });
-                }
-
-                if (gameResult == GameResult.InProgress)
-                {
-                    windowState = WindowState.ComputeHints;
-                    eventsQueue.Add(ComputeHints);
-                }
-                else
-                {
-                    windowState = WindowState.Idle;
-                    Gtk.Application.Invoke(delegate
-                    {
-                        boardImage.QueueDraw();
-                    });
-                }
+                PerformAiMovement();
+            }
+            else if (isActionPerformed)
+            {
+                windowState = WindowState.ComputeHints;
+                eventsQueue.Add(ComputeHints);
             }
             else
             {
                 windowState = WindowState.Idle;
-                Gtk.Application.Invoke(delegate
-                {
-                    boardImage.QueueDraw();
-                });
             }
+            Gtk.Application.Invoke(delegate
+            {
+                boardImage.QueueDraw();
+            });
+        }
+        //else
+        //{
+        private void PerformAiMovement()
+        {
+            GameResult gameResult = application.GameManager!.HandleAiMovement();
+            Player opponent = application.GameManager!.CurrentPlayer();
+            if (!application.HumanPlayers[opponent])
+            {
+                PerformAiMovement();
+            }
+            else if (gameResult == GameResult.InProgress)
+            {
+                windowState = WindowState.ComputeHints;
+                eventsQueue.Add(ComputeHints);
+            }
+            else
+            {
+                windowState = WindowState.Idle;
+            }
+            Gtk.Application.Invoke(delegate
+            {
+                boardImage.QueueDraw();
+            });
+            //}
         }
 
         private void ComputeHints()

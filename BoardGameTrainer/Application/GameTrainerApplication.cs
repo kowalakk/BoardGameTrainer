@@ -10,6 +10,11 @@ namespace BoardGameTrainer
         public IStopConditionFactory? CurrentStopConditionFactory { get; set; } = null;
         public IGameManager? GameManager { get; set; } = null;
         public int StopConditionParam { get; set; }
+        public Dictionary<Player, bool> HumanPlayers { get; } = new()
+        {
+            { Player.One, true },
+            { Player.Two, true }
+        };
         public Dictionary<Player, bool> ShowHints { get; } = new()
         {
             { Player.One, true },

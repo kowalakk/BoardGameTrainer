@@ -51,14 +51,14 @@ namespace Game.IGame
                 text = "A Draw!";
                 context.MoveTo(0.25, 0.5);
             }
-            context.SetSourceRGBA(0.5, 0.5, 0, 0.7);
+            context.SetSourceRGBA(0, 0, 1, 0.7);
             context.SelectFontFace("Sans", FontSlant.Italic, FontWeight.Bold);
             context.SetFontSize(0.12);
             context.ShowText(text);
             context.Stroke();
         }
 
-        public (GameResult result, bool actionPerformed) HandleMovement(double x, double y, bool isPlayer2Ai)
+        public (GameResult result, bool actionPerformed) HandleMovement(double x, double y)
         {
             (currentInputState, Action? nextAction) = game.HandleInput(x, y, currentInputState, currentState);
             GameResult gameResult = GameResult.InProgress;
@@ -72,13 +72,13 @@ namespace Game.IGame
             return (gameResult, nextAction != null);
         }
 
-        public GameResult PerformOponentsMovement(GameResult gameResult)
+        public GameResult HandleAiMovement()
         {
             CancellationToken token = new();
             Action nextAction = ai.ChooseAction(gameTree, token);
             ai.MoveGameToNextState(gameTree, nextAction);
             currentState = gameTree.SelectedNode.CorespondingState;
-            gameResult = game.Result(currentState);
+            GameResult gameResult = game.Result(currentState);
             return gameResult;
         }
 
@@ -94,6 +94,11 @@ namespace Game.IGame
             gameTree = new GameTree<Action, State>(currentState);
             CancellationTokenSource tokenSource = new();
             ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
+        }
+
+        public Player CurrentPlayer()
+        {
+            return game.CurrentPlayer(currentState);
         }
     }
 }
