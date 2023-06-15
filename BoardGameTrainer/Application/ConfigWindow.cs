@@ -72,7 +72,12 @@ namespace BoardGameTrainer
                 if (CurrentManagerFactory is not null)
                 {
                     mainWindow.GameManager = CurrentManagerFactory
-                        .Create(CurrentAiFactory, CurrentStopConditionFactory.Create(StopConditionParam));
+                        .Create(
+                            CurrentAiFactory,
+                            CurrentStopConditionFactory.Create(StopConditionParam),
+                            new Dictionary<Player, bool>(HumanPlayers),
+                            new Dictionary<Player, bool>(ShowHints),
+                            NumberOfHints);
                     if (!HumanPlayers[Player.One])
                         mainWindow.StartGameByAi();
                 }
@@ -95,11 +100,6 @@ namespace BoardGameTrainer
                 args.RetVal = true; // prevents closing
                 Hide();
             };
-        }
-
-        internal int HintsForPlayer(Player player)
-        {
-            return HumanPlayers[player] && ShowHints[player] ? NumberOfHints : 0;
         }
     }
 

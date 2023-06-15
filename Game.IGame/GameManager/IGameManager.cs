@@ -4,7 +4,10 @@ namespace Game.IGame
 {
     public interface IGameManager
     {
-        public void DrawBoard(Context context, int numberOfHints);
+        public Dictionary<Player, bool> HumanPlayers { get; }
+        public Dictionary<Player, bool> ShowHints { get; }
+        public int NumberOfHints { get; }
+        public void DrawBoard(Context context);
         public (GameResult result, bool actionPerformed) HandleMovement(double x, double y);
         public void ComputeHints(CancellationToken token);
         public GameResult HandleAiMovement();

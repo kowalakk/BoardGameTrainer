@@ -21,7 +21,6 @@
                     return;
                 }
             }
-            throw new ArgumentException();
         }
 
         public void SelectParentNode()

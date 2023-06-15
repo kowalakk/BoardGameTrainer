@@ -43,11 +43,13 @@ namespace BoardGameTrainer
             Button restartButton = new("Restart");
             restartButton.Clicked += (s, e) =>
             {
-                WindowState = WindowState.Idle;
-                EventsQueue.Add(delegate { GameManager?.Restart(); });
-
-                if (!ConfigWindow.HumanPlayers[Player.One])
-                    StartGameByAi();
+                if (GameManager is not null)
+                {
+                    WindowState = WindowState.Idle;
+                    GameManager.Restart();
+                    if (GameManager.HumanPlayers[Player.One])
+                        StartGameByAi();
+                }
             };
             restartButton.Show();
 
@@ -66,7 +68,7 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                GameManager?.DrawBoard(context, ConfigWindow.HintsForPlayer(GameManager!.CurrentPlayer()));
+                GameManager?.DrawBoard(context);
             };
             BoardImage.AddEvents((int)EventMask.ButtonPressMask);
             BoardImage.ButtonPressEvent += BoardImageClickHandler;
@@ -115,12 +117,12 @@ namespace BoardGameTrainer
         private void PerformMovement()
         {
             (GameResult gameResult, bool isActionPerformed) = GameManager!.HandleMovement(X, Y);
-            Gtk.Application.Invoke(delegate { BoardImage.QueueDraw(); });
+            Application.Invoke(delegate { BoardImage.QueueDraw(); });
             if (isActionPerformed && gameResult == GameResult.InProgress)
             {
                 CancellationToken token = ResetToken();
                 Player opponent = GameManager!.CurrentPlayer();
-                if (ConfigWindow.HumanPlayers[opponent])
+                if (GameManager.HumanPlayers[opponent])
                 {
                     WindowState = WindowState.ComputeHints;
                     EventsQueue.Add(ComputeHints);
@@ -139,11 +141,11 @@ namespace BoardGameTrainer
         private void PerformAiMovement()
         {
             GameResult gameResult = GameManager!.HandleAiMovement();
-            Gtk.Application.Invoke(delegate { BoardImage.QueueDraw(); });
+            Application.Invoke(delegate { BoardImage.QueueDraw(); });
             if (gameResult == GameResult.InProgress)
             {
                 Player opponent = GameManager!.CurrentPlayer();
-                if (ConfigWindow.HumanPlayers[opponent])
+                if (GameManager.HumanPlayers[opponent])
                 {
                     WindowState = WindowState.ComputeHints;
                     EventsQueue.Add(ComputeHints);

@@ -4,6 +4,9 @@ namespace Game.IGame
 {
     public class GameManager<Action, State, InputState> : IGameManager
     {
+        public Dictionary<Player, bool> HumanPlayers { get; }
+        public Dictionary<Player, bool> ShowHints { get; }
+        public int NumberOfHints { get; }
         private readonly IGame<Action, State, InputState> game;
         private readonly IAi<Action, State, InputState> ai;
         private State currentState;
@@ -11,8 +14,19 @@ namespace Game.IGame
         private GameTree<Action, State> gameTree;
         private List<(Action, double)> ratedActions;
 
-        public GameManager(IGame<Action, State, InputState> game, IAiFactory aiFactory, IStopCondition stopCondition)
+        public GameManager
+        (
+            IGame<Action, State, InputState> game,
+            IAiFactory aiFactory,
+            IStopCondition stopCondition,
+            Dictionary<Player, bool> humanPlayers,
+            Dictionary<Player, bool> showHints,
+            int numberOfHints
+        )
         {
+            HumanPlayers = humanPlayers;
+            ShowHints = showHints;
+            NumberOfHints = numberOfHints;
             this.game = game;
             ai = aiFactory.CreateAi(game, stopCondition);
             currentState = game.InitialState();
@@ -22,11 +36,14 @@ namespace Game.IGame
             ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
         }
 
-        public void DrawBoard(Context context, int numberOfHints)
+        public void DrawBoard(Context context)
         {
             GameResult gameResult = game.Result(currentState);
             if (gameResult == GameResult.InProgress)
             {
+
+                int numberOfHints = HumanPlayers[CurrentPlayer()] && ShowHints[CurrentPlayer()] ? NumberOfHints : 0;
+
                 IEnumerable<(Action, double)> filteredActions =
                     game.FilterByInputState(ratedActions, currentInputState, numberOfHints);
                 game.DrawBoard(context, currentInputState, currentState, filteredActions);
@@ -99,8 +116,8 @@ namespace Game.IGame
             currentState = game.InitialState();
             currentInputState = game.EmptyInputState();
             gameTree = new GameTree<Action, State>(currentState);
-            CancellationTokenSource tokenSource = new();
-            ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
+            CancellationToken token = new();
+            ratedActions = ai.MoveAssessment(gameTree, token);
         }
 
         public Player CurrentPlayer()
