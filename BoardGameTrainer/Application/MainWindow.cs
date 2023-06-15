@@ -13,13 +13,10 @@ namespace BoardGameTrainer
     }
     internal class MainWindow : Gtk.Window
     {
-
-        //refactor
-        DrawingArea boardImage;
-        double x;
-        double y;
-        //refactor
         public IGameManager? GameManager { get; set; } = null;
+        private DrawingArea BoardImage { get; } = new DrawingArea();
+        private double X { get; set; }
+        private double Y { get; set; }
         private ConfigWindow ConfigWindow { get; }
         private Thread HandleEventThread { get; }
         private CancellationTokenSource TokenSource { get; set; } = new();
@@ -59,25 +56,24 @@ namespace BoardGameTrainer
             panelHbox.PackStart(restartButton, false, false, 0);
             panelHbox.Show();
 
-            boardImage = new DrawingArea();
-            boardImage.Drawn += (sender, args) =>
+            BoardImage.Drawn += (sender, args) =>
             {
                 Context context = args.Cr;
 
-                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
-                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
-                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                int minDimention = Math.Min(BoardImage.AllocatedWidth, BoardImage.AllocatedHeight);
+                int xOffset = (BoardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (BoardImage.AllocatedHeight - minDimention) / 2;
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
                 GameManager?.DrawBoard(context, ConfigWindow.HintsForPlayer(GameManager!.CurrentPlayer()));
             };
-            boardImage.AddEvents((int)EventMask.ButtonPressMask);
-            boardImage.ButtonPressEvent += BoardImageClickHandler;
-            boardImage.Show();
+            BoardImage.AddEvents((int)EventMask.ButtonPressMask);
+            BoardImage.ButtonPressEvent += BoardImageClickHandler;
+            BoardImage.Show();
 
             HBox contentHBox = new();
-            contentHBox.PackStart(boardImage, true, true, 0);
+            contentHBox.PackStart(BoardImage, true, true, 0);
             contentHBox.Show();
 
             Label mainTitle = new("New Game");
@@ -106,11 +102,11 @@ namespace BoardGameTrainer
             if (WindowState != WindowState.ProcessMovement)
             {
                 WindowState = WindowState.ProcessMovement;
-                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
-                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
-                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
-                x = (args.Event.X - xOffset) / minDimention;
-                y = (args.Event.Y - yOffset) / minDimention;
+                int minDimention = Math.Min(BoardImage.AllocatedWidth, BoardImage.AllocatedHeight);
+                int xOffset = (BoardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (BoardImage.AllocatedHeight - minDimention) / 2;
+                X = (args.Event.X - xOffset) / minDimention;
+                Y = (args.Event.Y - yOffset) / minDimention;
 
                 PerformMovement();
             }
@@ -118,8 +114,8 @@ namespace BoardGameTrainer
 
         private void PerformMovement()
         {
-            (GameResult gameResult, bool isActionPerformed) = GameManager!.HandleMovement(x, y);
-            Gtk.Application.Invoke(delegate { boardImage.QueueDraw(); });
+            (GameResult gameResult, bool isActionPerformed) = GameManager!.HandleMovement(X, Y);
+            Gtk.Application.Invoke(delegate { BoardImage.QueueDraw(); });
             if (isActionPerformed && gameResult == GameResult.InProgress)
             {
                 CancellationToken token = ResetToken();
@@ -143,7 +139,7 @@ namespace BoardGameTrainer
         private void PerformAiMovement()
         {
             GameResult gameResult = GameManager!.HandleAiMovement();
-            Gtk.Application.Invoke(delegate { boardImage.QueueDraw(); });
+            Gtk.Application.Invoke(delegate { BoardImage.QueueDraw(); });
             if (gameResult == GameResult.InProgress)
             {
                 Player opponent = GameManager!.CurrentPlayer();
@@ -167,19 +163,18 @@ namespace BoardGameTrainer
         {
             CancellationToken token = ResetToken();
             GameManager!.ComputeHints(token);
-            Gtk.Application.Invoke(delegate
+            Application.Invoke(delegate
             {
-                boardImage.QueueDraw();
+                BoardImage.QueueDraw();
                 WindowState = WindowState.Idle;
             });
         }
 
         private void ThreadHandleEvents()
         {
-            Action job;
             while (true)
             {
-                job = EventsQueue.Take();
+                Action job = EventsQueue.Take();
                 job();
             }
         }

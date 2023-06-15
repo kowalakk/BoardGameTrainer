@@ -92,7 +92,7 @@ namespace BoardGameTrainer
 
             DeleteEvent += (sender, args) =>
             {
-                args.RetVal = true;
+                args.RetVal = true; // prevents closing
                 Hide();
             };
         }
