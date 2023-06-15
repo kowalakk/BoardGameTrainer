@@ -2,7 +2,9 @@
 using Gtk;
 
 namespace BoardGameTrainer
-{
+{/// <summary>
+/// ////////////////////////////////////////////////////////GameManager in MainWindow???
+/// </summary>
     public class GameTrainerApplication : Application
     {
         public IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
@@ -26,13 +28,13 @@ namespace BoardGameTrainer
 
         public GameTrainerApplication() : base("x.y.z", GLib.ApplicationFlags.None)
         {
-            this.Register(GLib.Cancellable.Current);
+            Register(GLib.Cancellable.Current);
 
             MainWindow mainWindow = new(this);
-            mainWindow.Show();
             mainWindow.DeleteEvent += (sender, args) => Quit();
+            mainWindow.Show();
 
-            this.AddWindow(mainWindow);
+            AddWindow(mainWindow);
         }
 
         public void CreateNewGame()

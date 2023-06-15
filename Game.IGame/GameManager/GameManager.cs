@@ -60,30 +60,30 @@ namespace Game.IGame
         public (GameResult result, bool actionPerformed) HandleMovement(double x, double y)
         {
             (currentInputState, Action? nextAction) = game.HandleInput(x, y, currentInputState, currentState);
-            GameResult gameResult = GameResult.InProgress;
             if (nextAction is not null)
             {
                 ai.MoveGameToNextState(gameTree, nextAction);
                 currentState = gameTree.SelectedNode.CorespondingState;
-                gameResult = game.Result(currentState);
+                GameResult gameResult = game.Result(currentState);
                 ratedActions = new List<(Action, double)>();
+                return (gameResult, true);
             }
-            return (gameResult, nextAction != null);
+            return (game.Result(currentState), false);
         }
 
         public GameResult HandleAiMovement()
         {
             CancellationToken token = new();
-            GameResult gameResult = GameResult.InProgress;
             Action nextAction = ai.ChooseAction(gameTree, token);
             if (nextAction is not null)
             {
                 ai.MoveGameToNextState(gameTree, nextAction);
                 currentState = gameTree.SelectedNode.CorespondingState;
-                gameResult = game.Result(currentState);
+                GameResult gameResult = game.Result(currentState);
                 ratedActions = new List<(Action, double)>();
+                return gameResult;
             }
-            return gameResult;
+            return game.Result(currentState);
         }
 
         public void ComputeHints(CancellationToken token)

@@ -35,7 +35,7 @@ namespace BoardGameTrainer
             Button newGameButton = new("New Game");
             newGameButton.Clicked += (s, e) =>
             {
-                ConfigWindow configWindow = new (application);
+                ConfigWindow configWindow = new(application);
                 configWindow.Destroyed += (s, e) =>
                 {
                     if (!application.HumanPlayers[Player.One])
@@ -108,7 +108,7 @@ namespace BoardGameTrainer
                 x = (args.Event.X - xOffset) / minDimention;
                 y = (args.Event.Y - yOffset) / minDimention;
 
-                eventsQueue.Add(PerformMovement);
+                PerformMovement();
             }
         }
 
@@ -116,11 +116,8 @@ namespace BoardGameTrainer
         {
             CancellationToken token = ResetToken();
             (GameResult gameResult, bool isActionPerformed) = application.GameManager!.HandleMovement(x, y);
-            Gtk.Application.Invoke(delegate
-            {
-                boardImage.QueueDraw();
-            });
-            if (gameResult == GameResult.InProgress)
+            Gtk.Application.Invoke(delegate { boardImage.QueueDraw(); });
+            if (isActionPerformed && gameResult == GameResult.InProgress)
             {
                 Player opponent = application.GameManager!.CurrentPlayer();
                 if (application.HumanPlayers[opponent])
@@ -130,7 +127,7 @@ namespace BoardGameTrainer
                 }
                 else
                 {
-                    PerformAiMovement();
+                    eventsQueue.Add(PerformAiMovement);
                 }
             }
             else
@@ -142,10 +139,7 @@ namespace BoardGameTrainer
         private void PerformAiMovement()
         {
             GameResult gameResult = application.GameManager!.HandleAiMovement();
-            Gtk.Application.Invoke(delegate
-            {
-                boardImage.QueueDraw();
-            });
+            Gtk.Application.Invoke(delegate { boardImage.QueueDraw(); });
             if (gameResult == GameResult.InProgress)
             {
                 Player opponent = application.GameManager!.CurrentPlayer();
@@ -156,7 +150,7 @@ namespace BoardGameTrainer
                 }
                 else
                 {
-                    PerformAiMovement();
+                    eventsQueue.Add(PerformAiMovement);
                 }
             }
             else
