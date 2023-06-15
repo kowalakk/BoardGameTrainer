@@ -114,11 +114,11 @@ namespace BoardGameTrainer
 
         private void PerformMovement()
         {
-            CancellationToken token = ResetToken();
             (GameResult gameResult, bool isActionPerformed) = application.GameManager!.HandleMovement(x, y);
             Gtk.Application.Invoke(delegate { boardImage.QueueDraw(); });
             if (isActionPerformed && gameResult == GameResult.InProgress)
             {
+                CancellationToken token = ResetToken();
                 Player opponent = application.GameManager!.CurrentPlayer();
                 if (application.HumanPlayers[opponent])
                 {
