@@ -26,40 +26,40 @@ namespace BoardGameTrainer
             { "Iterations limit", new IterationStopConditionFactory() }
         };
 
-        public ConfigWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
+        public ConfigWindow(MainWindow mainWindow) : base(Gtk.WindowType.Toplevel)
         {
-            application.CurrentManagerFactory = GameFactories.FirstOrDefault().Value;
-            application.CurrentAiFactory = AiFactories.FirstOrDefault().Value;
-            application.CurrentStopConditionFactory = StopConditions.FirstOrDefault().Value;
-            application.StopConditionParam = 1000;
+            mainWindow.CurrentManagerFactory = GameFactories.FirstOrDefault().Value;
+            mainWindow.CurrentAiFactory = AiFactories.FirstOrDefault().Value;
+            mainWindow.CurrentStopConditionFactory = StopConditions.FirstOrDefault().Value;
+            mainWindow.StopConditionParam = 1000;
 
             DropDownFrame<IGameManagerFactory> gamesFrame = new("Game", GameFactories);
-            gamesFrame.Changed += (sender, args) => { application.CurrentManagerFactory = gamesFrame.Active; Console.WriteLine(application.CurrentManagerFactory); };
+            gamesFrame.Changed += (sender, args) => { mainWindow.CurrentManagerFactory = gamesFrame.Active; };
             gamesFrame.Show();
 
             DropDownFrame<IAiFactory> aiFrame = new("AI Module", AiFactories);
-            aiFrame.Changed += (sender, args) => { application.CurrentAiFactory = aiFrame.Active; };
+            aiFrame.Changed += (sender, args) => { mainWindow.CurrentAiFactory = aiFrame.Active; };
             aiFrame.Show();
 
             CheckButtonsFrame numOfPlayersFrame = new("Human players");
-            numOfPlayersFrame.FirstClicked += (sender, args) => { application.HumanPlayers[Player.One] = numOfPlayersFrame.FirstActive; };
-            numOfPlayersFrame.SecondClicked += (sender, args) => { application.HumanPlayers[Player.Two] = numOfPlayersFrame.SecondActive; };
+            numOfPlayersFrame.FirstClicked += (sender, args) => { mainWindow.HumanPlayers[Player.One] = numOfPlayersFrame.FirstActive; };
+            numOfPlayersFrame.SecondClicked += (sender, args) => { mainWindow.HumanPlayers[Player.Two] = numOfPlayersFrame.SecondActive; };
             numOfPlayersFrame.Show();
 
             CheckButtonsFrame showHintsFrame = new("Show hints");
-            showHintsFrame.FirstClicked += (sender, args) => { application.ShowHints[Player.One] = showHintsFrame.FirstActive; };
-            showHintsFrame.SecondClicked += (sender, args) => { application.ShowHints[Player.Two] = showHintsFrame.SecondActive; };
+            showHintsFrame.FirstClicked += (sender, args) => { mainWindow.ShowHints[Player.One] = showHintsFrame.FirstActive; };
+            showHintsFrame.SecondClicked += (sender, args) => { mainWindow.ShowHints[Player.Two] = showHintsFrame.SecondActive; };
             showHintsFrame.Show();
 
             StopConditionFrame stopConditionFrame = new(StopConditions);
-            stopConditionFrame.Changed += (sender, args) => { application.CurrentStopConditionFactory = stopConditionFrame.Active; };
-            stopConditionFrame.ParamChanged += (sender, args) => { application.StopConditionParam = stopConditionFrame.Param; };
+            stopConditionFrame.Changed += (sender, args) => { mainWindow.CurrentStopConditionFactory = stopConditionFrame.Active; };
+            stopConditionFrame.ParamChanged += (sender, args) => { mainWindow.StopConditionParam = stopConditionFrame.Param; };
             stopConditionFrame.Show();
 
             Button newGameButton = new("Start new game");
             newGameButton.Clicked += (sender, args) =>
             {
-                application.CreateNewGame();
+                mainWindow.CreateNewGame();
                 Close();
             };
             newGameButton.Show();
