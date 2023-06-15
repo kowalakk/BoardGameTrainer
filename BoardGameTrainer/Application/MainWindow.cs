@@ -13,60 +13,44 @@ namespace BoardGameTrainer
     }
     internal class MainWindow : Gtk.Window
     {
-        public IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
-        public IAiFactory? CurrentAiFactory { get; set; } = null;
-        public IStopConditionFactory? CurrentStopConditionFactory { get; set; } = null;
-        public IGameManager? GameManager { get; set; } = null;
-        public int StopConditionParam { get; set; }
-        public Dictionary<Player, bool> HumanPlayers { get; } = new()
-        {
-            { Player.One, true },
-            { Player.Two, true }
-        };
-        public Dictionary<Player, bool> ShowHints { get; } = new()
-        {
-            { Player.One, true },
-            { Player.Two, true }
-        };
-        public int NumberOfHints { get; set; } = (int.MaxValue);
-        CancellationTokenSource tokenSource;
-        Thread handleEventThread;
-        BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
-        WindowState windowState;
+
+        //refactor
         DrawingArea boardImage;
         double x;
         double y;
-
+        //refactor
+        public IGameManager? GameManager { get; set; } = null;
+        private ConfigWindow ConfigWindow { get; }
+        private Thread HandleEventThread { get; }
+        private CancellationTokenSource TokenSource { get; set; } = new();
+        private WindowState WindowState { get; set; } = WindowState.Idle;
+        private BlockingCollection<Action> EventsQueue { get; } = new(new ConcurrentQueue<Action>());
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
             DefaultSize = new Gdk.Size(700, 500);
 
-            tokenSource = new CancellationTokenSource();
+            HandleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
+            HandleEventThread.Start();
 
-            handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
-            handleEventThread.Start();
+            ConfigWindow = new(this);
+            DeleteEvent += (sender, args) => ConfigWindow.Dispose();
+            application.AddWindow(ConfigWindow);
 
             Button newGameButton = new("New Game");
             newGameButton.Clicked += (s, e) =>
             {
-                ConfigWindow configWindow = new(this);
-                configWindow.Destroyed += (s, e) =>
-                {
-                    if (!HumanPlayers[Player.One])
-                        eventsQueue.Add(PerformAiMovement);
-                };
-                application.AddWindow(configWindow);
-                configWindow.Show();
+                ConfigWindow.Show();
             };
             newGameButton.Show();
 
             Button restartButton = new("Restart");
             restartButton.Clicked += (s, e) =>
             {
-                windowState = WindowState.Idle;
-                eventsQueue.Add(RestartGame);
-                if (!HumanPlayers[Player.One])
-                    eventsQueue.Add(PerformAiMovement);
+                WindowState = WindowState.Idle;
+                EventsQueue.Add(delegate { GameManager?.Restart(); });
+
+                if (!ConfigWindow.HumanPlayers[Player.One])
+                    StartGameByAi();
             };
             restartButton.Show();
 
@@ -86,7 +70,7 @@ namespace BoardGameTrainer
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
-                GameManager?.DrawBoard(context, ShowHintsForPlayer() ? NumberOfHints : 0);
+                GameManager?.DrawBoard(context, ConfigWindow.HintsForPlayer(GameManager!.CurrentPlayer()));
             };
             boardImage.AddEvents((int)EventMask.ButtonPressMask);
             boardImage.ButtonPressEvent += BoardImageClickHandler;
@@ -111,11 +95,17 @@ namespace BoardGameTrainer
             Add(mainVBox);
         }
 
+        public void StartGameByAi()
+        {
+            WindowState = WindowState.ProcessMovement;
+            EventsQueue.Add(PerformAiMovement);
+        }
+
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if (windowState != WindowState.ProcessMovement)
+            if (WindowState != WindowState.ProcessMovement)
             {
-                windowState = WindowState.ProcessMovement;
+                WindowState = WindowState.ProcessMovement;
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
                 int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
                 int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
@@ -124,26 +114,6 @@ namespace BoardGameTrainer
 
                 PerformMovement();
             }
-        }
-        public void CreateNewGame()
-        {
-            if (CurrentManagerFactory is not null
-                && CurrentAiFactory is not null
-                && CurrentStopConditionFactory is not null)
-            {
-                GameManager = CurrentManagerFactory
-                    .Create(CurrentAiFactory, CurrentStopConditionFactory.Create(StopConditionParam));
-            }
-        }
-
-        internal void RestartGame()
-        {
-            GameManager?.Restart();
-        }
-
-        internal bool ShowHintsForPlayer()
-        {
-            return HumanPlayers[GameManager!.CurrentPlayer()] && ShowHints[GameManager.CurrentPlayer()];
         }
 
         private void PerformMovement()
@@ -154,19 +124,19 @@ namespace BoardGameTrainer
             {
                 CancellationToken token = ResetToken();
                 Player opponent = GameManager!.CurrentPlayer();
-                if (HumanPlayers[opponent])
+                if (ConfigWindow.HumanPlayers[opponent])
                 {
-                    windowState = WindowState.ComputeHints;
-                    eventsQueue.Add(ComputeHints);
+                    WindowState = WindowState.ComputeHints;
+                    EventsQueue.Add(ComputeHints);
                 }
                 else
                 {
-                    eventsQueue.Add(PerformAiMovement);
+                    EventsQueue.Add(PerformAiMovement);
                 }
             }
             else
             {
-                windowState = WindowState.Idle;
+                WindowState = WindowState.Idle;
             }
         }
 
@@ -177,19 +147,19 @@ namespace BoardGameTrainer
             if (gameResult == GameResult.InProgress)
             {
                 Player opponent = GameManager!.CurrentPlayer();
-                if (HumanPlayers[opponent])
+                if (ConfigWindow.HumanPlayers[opponent])
                 {
-                    windowState = WindowState.ComputeHints;
-                    eventsQueue.Add(ComputeHints);
+                    WindowState = WindowState.ComputeHints;
+                    EventsQueue.Add(ComputeHints);
                 }
                 else
                 {
-                    eventsQueue.Add(PerformAiMovement);
+                    EventsQueue.Add(PerformAiMovement);
                 }
             }
             else
             {
-                windowState = WindowState.Idle;
+                WindowState = WindowState.Idle;
             }
         }
 
@@ -200,7 +170,7 @@ namespace BoardGameTrainer
             Gtk.Application.Invoke(delegate
             {
                 boardImage.QueueDraw();
-                windowState = WindowState.Idle;
+                WindowState = WindowState.Idle;
             });
         }
 
@@ -209,16 +179,16 @@ namespace BoardGameTrainer
             Action job;
             while (true)
             {
-                job = eventsQueue.Take();
+                job = EventsQueue.Take();
                 job();
             }
         }
 
         private CancellationToken ResetToken()
         {
-            tokenSource.Cancel();
-            tokenSource = new CancellationTokenSource();
-            return tokenSource.Token;
+            TokenSource.Cancel();
+            TokenSource = new CancellationTokenSource();
+            return TokenSource.Token;
         }
     }
 }

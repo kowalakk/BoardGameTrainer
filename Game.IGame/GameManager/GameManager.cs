@@ -34,6 +34,9 @@ namespace Game.IGame
             }
 
             game.DrawBoard(context, currentInputState, currentState, Enumerable.Empty<(Action, double)>());
+            context.SetSourceRGBA(1, 1, 1, 0.5);
+            context.Rectangle(0, 0, 1, 1);
+            context.Fill();
             string text = string.Empty;
             if (gameResult == GameResult.PlayerOneWins)
             {
