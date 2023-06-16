@@ -45,10 +45,8 @@ namespace BoardGameTrainer
             {
                 if (GameManager is not null)
                 {
-                    WindowState = WindowState.Idle;
-                    GameManager.Restart();
-                    if (GameManager.HumanPlayers[Player.One])
-                        StartGameByAi();
+                    GameManager.Reset();
+                    StartGame();
                 }
             };
             restartButton.Show();
@@ -93,12 +91,6 @@ namespace BoardGameTrainer
             Add(mainVBox);
         }
 
-        public void StartGameByAi()
-        {
-            WindowState = WindowState.ProcessMovement;
-            EventsQueue.Add(PerformAiMovement);
-        }
-
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
             if (WindowState != WindowState.ProcessMovement)
@@ -111,6 +103,22 @@ namespace BoardGameTrainer
                 Y = (args.Event.Y - yOffset) / minDimention;
 
                 PerformMovement();
+            }
+        }
+
+        internal void StartGame()
+        {
+            ResetToken();
+            WindowState = WindowState.Idle;
+            if (GameManager!.HumanPlayers[Player.One])
+            {
+                WindowState = WindowState.ComputeHints;
+                EventsQueue.Add(ComputeHints);
+            }
+            else
+            {
+                WindowState = WindowState.ProcessMovement;
+                EventsQueue.Add(PerformAiMovement);
             }
         }
 
@@ -181,7 +189,7 @@ namespace BoardGameTrainer
             }
         }
 
-        private CancellationToken ResetToken()
+        public CancellationToken ResetToken()
         {
             TokenSource.Cancel();
             TokenSource = new CancellationTokenSource();

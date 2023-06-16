@@ -78,10 +78,10 @@ namespace BoardGameTrainer
                             new Dictionary<Player, bool>(HumanPlayers),
                             new Dictionary<Player, bool>(ShowHints),
                             NumberOfHints);
-                    if (!HumanPlayers[Player.One])
-                        mainWindow.StartGameByAi();
+
+                    mainWindow.StartGame();
+                    Hide();
                 }
-                Hide();
             };
             newGameButton.Show();
 

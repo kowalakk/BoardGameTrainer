@@ -111,13 +111,14 @@ namespace Game.IGame
             ratedActions = ai.MoveAssessment(gameTree, token);
         }
 
-        public void Restart()
+        public void Reset()
         {
             currentState = game.InitialState();
             currentInputState = game.EmptyInputState();
             gameTree = new GameTree<Action, State>(currentState);
-            CancellationToken token = new();
-            ratedActions = ai.MoveAssessment(gameTree, token);
+            ratedActions= new List<(Action, double)>();
+            CancellationTokenSource tokenSource = new();
+            ratedActions = ai.MoveAssessment(gameTree, tokenSource.Token);
         }
 
         public Player CurrentPlayer()

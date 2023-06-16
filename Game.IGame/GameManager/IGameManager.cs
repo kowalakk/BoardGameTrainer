@@ -9,9 +9,9 @@ namespace Game.IGame
         public int NumberOfHints { get; }
         public void DrawBoard(Context context);
         public (GameResult result, bool actionPerformed) HandleMovement(double x, double y);
-        public void ComputeHints(CancellationToken token);
         public GameResult HandleAiMovement();
+        public void ComputeHints(CancellationToken token);
         public Player CurrentPlayer();
-        public void Restart();
+        public void Reset();
     }
 }
