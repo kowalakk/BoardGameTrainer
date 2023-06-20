@@ -73,7 +73,10 @@ namespace Game.Checkers
         public CheckersState PerformOn(CheckersState state, Piece substituteCapturedWith)
         {
             Piece capturer = state.GetPieceAt(Start);
-            CheckersState newState = new(state);
+            CheckersState newState = new(state)
+            {
+                InsignificantActions = 0
+            };
             newState.SetPieceAt(Start, Piece.None);
             foreach (SimpleCapture capture in Captures)
             {
