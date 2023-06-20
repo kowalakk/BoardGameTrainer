@@ -3,6 +3,7 @@ using Game.IGame;
 using Gdk;
 using Gtk;
 using System.Collections.Concurrent;
+using System.Reflection;
 using Action = System.Action;
 
 namespace BoardGameTrainer
@@ -51,9 +52,35 @@ namespace BoardGameTrainer
             };
             restartButton.Show();
 
+            Button addGameButton = new("Add Game");
+            addGameButton.Clicked += (s, e) =>
+            {
+                FileChooserDialog dialog = new("", this, FileChooserAction.Open, "Open",
+                    ResponseType.Accept, "Cancel", ResponseType.Cancel);
+                FileFilter filter = new()
+                {
+                    Name = ".dll",
+                };
+                filter.AddPattern("*.dll");
+                dialog.AddFilter(filter);
+
+                if (dialog.Run() == (int)ResponseType.Accept)
+                {
+                    Assembly assembly = Assembly.LoadFile(dialog.Filename);
+                    try
+                    {
+                        LoadGameFactory(assembly);
+                    }
+                    catch { } // TODO: okenko z errorem
+                }
+                dialog.Destroy();
+            };
+            addGameButton.Show();
+
             HBox panelHbox = new();
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
+            panelHbox.PackStart(addGameButton, false, false, 0);
             panelHbox.Show();
 
             BoardImage.Drawn += (sender, args) =>
@@ -189,11 +216,25 @@ namespace BoardGameTrainer
             }
         }
 
-        public CancellationToken ResetToken()
+        private CancellationToken ResetToken()
         {
             TokenSource.Cancel();
             TokenSource = new CancellationTokenSource();
             return TokenSource.Token;
+        }
+
+        private IGameManagerFactory LoadGameFactory(Assembly asm)
+        {
+            foreach (Type type in asm.GetTypes())
+            {
+                if (type.GetInterface("IGameManagerFactory") != null)
+                {
+                    object? obj = Activator.CreateInstance(type);
+                    IGameManagerFactory gameManagerFactory = (IGameManagerFactory)obj!;
+                    return gameManagerFactory;
+                }
+            }
+            throw new Exception("There are no valid plugin(s) in the DLL.");
         }
     }
 }

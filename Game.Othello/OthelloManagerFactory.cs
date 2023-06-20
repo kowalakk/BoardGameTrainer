@@ -4,6 +4,8 @@ namespace Game.Othello
 {
     public class OthelloManagerFactory : IGameManagerFactory
     {
+        public string Name => "Othello";
+
         public IGameManager Create(
             IAiFactory aiFactory,
             IStopCondition stopCondition,
