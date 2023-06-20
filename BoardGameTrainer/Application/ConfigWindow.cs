@@ -13,31 +13,33 @@ namespace BoardGameTrainer
             { "Checkers", new CheckersManagerFactory() },
             { "Othello", new OthelloManagerFactory() }
         };
-        public static Dictionary<string, IAiFactory> AiFactories { get; } = new()
+        private static double uctConstant = 1.41;
+        private static int nmcsDepth = 5;
+        private static Dictionary<string, IAiFactory> AiFactories { get; } = new()
         {
-            { "Upper Confidence Bounds for Trees", new UctFactory(1.41) },
-            { "Nested Monte Carlo Search", new NmcsFactory(3) }
+            { "Upper Confidence Bounds for Trees", new UctFactory(uctConstant) },
+            { "Nested Monte Carlo Search", new NmcsFactory(nmcsDepth) }
         };
-        public static Dictionary<string, IStopConditionFactory> StopConditions { get; } = new()
+        private static Dictionary<string, IStopConditionFactory> StopConditions { get; } = new()
         {
             { "Time limit", new TimeStopConditionFactory() },
             { "Iterations limit", new IterationStopConditionFactory() }
         };
-        public static Dictionary<Player, bool> HumanPlayers { get; } = new()
+        private static Dictionary<Player, bool> HumanPlayers { get; } = new()
         {
             { Player.One, true },
             { Player.Two, true }
         };
-        public static Dictionary<Player, bool> ShowHints { get; } = new()
+        private static Dictionary<Player, bool> ShowHints { get; } = new()
         {
             { Player.One, true },
             { Player.Two, true }
         };
-        public IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
-        public IAiFactory CurrentAiFactory { get; set; } = AiFactories.FirstOrDefault().Value;
-        public IStopConditionFactory CurrentStopConditionFactory { get; set; } = StopConditions.FirstOrDefault().Value;
-        public int StopConditionParam { get; set; } = 1000;
-        public int NumberOfHints { get; set; } = int.MaxValue;
+        private IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
+        private IAiFactory CurrentAiFactory { get; set; } = AiFactories.FirstOrDefault().Value;
+        private IStopConditionFactory CurrentStopConditionFactory { get; set; } = StopConditions.FirstOrDefault().Value;
+        private int StopConditionParam { get; set; } = 1000;
+        private int NumberOfHints { get; set; } = int.MaxValue;
 
         public ConfigWindow(MainWindow mainWindow) : base(WindowType.Toplevel)
         {

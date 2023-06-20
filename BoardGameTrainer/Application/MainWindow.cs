@@ -14,29 +14,29 @@ namespace BoardGameTrainer
     internal class MainWindow : Gtk.Window
     {
         public IGameManager? GameManager { get; set; } = null;
-        private DrawingArea BoardImage { get; } = new DrawingArea();
-        private double X { get; set; }
-        private double Y { get; set; }
-        private ConfigWindow ConfigWindow { get; }
-        private Thread HandleEventThread { get; }
-        private CancellationTokenSource TokenSource { get; set; } = new();
-        private WindowState WindowState { get; set; } = WindowState.Idle;
-        private BlockingCollection<Action> EventsQueue { get; } = new(new ConcurrentQueue<Action>());
+        private readonly DrawingArea boardImage = new();
+        private double x;
+        private double y;
+        private readonly ConfigWindow configWindow;
+        private readonly Thread handleEventThread;
+        private CancellationTokenSource tokenSource = new();
+        private WindowState windowState = WindowState.Idle;
+        private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
             DefaultSize = new Gdk.Size(700, 500);
 
-            HandleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
-            HandleEventThread.Start();
+            handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
+            handleEventThread.Start();
 
-            ConfigWindow = new(this);
-            DeleteEvent += (sender, args) => ConfigWindow.Dispose();
-            application.AddWindow(ConfigWindow);
+            configWindow = new(this);
+            DeleteEvent += (sender, args) => configWindow.Dispose();
+            application.AddWindow(configWindow);
 
             Button newGameButton = new("New Game");
             newGameButton.Clicked += (s, e) =>
             {
-                ConfigWindow.Show();
+                configWindow.Show();
             };
             newGameButton.Show();
 
@@ -45,6 +45,7 @@ namespace BoardGameTrainer
             {
                 if (GameManager is not null)
                 {
+                    ResetToken();
                     GameManager.Reset();
                     StartGame();
                 }
@@ -56,24 +57,24 @@ namespace BoardGameTrainer
             panelHbox.PackStart(restartButton, false, false, 0);
             panelHbox.Show();
 
-            BoardImage.Drawn += (sender, args) =>
+            boardImage.Drawn += (sender, args) =>
             {
                 Context context = args.Cr;
 
-                int minDimention = Math.Min(BoardImage.AllocatedWidth, BoardImage.AllocatedHeight);
-                int xOffset = (BoardImage.AllocatedWidth - minDimention) / 2;
-                int yOffset = (BoardImage.AllocatedHeight - minDimention) / 2;
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
                 context.Translate(xOffset, yOffset);
                 context.Scale(minDimention, minDimention);
 
                 GameManager?.DrawBoard(context);
             };
-            BoardImage.AddEvents((int)EventMask.ButtonPressMask);
-            BoardImage.ButtonPressEvent += BoardImageClickHandler;
-            BoardImage.Show();
+            boardImage.AddEvents((int)EventMask.ButtonPressMask);
+            boardImage.ButtonPressEvent += BoardImageClickHandler;
+            boardImage.Show();
 
             HBox contentHBox = new();
-            contentHBox.PackStart(BoardImage, true, true, 0);
+            contentHBox.PackStart(boardImage, true, true, 0);
             contentHBox.Show();
 
             Label mainTitle = new("New Game");
@@ -93,14 +94,14 @@ namespace BoardGameTrainer
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if (WindowState != WindowState.ProcessMovement)
+            if (windowState != WindowState.ProcessMovement)
             {
-                WindowState = WindowState.ProcessMovement;
-                int minDimention = Math.Min(BoardImage.AllocatedWidth, BoardImage.AllocatedHeight);
-                int xOffset = (BoardImage.AllocatedWidth - minDimention) / 2;
-                int yOffset = (BoardImage.AllocatedHeight - minDimention) / 2;
-                X = (args.Event.X - xOffset) / minDimention;
-                Y = (args.Event.Y - yOffset) / minDimention;
+                windowState = WindowState.ProcessMovement;
+                int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
+                int xOffset = (boardImage.AllocatedWidth - minDimention) / 2;
+                int yOffset = (boardImage.AllocatedHeight - minDimention) / 2;
+                x = (args.Event.X - xOffset) / minDimention;
+                y = (args.Event.Y - yOffset) / minDimention;
 
                 PerformMovement();
             }
@@ -108,64 +109,63 @@ namespace BoardGameTrainer
 
         internal void StartGame()
         {
-            ResetToken();
-            WindowState = WindowState.Idle;
+            windowState = WindowState.Idle;
             if (GameManager!.HumanPlayers[Player.One])
             {
-                WindowState = WindowState.ComputeHints;
-                EventsQueue.Add(ComputeHints);
+                windowState = WindowState.ComputeHints;
+                eventsQueue.Add(ComputeHints);
             }
             else
             {
-                WindowState = WindowState.ProcessMovement;
-                EventsQueue.Add(PerformAiMovement);
+                windowState = WindowState.ProcessMovement;
+                eventsQueue.Add(PerformAiMovement);
             }
         }
 
         private void PerformMovement()
         {
-            (GameResult gameResult, bool isActionPerformed) = GameManager!.HandleMovement(X, Y);
-            Application.Invoke(delegate { BoardImage.QueueDraw(); });
+            (GameResult gameResult, bool isActionPerformed) = GameManager!.HandleMovement(x, y);
+            Application.Invoke(delegate { boardImage.QueueDraw(); });
             if (isActionPerformed && gameResult == GameResult.InProgress)
             {
                 CancellationToken token = ResetToken();
                 Player opponent = GameManager!.CurrentPlayer();
                 if (GameManager.HumanPlayers[opponent])
                 {
-                    WindowState = WindowState.ComputeHints;
-                    EventsQueue.Add(ComputeHints);
+                    windowState = WindowState.ComputeHints;
+                    eventsQueue.Add(ComputeHints);
                 }
                 else
                 {
-                    EventsQueue.Add(PerformAiMovement);
+                    eventsQueue.Add(PerformAiMovement);
                 }
             }
             else
             {
-                WindowState = WindowState.Idle;
+                windowState = WindowState.Idle;
             }
         }
 
         private void PerformAiMovement()
         {
             GameResult gameResult = GameManager!.HandleAiMovement();
-            Application.Invoke(delegate { BoardImage.QueueDraw(); });
+            Application.Invoke(delegate { boardImage.QueueDraw(); });
             if (gameResult == GameResult.InProgress)
             {
                 Player opponent = GameManager!.CurrentPlayer();
                 if (GameManager.HumanPlayers[opponent])
                 {
-                    WindowState = WindowState.ComputeHints;
-                    EventsQueue.Add(ComputeHints);
+                    windowState = WindowState.ComputeHints;
+                    eventsQueue.Add(ComputeHints);
                 }
                 else
                 {
-                    EventsQueue.Add(PerformAiMovement);
+                    eventsQueue.Add(PerformAiMovement);
                 }
             }
             else
             {
-                WindowState = WindowState.Idle;
+                windowState = WindowState.Idle;
             }
         }
 
@@ -175,8 +175,8 @@ namespace BoardGameTrainer
             GameManager!.ComputeHints(token);
             Application.Invoke(delegate
             {
-                BoardImage.QueueDraw();
-                WindowState = WindowState.Idle;
+                boardImage.QueueDraw();
+                windowState = WindowState.Idle;
             });
         }
 
@@ -184,16 +184,16 @@ namespace BoardGameTrainer
         {
             while (true)
             {
-                Action job = EventsQueue.Take();
+                Action job = eventsQueue.Take();
                 job();
             }
         }
 
         public CancellationToken ResetToken()
         {
-            TokenSource.Cancel();
-            TokenSource = new CancellationTokenSource();
-            return TokenSource.Token;
+            tokenSource.Cancel();
+            tokenSource = new CancellationTokenSource();
+            return tokenSource.Token;
         }
     }
 }
