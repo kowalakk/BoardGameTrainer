@@ -17,10 +17,10 @@ namespace BoardGameTrainer
         public StopConditionFrame(Dictionary<string, IStopConditionFactory> entries) : base("Stop condition", entries)
         {
 
-            Boxes[0] = new(1000, 100000, 100, Param, "miliseconds");
+            Boxes[0] = new(100, 100000, 100, Param, "miliseconds");
             Boxes[0].Changed += (sender, args) => { Param = (int)Boxes[0].Value; };
 
-            Boxes[1] = new(1000, 100000, 100, Param, "iterations");
+            Boxes[1] = new(100, 100000, 100, Param, "iterations");
             Boxes[1].Changed += (sender, args) => { Param = (int)Boxes[1].Value; };
 
             Box.PackStart(Boxes[0], true, true, 5);
