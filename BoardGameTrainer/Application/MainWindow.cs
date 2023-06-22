@@ -232,9 +232,9 @@ namespace BoardGameTrainer
             return tokenSource.Token;
         }
 
-        private IGameManagerFactory LoadGameFactory(Assembly asm)
+        private IGameManagerFactory LoadGameFactory(Assembly assembly)
         {
-            foreach (Type type in asm.GetTypes())
+            foreach (Type type in assembly.GetTypes())
             {
                 if (type.GetInterface("IGameManagerFactory") != null)
                 {
