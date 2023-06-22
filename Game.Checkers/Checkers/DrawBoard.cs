@@ -14,7 +14,7 @@ namespace Game.Checkers
         private static readonly Color red = new(0.8, 0.3, 0.3);
         private static readonly Color brown = new(0.96, 0.85, 0.74);
         private static readonly Color beige = new(0.26, 0.13, 0);
-        private static readonly Color purple = new (0.5, 0.4, 1);
+        private static readonly Color purple = new(0.5, 0.4, 1);
         private (int col, int row) lastClickedField;
 
         public void DrawBoard(Context context, ICheckersInputState inputState, CheckersState state, IEnumerable<(ICheckersAction, double)> ratedActions)
@@ -33,6 +33,7 @@ namespace Game.Checkers
             }
             DrawInpputState(context, inputState, state, ratedActions);
             DrawPreviousAction(context, state);
+            context.Translate(-lastClickedField.col * fieldSize, -lastClickedField.row * fieldSize);
         }
 
         private void MoveContextToField(Context context, int field)
@@ -162,7 +163,7 @@ namespace Game.Checkers
         private void DrawRatedAction(Context context, CheckersState state, (ICheckersAction, double) action)
         {
             IEnumerable<int> fields = action.Item1.GetParticipatingFields();
-            Color colorFromRating = new((1-action.Item2)*0.75, (1 + action.Item2) * 0.75, 0);
+            Color colorFromRating = new((1 - action.Item2) * 0.75, (1 + action.Item2) * 0.75, 0);
 
             foreach (int field in fields)
             {
@@ -175,7 +176,7 @@ namespace Game.Checkers
 
             if (action.Item1 is CaptureAction captureAction)
             {
-                foreach(int field in captureAction.GetCapturedFields())
+                foreach (int field in captureAction.GetCapturedFields())
                 {
                     MoveContextToField(context, field);
                     DrawSpecialField(context, red);

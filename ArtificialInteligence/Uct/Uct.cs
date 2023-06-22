@@ -1,5 +1,4 @@
 ﻿using Game.IGame;
-using System.Threading;
 
 namespace Ai
 {
@@ -15,6 +14,7 @@ namespace Ai
 
         public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
+            StopCondition.Start();
             UctSearch(gameTree.SelectedNode, token);
             return gameTree.SelectedNode.ExpandedChildren
                 .Select(child => (child.CorespondingAction!, -(double)child.SuccessCount / child.VisitCount))
@@ -23,8 +23,9 @@ namespace Ai
 
         private void UctSearch(Node<Action, State> root, CancellationToken token)
         {
-            while (!StopCondition.StopConditionOccured() && !token.IsCancellationRequested)
+            while (!StopCondition.Occured() && !token.IsCancellationRequested)
             {
+                StopCondition.Advance();
                 Node<Action, State> node = TreePolicy(root);
                 GameResult gameResult = DefaultPolicy(node.CorespondingState);
                 Backup(node, gameResult);

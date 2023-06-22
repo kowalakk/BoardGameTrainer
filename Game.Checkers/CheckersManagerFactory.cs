@@ -4,12 +4,20 @@ namespace Game.Checkers
 {
     public class CheckersManagerFactory : IGameManagerFactory
     {
-        public IGameManager CreateGameManager(IAiFactory aiFactory, IStopCondition stopCondition)
+        public IGameManager Create(
+            IAiFactory aiFactory,
+            IStopCondition stopCondition,
+            Dictionary<Player, bool> humanPlayers,
+            Dictionary<Player, bool> showHints,
+            int numberOfHints)
         {
             return new GameManager<ICheckersAction, CheckersState, ICheckersInputState>(
-                new Checkers(), 
+                new Checkers(),
                 aiFactory,
-                stopCondition);
+                stopCondition,
+                humanPlayers,
+                showHints,
+                numberOfHints);
         }
     }
 }

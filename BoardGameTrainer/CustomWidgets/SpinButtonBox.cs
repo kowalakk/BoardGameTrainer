@@ -2,7 +2,7 @@
 
 namespace BoardGameTrainer
 {
-    public class SpinButtonFrame : Frame
+    public class SpinButtonBox : HBox
     {
         private readonly SpinButton spinButton;
 
@@ -13,12 +13,14 @@ namespace BoardGameTrainer
             add { spinButton.Changed += value; }
             remove { spinButton.Changed -= value; }
         }
-        public SpinButtonFrame(string label, 
+        public SpinButtonBox
+        ( 
             double min, 
             double max, 
             double step, 
             double initialValue, 
-            string text) : base(label) 
+            string text
+        ) : base() 
         {
             spinButton = new(min, max, step)
             {
@@ -29,12 +31,8 @@ namespace BoardGameTrainer
             Label textLabel = new(text);
             textLabel.Show();
 
-            HBox box = new();
-            box.Show();
-            box.PackStart(spinButton, true, true, 5);
-            box.PackStart(textLabel, false, false, 5);
-
-            this.Add(box);
+            PackStart(spinButton, true, true, 5);
+            PackStart(textLabel, false, false, 5);
         }
     }
 }

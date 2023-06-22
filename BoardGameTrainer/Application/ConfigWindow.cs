@@ -1,77 +1,108 @@
-﻿using Gtk;
+﻿using Ai;
+using Game.Checkers;
+using Game.IGame;
+using Game.Othello;
+using Gtk;
 
 namespace BoardGameTrainer
 {
     internal class ConfigWindow : Window
     {
-        // TODO: refactor
-        public ConfigWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
+        public Dictionary<string, IGameManagerFactory> GameFactories { get; } = new()
         {
-            application.gameNum = 0;
-            var configWindow = new Gtk.Window(Gtk.WindowType.Toplevel);
+            { "Checkers", new CheckersManagerFactory() },
+            { "Othello", new OthelloManagerFactory() }
+        };
+        private static double uctConstant = 1.41;
+        private static int nmcsDepth = 5;
+        private static Dictionary<string, IAiFactory> AiFactories { get; } = new()
+        {
+            { "Upper Confidence Bounds for Trees", new UctFactory(uctConstant) },
+            { "Nested Monte Carlo Search", new NmcsFactory(nmcsDepth) }
+        };
+        private static Dictionary<string, IStopConditionFactory> StopConditions { get; } = new()
+        {
+            { "Time limit", new TimeStopConditionFactory() },
+            { "Iterations limit", new IterationStopConditionFactory() }
+        };
+        private static Dictionary<Player, bool> HumanPlayers { get; } = new()
+        {
+            { Player.One, true },
+            { Player.Two, true }
+        };
+        private static Dictionary<Player, bool> ShowHints { get; } = new()
+        {
+            { Player.One, true },
+            { Player.Two, true }
+        };
+        private IGameManagerFactory? CurrentManagerFactory { get; set; } = null;
+        private IAiFactory CurrentAiFactory { get; set; } = AiFactories.FirstOrDefault().Value;
+        private IStopConditionFactory CurrentStopConditionFactory { get; set; } = StopConditions.FirstOrDefault().Value;
+        private int StopConditionParam { get; set; } = 1000;
+        private int NumberOfHints { get; set; } = int.MaxValue;
 
-            configWindow.Show();
-            var contentVbox = new Gtk.VBox();
+        public ConfigWindow(MainWindow mainWindow) : base(WindowType.Toplevel)
+        {
+            CurrentManagerFactory = GameFactories.FirstOrDefault().Value;
 
-            var aiHBox = new Gtk.HBox();
-            var aiDropDown = new Gtk.ComboBox(new string[] { "Upper Confidence Bounds for Trees", "Nested Monte Carlo Search" })
-            {
-                Active = 0
-            };
-            aiDropDown.Changed += (sender, args) => { application.aiNum = aiDropDown.Active; };
-            var aiLabel = new Gtk.Label("AI Module");
-            aiHBox.PackStart(aiLabel, false, false, 3);
-            aiHBox.PackStart(aiDropDown, false, false, 3);
-            aiLabel.Show();
-            aiDropDown.Show();
-            aiHBox.Show();
+            DropDownFrame<IGameManagerFactory> gamesFrame = new("Game", GameFactories);
+            gamesFrame.Changed += (sender, args) => { CurrentManagerFactory = gamesFrame.Active; };
+            gamesFrame.Show();
 
-            var gameHBox = new Gtk.HBox();
-            var gamesDropDown = new Gtk.ComboBox(application.games);
-            gamesDropDown.Active = 0;
-            gamesDropDown.Changed += (sender, args) => { application.gameNum = gamesDropDown.Active; };
-            var gameLabel = new Gtk.Label("Game");
-            gameHBox.PackStart(gameLabel, false, false, 3);
-            gameHBox.PackStart(gamesDropDown, false, false, 3);
-            gameLabel.Show();
-            gamesDropDown.Show();
-            gameHBox.Show();
+            DropDownFrame<IAiFactory> aiFrame = new("AI Module", AiFactories);
+            aiFrame.Changed += (sender, args) => { CurrentAiFactory = aiFrame.Active; };
+            aiFrame.Show();
 
-
-            NumberOfPlayersFrame numOfPlayersFrame = new();
+            CheckButtonsFrame numOfPlayersFrame = new("Human players");
+            numOfPlayersFrame.FirstClicked += (sender, args) => { HumanPlayers[Player.One] = numOfPlayersFrame.FirstActive; };
+            numOfPlayersFrame.SecondClicked += (sender, args) => { HumanPlayers[Player.Two] = numOfPlayersFrame.SecondActive; };
             numOfPlayersFrame.Show();
-            numOfPlayersFrame.FirstClicked += (sender, args) => { application.isPlayer2Ai = true; };
-            numOfPlayersFrame.SecondClicked += (sender, args) => { application.isPlayer2Ai = false; };
 
-            ShowHintsFrame showHintsFrame = new();
+            CheckButtonsFrame showHintsFrame = new("Show hints");
+            showHintsFrame.FirstClicked += (sender, args) => { ShowHints[Player.One] = showHintsFrame.FirstActive; };
+            showHintsFrame.SecondClicked += (sender, args) => { ShowHints[Player.Two] = showHintsFrame.SecondActive; };
             showHintsFrame.Show();
-            showHintsFrame.FirstClicked += (sender, args) => { application.numberOfHints.Item1 = showHintsFrame.FirstActive ? int.MaxValue : 0; };
-            showHintsFrame.SecondClicked += (sender, args) => { application.numberOfHints.Item2 = showHintsFrame.SecondActive ? int.MaxValue : 0; };
 
-            // for later
-            //SpinButtonFrame computationTimeFrame = new("Computation time", 10, 10000, 10, computationTime, "ms");
-            //computationTimeFrame.Changed += (sender, args) => { computationTime = computationTimeFrame.Value; };
-            //computationTimeFrame.Show();
-
-            SpinButtonFrame iterationFrame = new("Number of iterations", 1000, 100000, 100, application.iterationsNumber, "iterations");
-            iterationFrame.Show();
-            iterationFrame.Changed += (sender, args) => { application.iterationsNumber = (int)iterationFrame.Value; };
+            StopConditionFrame stopConditionFrame = new(StopConditions);
+            stopConditionFrame.Changed += (sender, args) => { CurrentStopConditionFactory = stopConditionFrame.Active; };
+            stopConditionFrame.ParamChanged += (sender, args) => { StopConditionParam = stopConditionFrame.Param; };
+            stopConditionFrame.Show();
 
             Button newGameButton = new("Start new game");
-            newGameButton.Show();
-            newGameButton.Clicked += (sender, args) => { application.CreateNewGame(); configWindow.Close(); };
+            newGameButton.Clicked += (sender, args) =>
+            {
+                if (CurrentManagerFactory is not null)
+                {
+                    mainWindow.GameManager = CurrentManagerFactory
+                        .Create(
+                            CurrentAiFactory,
+                            CurrentStopConditionFactory.Create(StopConditionParam),
+                            new Dictionary<Player, bool>(HumanPlayers),
+                            new Dictionary<Player, bool>(ShowHints),
+                            NumberOfHints);
 
-            contentVbox.PackStart(aiHBox, false, false, 3);
-            contentVbox.PackStart(gameHBox, false, false, 3);
+                    mainWindow.StartGame();
+                    Hide();
+                }
+            };
+            newGameButton.Show();
+
+            VBox contentVbox = new();
+            contentVbox.PackStart(gamesFrame, false, false, 3);
+            contentVbox.PackStart(aiFrame, false, false, 3);
             contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
             contentVbox.PackStart(showHintsFrame, false, false, 3);
-            //contentVbox.PackStart(computationTimeFrame, false, false, 3);
-            contentVbox.PackStart(iterationFrame, false, false, 3);
+            contentVbox.PackStart(stopConditionFrame, false, false, 3);
             contentVbox.PackStart(newGameButton, false, false, 3);
             contentVbox.Show();
-            configWindow.Add(contentVbox);
-        }
+            Add(contentVbox);
 
+            DeleteEvent += (sender, args) =>
+            {
+                args.RetVal = true; // prevents closing
+                Hide();
+            };
+        }
     }
 
 }

@@ -4,9 +4,9 @@ namespace BoardGameTrainer
 {
     internal class NumberOfPlayersFrame : Frame
     {
-        private RadioButton firstButton;
+        private readonly RadioButton firstButton;
 
-        private RadioButton secondButton;
+        private readonly RadioButton secondButton;
 
         public event EventHandler FirstClicked
         {
@@ -32,7 +32,7 @@ namespace BoardGameTrainer
             box.Show();
             box.PackStart(firstButton, false, false, 5);
             box.PackStart(secondButton, false, false, 5);
-            this.Add(box);
+            Add(box);
         }
     }
 }

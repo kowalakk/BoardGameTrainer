@@ -15,6 +15,7 @@ namespace Ai
 
         public override List<(Action, double)> MoveAssessment(GameTree<Action, State> gameTree, CancellationToken token)
         {
+            StopCondition.Start();
             List<Node<Action, State>> leaves = new();
             Nesting(Depth, gameTree.SelectedNode, leaves);
             if (leaves.Count > 0)
@@ -57,24 +58,15 @@ namespace Ai
 
         private void NmcSearch(Node<Action, State>[] leaves, CancellationToken token)
         {
-            var watch = new System.Diagnostics.Stopwatch();
-            int iterations = 0;
-            watch.Start();
-
-            while (!StopCondition.StopConditionOccured() && !token.IsCancellationRequested)
+            while (!StopCondition.Occured() && !token.IsCancellationRequested)
             {
+                StopCondition.Advance();
                 Node<Action, State> randomLeaf = leaves.RandomElement();
                 GameResult gameResult = DefaultPolicy(randomLeaf.CorespondingState);
                 int delta = Delta(randomLeaf.CorespondingState, gameResult);
                 randomLeaf.VisitCount++;
                 randomLeaf.SuccessCount += delta;
-
-                iterations++;//for tests
             }
-
-            watch.Stop();
-            Console.WriteLine($"NMC search execution time: {watch.ElapsedMilliseconds} ms" +
-                $" - {(double)watch.ElapsedMilliseconds / iterations} ms/iteration");
         }
 
         private void Backup(List<Node<Action, State>> leaves)
