@@ -19,7 +19,11 @@ namespace BoardGameTrainer
             { "Upper Confidence Bounds for Trees", new UctFactory(uctConstant) },
             { "Nested Monte Carlo Search", new NmcsFactory(nmcsDepth) }
         };
-        private static readonly Dictionary<string, IStopConditionFactory> stopConditions = new() { { "Time limit", new TimeStopConditionFactory() }, { "Iterations limit", new IterationStopConditionFactory() } };
+        private static readonly Dictionary<string, IStopConditionFactory> stopConditions = new()
+        {
+            { "Time limit", new TimeStopConditionFactory() },
+            { "Iterations limit", new IterationStopConditionFactory() }
+        };
         private static readonly Dictionary<Player, bool> humanPlayers = new()
         {
             { Player.One, true },
