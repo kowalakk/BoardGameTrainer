@@ -2,6 +2,7 @@
 {
     public interface IGameManagerFactory
     {
+        public string Name { get; }
         public IGameManager Create(
             IAiFactory aiFactory, 
             IStopCondition stopCondition, 

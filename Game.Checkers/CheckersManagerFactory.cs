@@ -4,6 +4,8 @@ namespace Game.Checkers
 {
     public class CheckersManagerFactory : IGameManagerFactory
     {
+        public string Name => "Checkers";
+
         public IGameManager Create(
             IAiFactory aiFactory,
             IStopCondition stopCondition,

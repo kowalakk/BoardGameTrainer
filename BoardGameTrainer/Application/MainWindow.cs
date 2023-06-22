@@ -3,6 +3,7 @@ using Game.IGame;
 using Gdk;
 using Gtk;
 using System.Collections.Concurrent;
+using System.Reflection;
 using Action = System.Action;
 
 namespace BoardGameTrainer
@@ -14,14 +15,16 @@ namespace BoardGameTrainer
     internal class MainWindow : Gtk.Window
     {
         public IGameManager? GameManager { get; set; } = null;
+
         private readonly DrawingArea boardImage = new();
-        private double x;
-        private double y;
         private readonly ConfigWindow configWindow;
         private readonly Thread handleEventThread;
+        private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
+
         private CancellationTokenSource tokenSource = new();
         private WindowState windowState = WindowState.Idle;
-        private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
+        private double x;
+        private double y;
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
             DefaultSize = new Gdk.Size(700, 500);
@@ -52,9 +55,42 @@ namespace BoardGameTrainer
             };
             restartButton.Show();
 
+            Button addGameButton = new("Add Game");
+            addGameButton.Clicked += (s, e) =>
+            {
+                FileChooserDialog dialog = new("", this, FileChooserAction.Open, "Open",
+                    ResponseType.Accept, "Cancel", ResponseType.Cancel);
+                FileFilter filter = new()
+                {
+                    Name = "DLL Files",
+                };
+                filter.AddPattern("*.dll");
+                dialog.AddFilter(filter);
+
+                if (dialog.Run() == (int)ResponseType.Accept)
+                {
+                    Assembly assembly = Assembly.LoadFile(dialog.Filename);
+                    try
+                    {
+                        IGameManagerFactory factory = LoadGameFactory(assembly);
+                        configWindow.UpdateGameFactoryDict(factory);
+                    }
+                    catch
+                    {
+                        MessageDialog error = new(dialog, DialogFlags.DestroyWithParent, MessageType.Error, 
+                            ButtonsType.Ok, "Failed to add a new game");
+                        error.Run();
+                        error.Dispose();
+                    }
+                }
+                dialog.Dispose();
+            };
+            addGameButton.Show();
+
             HBox panelHbox = new();
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
+            panelHbox.PackStart(addGameButton, false, false, 0);
             panelHbox.Show();
 
             boardImage.Drawn += (sender, args) =>
@@ -189,11 +225,25 @@ namespace BoardGameTrainer
             }
         }
 
-        public CancellationToken ResetToken()
+        private CancellationToken ResetToken()
         {
             tokenSource.Cancel();
             tokenSource = new CancellationTokenSource();
             return tokenSource.Token;
+        }
+
+        private IGameManagerFactory LoadGameFactory(Assembly assembly)
+        {
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (type.GetInterface("IGameManagerFactory") != null)
+                {
+                    object? obj = Activator.CreateInstance(type);
+                    IGameManagerFactory gameManagerFactory = (IGameManagerFactory)obj!;
+                    return gameManagerFactory;
+                }
+            }
+            throw new Exception("There are no valid plugin(s) in the DLL.");
         }
     }
 }
