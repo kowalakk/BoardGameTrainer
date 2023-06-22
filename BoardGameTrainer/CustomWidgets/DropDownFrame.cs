@@ -4,26 +4,27 @@ namespace BoardGameTrainer
 {
     public class DropDownFrame<T> : Frame
     {
-        protected VBox Box { get; }
-        private Dictionary<string, T> Entries { get; }
-
-        protected ComboBox DropDown { get; }
-
+        public T Active => entries.ElementAt(DropDown.Active).Value;
         public event EventHandler Changed
         {
             add { DropDown.Changed += value; }
             remove { DropDown.Changed -= value; }
         }
 
-        public T Active => Entries.ElementAt(DropDown.Active).Value;
+        protected VBox Box { get; set; }
+        protected ComboBoxText DropDown { get; }
+
+        private readonly Dictionary<string, T> entries;
 
         public DropDownFrame(string label, Dictionary<string, T> entries) : base(label)
         {
-            Entries = entries;
-            DropDown = new(Entries.Keys.ToArray())
+            this.entries = entries;
+            DropDown = new();
+            foreach (string entry in entries.Keys)
             {
-                Active = 0
-            };
+                DropDown.AppendText(entry);
+            }
+            DropDown.Active = 0;
             DropDown.Show();
 
             Box = new();
@@ -31,6 +32,11 @@ namespace BoardGameTrainer
             Box.Show();
 
             Add(Box);
+        }
+        public void AddEntry(string entry)
+        {
+            DropDown.AppendText(entry);
+            DropDown.Active = 0;
         }
     }
 }

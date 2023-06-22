@@ -15,14 +15,16 @@ namespace BoardGameTrainer
     internal class MainWindow : Gtk.Window
     {
         public IGameManager? GameManager { get; set; } = null;
+
         private readonly DrawingArea boardImage = new();
-        private double x;
-        private double y;
         private readonly ConfigWindow configWindow;
         private readonly Thread handleEventThread;
+        private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
+
         private CancellationTokenSource tokenSource = new();
         private WindowState windowState = WindowState.Idle;
-        private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
+        private double x;
+        private double y;
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
             DefaultSize = new Gdk.Size(700, 500);
@@ -60,7 +62,7 @@ namespace BoardGameTrainer
                     ResponseType.Accept, "Cancel", ResponseType.Cancel);
                 FileFilter filter = new()
                 {
-                    Name = ".dll",
+                    Name = "DLL Files",
                 };
                 filter.AddPattern("*.dll");
                 dialog.AddFilter(filter);
@@ -70,11 +72,18 @@ namespace BoardGameTrainer
                     Assembly assembly = Assembly.LoadFile(dialog.Filename);
                     try
                     {
-                        LoadGameFactory(assembly);
+                        IGameManagerFactory factory = LoadGameFactory(assembly);
+                        configWindow.UpdateGameFactoryDict(factory);
                     }
-                    catch { } // TODO: okenko z errorem
+                    catch
+                    {
+                        MessageDialog error = new(dialog, DialogFlags.DestroyWithParent, MessageType.Error, 
+                            ButtonsType.Ok, "Failed to add a new game");
+                        error.Run();
+                        error.Dispose();
+                    }
                 }
-                dialog.Destroy();
+                dialog.Dispose();
             };
             addGameButton.Show();
 
