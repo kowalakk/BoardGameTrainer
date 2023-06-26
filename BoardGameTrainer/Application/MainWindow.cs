@@ -4,6 +4,7 @@ using Gdk;
 using Gtk;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Text;
 using Action = System.Action;
 
 namespace BoardGameTrainer
@@ -39,6 +40,7 @@ namespace BoardGameTrainer
             Button newGameButton = new("New Game");
             newGameButton.Clicked += (s, e) =>
             {
+                // dodaj do słownika wszystkie dllki z appdata/BoardGameTRainer
                 configWindow.Show();
             };
             newGameButton.Show();
@@ -70,6 +72,7 @@ namespace BoardGameTrainer
                 if (dialog.Run() == (int)ResponseType.Accept)
                 {
                     Assembly assembly = Assembly.LoadFile(dialog.Filename);
+                    bool isCorrectDll = true;
                     try
                     {
                         IGameManagerFactory factory = LoadGameFactory(assembly);
@@ -77,13 +80,29 @@ namespace BoardGameTrainer
                     }
                     catch
                     {
+                        isCorrectDll= false;
                         MessageDialog error = new(dialog, DialogFlags.DestroyWithParent, MessageType.Error, 
                             ButtonsType.Ok, "Failed to add a new game");
                         error.Run();
                         error.Dispose();
                     }
+                    finally
+                    {
+                        // jeśli nie wpadliśmy w blok catch
+                        if(isCorrectDll)
+                        {
+                            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                            StringBuilder pathBuilder = new StringBuilder();
+                            pathBuilder.Append(appDataPath);
+                            pathBuilder.Append("//BoardGameTrainer");
+                            string boardGameTrainerPath = pathBuilder.ToString();
+                            Directory.CreateDirectory(boardGameTrainerPath);
+                            // skopiuj assembly do appdata/BoardGameTrainer
+                            File.Copy(dialog.Filename, boardGameTrainerPath, true);
+                        }
+                        dialog.Dispose();
+                    }
                 }
-                dialog.Dispose();
             };
             addGameButton.Show();
 
