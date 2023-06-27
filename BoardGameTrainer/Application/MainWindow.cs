@@ -22,12 +22,12 @@ namespace BoardGameTrainer
         private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
 
         private CancellationTokenSource tokenSource = new();
-        private WindowState windowState = WindowState.Idle;
+        private WindowState windowState = WindowState.ProcessMovement;
         private double x;
         private double y;
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
-            DefaultSize = new Gdk.Size(700, 500);
+            DefaultSize = new Size(700, 500);
 
             handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
             handleEventThread.Start();
