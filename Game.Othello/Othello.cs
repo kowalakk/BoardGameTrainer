@@ -33,8 +33,8 @@ namespace Game.Othello
 
         public GameResult Result(OthelloState state)
         {
-            if (PossibleActions(state).Where(action => action is OthelloEmptyAction).Count() > 0)
-                if (PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).Where(action => action is OthelloEmptyAction).Count() > 0)
+            if (PossibleActions(state).FirstOrDefault() is OthelloEmptyAction)
+                if (PossibleActions(new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn)).FirstOrDefault() is OthelloEmptyAction)
                     return HasBlackWon(state);
             return GameResult.InProgress;
         }
