@@ -37,10 +37,11 @@ namespace BoardGameTrainer
             DeleteEvent += (sender, args) => configWindow.Dispose();
             application.AddWindow(configWindow);
 
+            loadDllFiles();
+
             Button newGameButton = new("New Game");
             newGameButton.Clicked += (s, e) =>
             {
-                // dodaj do słownika wszystkie dllki z appdata/BoardGameTRainer
                 configWindow.Show();
             };
             newGameButton.Show();
@@ -88,17 +89,9 @@ namespace BoardGameTrainer
                     }
                     finally
                     {
-                        // jeśli nie wpadliśmy w blok catch
                         if(isCorrectDll)
                         {
-                            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                            StringBuilder pathBuilder = new StringBuilder();
-                            pathBuilder.Append(appDataPath);
-                            pathBuilder.Append("//BoardGameTrainer");
-                            string boardGameTrainerPath = pathBuilder.ToString();
-                            Directory.CreateDirectory(boardGameTrainerPath);
-                            // skopiuj assembly do appdata/BoardGameTrainer
-                            File.Copy(dialog.Filename, boardGameTrainerPath, true);
+                            copyDllToAppdata(assembly.GetName(), dialog.Filename);
                         }
                         dialog.Dispose();
                     }
@@ -145,6 +138,47 @@ namespace BoardGameTrainer
             mainVBox.PackStart(titleAndContentVBox, true, true, 0);
             mainVBox.Show();
             Add(mainVBox);
+        }
+
+        private void copyDllToAppdata(AssemblyName assemblyName, string filename)
+        {
+            string boardGameTrainerPath = getAppdataPath();
+            Directory.CreateDirectory(boardGameTrainerPath);
+            StringBuilder pathBuilder = new StringBuilder(boardGameTrainerPath);
+            pathBuilder.Append('\\');
+            pathBuilder.Append(assemblyName);
+            string destinationDllPath = pathBuilder.ToString();
+            File.Copy(filename, destinationDllPath, true);
+        }
+
+        private string getAppdataPath()
+        {
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            StringBuilder pathBuilder = new StringBuilder();
+            pathBuilder.Append(appDataPath);
+            pathBuilder.Append("\\BoardGameTrainer");
+            return pathBuilder.ToString();
+        }
+
+        private void loadDllFiles()
+        {
+            string appdataPath = getAppdataPath();
+            if(Directory.Exists(appdataPath))
+            {
+                foreach (var dll in Directory.GetFiles(appdataPath))
+                {
+                    try
+                    {
+                        Assembly assembly = Assembly.LoadFile(dll);
+                        IGameManagerFactory factory = LoadGameFactory(assembly);
+                        configWindow.UpdateGameFactoryDict(factory);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("incorrect file in appData/BoardGameTrainer");
+                    }
+                }
+            }
         }
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
