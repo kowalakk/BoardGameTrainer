@@ -1,6 +1,4 @@
-﻿using Game.IGame;
-
-namespace Game.Checkers
+﻿namespace Game.Checkers
 {
     public struct SimpleCapture
     {
@@ -18,9 +16,9 @@ namespace Game.Checkers
 
     public class CaptureAction : ICheckersAction
     {
-        public int Start { get => Captures.First!.Value.Start; }
+        public int Start => Captures.First!.Value.Start; 
 
-        public int Finish { get => Captures.Last!.Value.Finish; }
+        public int Finish => Captures.Last!.Value.Finish; 
 
         public LinkedList<SimpleCapture> Captures { get; private set; }
 
@@ -83,7 +81,7 @@ namespace Game.Checkers
                 newState.SetPieceAt(capture.Captured, substituteCapturedWith);
             }
             newState.SetPieceAtWithPossiblePromotion(Finish, capturer);
-            newState.CurrentPlayer = state.CurrentPlayer == Player.One ? Player.Two : Player.One;
+            newState.CurrentPlayer = state.CurrentOpponent;
             newState.LastAction = this;
 
             return newState;

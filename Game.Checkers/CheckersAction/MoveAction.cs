@@ -1,6 +1,4 @@
-﻿using Game.IGame;
-
-namespace Game.Checkers
+﻿namespace Game.Checkers
 {
     public class MoveAction : ICheckersAction
     {
@@ -9,7 +7,7 @@ namespace Game.Checkers
 
         public MoveAction(int start, int finish)
         {
-            Start= start;
+            Start = start;
             Finish = finish;
         }
 
@@ -27,11 +25,13 @@ namespace Game.Checkers
         public CheckersState PerformOn(CheckersState state)
         {
             Piece movedPiece = state.GetPieceAt(Start);
-            CheckersState newState = new(state);
+            CheckersState newState = new(state)
+            {
+                CurrentPlayer = state.CurrentOpponent,
+                LastAction = this,
+            };
             newState.SetPieceAt(Start, Piece.None);
             newState.SetPieceAtWithPossiblePromotion(Finish, movedPiece);
-            newState.CurrentPlayer = state.CurrentPlayer == Player.One? Player.Two: Player.One;
-            newState.LastAction = this;
             if (movedPiece == Piece.WhiteCrowned || movedPiece == Piece.BlackCrowned)
             {
                 newState.InsignificantActions++;

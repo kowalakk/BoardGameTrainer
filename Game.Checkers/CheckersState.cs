@@ -15,8 +15,8 @@ namespace Game.Checkers
     public class CheckersState : IEquatable<CheckersState>
     {
         public static int BoardSize { get; } = 8;
-
         public static int FieldCount { get; } = BoardSize * BoardSize / 2;
+        public static int InsignificantActionsToDraw { get; } = 15;
 
         public static int?[][] Neighbours { get; } = new int?[][]
         {
@@ -60,16 +60,12 @@ namespace Game.Checkers
             new int?[] {   25,   26, null, null },
             new int?[] {   26,   27, null, null },
         };
-
-        public static int InsignificantActionsToDraw { get; } = 15;
+        public Player CurrentPlayer { get; set; }
+        public Player CurrentOpponent => CurrentPlayer == Player.One? Player.Two : Player.One;
+        public int InsignificantActions { get; set; }
+        public ICheckersAction? LastAction { get; set; } // for drawing purposes
 
         private Piece[] Board { get; }
-
-        public Player CurrentPlayer { get; set; }
-
-        public int InsignificantActions { get; set; }
-
-        public ICheckersAction? LastAction { get; set; } // for drawing purposes
 
         private CheckersState(Piece[] board, Player currentPlayer, ICheckersAction? lastAction = null, int insignificantActions = 0)
         {
