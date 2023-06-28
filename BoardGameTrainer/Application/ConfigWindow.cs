@@ -41,7 +41,7 @@ namespace BoardGameTrainer
         private IAiFactory currentAiFactory = aiFactories.FirstOrDefault().Value;
         private IStopConditionFactory currentStopConditionFactory = stopConditions.FirstOrDefault().Value;
         private int stopConditionParam = 1000;
-        private int numberOfHints = int.MaxValue;
+        private int numberOfHints = 100;
 
         public ConfigWindow(MainWindow mainWindow) : base(WindowType.Toplevel)
         {
@@ -82,14 +82,18 @@ namespace BoardGameTrainer
                             new Dictionary<Player, bool>(humanPlayers),
                             new Dictionary<Player, bool>(showHints),
                             numberOfHints);
-
+                    mainWindow.GameTitle.Text = currentManagerFactory.Name;
                     mainWindow.StartGame();
                     Hide();
                 }
             };
             newGameButton.Show();
 
-            VBox contentVbox = new();
+            VBox contentVbox = new()
+            {
+                MarginStart = 3,
+                MarginEnd = 3
+            };
             contentVbox.PackStart(gameFrame, false, false, 3);
             contentVbox.PackStart(aiFrame, false, false, 3);
             contentVbox.PackStart(numOfPlayersFrame, false, false, 3);

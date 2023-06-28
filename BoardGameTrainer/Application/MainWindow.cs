@@ -16,6 +16,7 @@ namespace BoardGameTrainer
     internal class MainWindow : Gtk.Window
     {
         public IGameManager? GameManager { get; set; } = null;
+        public Label GameTitle { get; } = new();
 
         private readonly DrawingArea boardImage = new();
         private readonly ConfigWindow configWindow;
@@ -28,7 +29,7 @@ namespace BoardGameTrainer
         private double y;
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
-            DefaultSize = new Gdk.Size(700, 500);
+            DefaultSize = new Size(700, 500);
 
             handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
             handleEventThread.Start();
@@ -38,25 +39,6 @@ namespace BoardGameTrainer
             application.AddWindow(configWindow);
 
             LoadDllFiles();
-
-            Button newGameButton = new("New Game");
-            newGameButton.Clicked += (s, e) =>
-            {
-                configWindow.Show();
-            };
-            newGameButton.Show();
-
-            Button restartButton = new("Restart");
-            restartButton.Clicked += (s, e) =>
-            {
-                if (GameManager is not null)
-                {
-                    ResetToken();
-                    GameManager.Reset();
-                    StartGame();
-                }
-            };
-            restartButton.Show();
 
             Button addGameButton = new("Add Game");
             addGameButton.Clicked += (s, e) =>
@@ -81,28 +63,44 @@ namespace BoardGameTrainer
                     }
                     catch
                     {
-                        isCorrectDll= false;
-                        MessageDialog error = new(dialog, DialogFlags.DestroyWithParent, MessageType.Error, 
+                        isCorrectDll = false;
+                        MessageDialog error = new(dialog, DialogFlags.DestroyWithParent, MessageType.Error,
                             ButtonsType.Ok, "Failed to add a new game");
                         error.Run();
                         error.Dispose();
                     }
-                    finally
+                    if (isCorrectDll)
                     {
-                        if(isCorrectDll)
-                        {
-                            CopyDllToAppdata(assembly.GetName(), dialog.Filename);
-                        }
-                        dialog.Dispose();
+                        CopyDllToAppdata(assembly.GetName(), dialog.Filename);
                     }
                 }
+                dialog.Dispose();
             };
             addGameButton.Show();
 
+            Button newGameButton = new("New Game");
+            newGameButton.Clicked += (s, e) =>
+            {
+                configWindow.Show();
+            };
+            newGameButton.Show();
+
+            Button restartButton = new("Restart");
+            restartButton.Clicked += (s, e) =>
+            {
+                if (GameManager is not null)
+                {
+                    ResetToken();
+                    GameManager.Reset();
+                    StartGame();
+                }
+            };
+            restartButton.Show();
+
             HBox panelHbox = new();
+            panelHbox.PackStart(addGameButton, false, false, 0);
             panelHbox.PackStart(newGameButton, false, false, 0);
             panelHbox.PackStart(restartButton, false, false, 0);
-            panelHbox.PackStart(addGameButton, false, false, 0);
             panelHbox.Show();
 
             boardImage.Drawn += (sender, args) =>
@@ -125,11 +123,10 @@ namespace BoardGameTrainer
             contentHBox.PackStart(boardImage, true, true, 0);
             contentHBox.Show();
 
-            Label mainTitle = new("New Game");
-            mainTitle.Show();
+            GameTitle.Show();
 
             VBox titleAndContentVBox = new();
-            titleAndContentVBox.PackStart(mainTitle, false, false, 0);
+            titleAndContentVBox.PackStart(GameTitle, false, false, 0);
             titleAndContentVBox.PackStart(contentHBox, true, true, 0);
             titleAndContentVBox.Show();
 
@@ -138,6 +135,21 @@ namespace BoardGameTrainer
             mainVBox.PackStart(titleAndContentVBox, true, true, 0);
             mainVBox.Show();
             Add(mainVBox);
+        }
+
+        public void StartGame()
+        {
+            windowState = WindowState.Idle;
+            if (GameManager!.HumanPlayers[Player.One])
+            {
+                windowState = WindowState.ComputeHints;
+                eventsQueue.Add(ComputeHints);
+            }
+            else
+            {
+                windowState = WindowState.ProcessMovement;
+                eventsQueue.Add(PerformAiMovement);
+            }
         }
 
         private static void CopyDllToAppdata(AssemblyName assemblyName, string filename)
@@ -160,10 +172,31 @@ namespace BoardGameTrainer
             return pathBuilder.ToString();
         }
 
+        private static IGameManagerFactory LoadGameFactory(Assembly assembly)
+        {
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (type.GetInterface("IGameManagerFactory") != null)
+                {
+                    object? obj = Activator.CreateInstance(type);
+                    IGameManagerFactory gameManagerFactory = (IGameManagerFactory)obj!;
+                    return gameManagerFactory;
+                }
+            }
+            throw new Exception("There are no valid plugin(s) in the DLL.");
+        }
+
+        private CancellationToken ResetToken()
+        {
+            tokenSource.Cancel();
+            tokenSource = new CancellationTokenSource();
+            return tokenSource.Token;
+        }
+
         private void LoadDllFiles()
         {
             string appdataPath = GetAppdataPath();
-            if(Directory.Exists(appdataPath))
+            if (Directory.Exists(appdataPath))
             {
                 foreach (var dll in Directory.GetFiles(appdataPath))
                 {
@@ -193,21 +226,6 @@ namespace BoardGameTrainer
                 y = (args.Event.Y - yOffset) / minDimention;
 
                 PerformMovement();
-            }
-        }
-
-        internal void StartGame()
-        {
-            windowState = WindowState.Idle;
-            if (GameManager!.HumanPlayers[Player.One])
-            {
-                windowState = WindowState.ComputeHints;
-                eventsQueue.Add(ComputeHints);
-            }
-            else
-            {
-                windowState = WindowState.ProcessMovement;
-                eventsQueue.Add(PerformAiMovement);
             }
         }
 
@@ -276,27 +294,6 @@ namespace BoardGameTrainer
                 Action job = eventsQueue.Take();
                 job();
             }
-        }
-
-        private CancellationToken ResetToken()
-        {
-            tokenSource.Cancel();
-            tokenSource = new CancellationTokenSource();
-            return tokenSource.Token;
-        }
-
-        private IGameManagerFactory LoadGameFactory(Assembly assembly)
-        {
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (type.GetInterface("IGameManagerFactory") != null)
-                {
-                    object? obj = Activator.CreateInstance(type);
-                    IGameManagerFactory gameManagerFactory = (IGameManagerFactory)obj!;
-                    return gameManagerFactory;
-                }
-            }
-            throw new Exception("There are no valid plugin(s) in the DLL.");
         }
     }
 }
