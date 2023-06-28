@@ -55,7 +55,7 @@ namespace BoardGameTrainer
             Add(mainVBox);
         }
 
-        public void CreateGameManager(
+        public void InitiateNewGame(
             IGameManagerFactory managerFactory,
             IAiFactory aiFactory,
             IStopCondition stopCondition,

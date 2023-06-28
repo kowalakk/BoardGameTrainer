@@ -67,7 +67,7 @@ namespace BoardGameTrainer
             {
                 if (currentManagerFactory is not null)
                 {
-                    mainWindow.CreateGameManager(
+                    mainWindow.InitiateNewGame(
                         currentManagerFactory, 
                         currentAiFactory, 
                         currentStopConditionFactory.Create(stopConditionParam),
