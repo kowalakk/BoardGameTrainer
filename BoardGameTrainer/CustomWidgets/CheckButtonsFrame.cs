@@ -1,43 +1,32 @@
-﻿using Gtk;
+﻿using Game.IGame;
+using Gtk;
 
 namespace BoardGameTrainer
 {
     internal class CheckButtonsFrame : Frame
     {
-        private readonly CheckButton firstCheckbox;
+        public CheckButton FirstCheckbox { get; }
+        public CheckButton SecondCheckbox { get; }
 
-        private readonly CheckButton secondCheckbox;
-
-        public bool FirstActive => firstCheckbox.Active;
-        public bool SecondActive => secondCheckbox.Active;
-
-        public event EventHandler FirstClicked
+        public CheckButtonsFrame(string label, Dictionary<Player, bool> dict) : base(label)
         {
-            add { firstCheckbox.Clicked += value; }
-            remove { firstCheckbox.Clicked -= value; }
-        }
+            FirstCheckbox = new CheckButton("Player 1");
+            FirstCheckbox.Show();
+            FirstCheckbox.Active = true;
 
-        public event EventHandler SecondClicked
-        {
-            add { secondCheckbox.Clicked += value; }
-            remove { secondCheckbox.Clicked -= value; }
-        }
-        public CheckButtonsFrame(string label) : base(label) 
-        {
-            firstCheckbox = new CheckButton("Player 1");
-            firstCheckbox.Show();
-            firstCheckbox.Active = true;
-
-            secondCheckbox = new CheckButton("Player 2");
-            secondCheckbox.Show();
-            secondCheckbox.Active = true;
+            SecondCheckbox = new CheckButton("Player 2");
+            SecondCheckbox.Show();
+            SecondCheckbox.Active = true;
 
             HBox box = new();
             box.Show();
-            box.PackStart(firstCheckbox, false, false, 5);
-            box.PackStart(secondCheckbox, false, false, 5);
+            box.PackStart(FirstCheckbox, false, false, 5);
+            box.PackStart(SecondCheckbox, false, false, 5);
 
             Add(box);
+
+            FirstCheckbox.Clicked += (sender, args) => { dict[Player.One] = FirstCheckbox.Active; };
+            SecondCheckbox.Clicked += (sender, args) => { dict[Player.Two] = SecondCheckbox.Active; };
         }
     }
 }
