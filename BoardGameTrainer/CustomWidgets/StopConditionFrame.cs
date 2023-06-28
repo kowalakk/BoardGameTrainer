@@ -14,7 +14,8 @@ namespace BoardGameTrainer
             remove { Boxes[0].Changed -= value; Boxes[1].Changed -= value; DropDown.Changed -= value; }
         }
 
-        public StopConditionFrame(Dictionary<string, IStopConditionFactory> entries) : base("Stop condition", entries)
+        public StopConditionFrame(Dictionary<string, IStopConditionFactory> entries, IStopConditionFactory currentEntry)
+            : base("Stop condition", entries, currentEntry)
         {
 
             Boxes[0] = new(100, 100000, 100, Param, "miliseconds");
@@ -27,9 +28,9 @@ namespace BoardGameTrainer
             Box.PackStart(Boxes[1], true, true, 5);
 
             Boxes[VisibleBox].Show();
-            DropDown.Changed += (sender, args) => 
-            { 
-                Boxes[VisibleBox].Hide(); 
+            DropDown.Changed += (sender, args) =>
+            {
+                Boxes[VisibleBox].Hide();
                 Boxes[1 - VisibleBox].Show();
                 VisibleBox = 1 - VisibleBox;
                 Param = (int)Boxes[VisibleBox].Value;

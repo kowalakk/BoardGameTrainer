@@ -46,26 +46,16 @@ namespace BoardGameTrainer
         {
             currentManagerFactory = GameFactories.FirstOrDefault().Value;
 
-            gameFrame = new("Game", GameFactories);
-            gameFrame.Changed += (sender, args) => { currentManagerFactory = gameFrame.Active; };
+            gameFrame = new("Game", GameFactories, currentManagerFactory);
             gameFrame.Show();
 
-            DropDownFrame<IAiFactory> aiFrame = new("AI Module", aiFactories);
-            aiFrame.Changed += (sender, args) => { currentAiFactory = aiFrame.Active; };
+            DropDownFrame<IAiFactory> aiFrame = new("AI Module", aiFactories, currentAiFactory);
             aiFrame.Show();
 
-            CheckButtonsFrame numOfPlayersFrame = new("Human players");
-            numOfPlayersFrame.FirstClicked += (sender, args) => { humanPlayers[Player.One] = numOfPlayersFrame.FirstActive; };
-            numOfPlayersFrame.SecondClicked += (sender, args) => { humanPlayers[Player.Two] = numOfPlayersFrame.SecondActive; };
-            numOfPlayersFrame.Show();
+            PlayersBox playersBox = new(humanPlayers, showHints);
+            playersBox.Show();
 
-            CheckButtonsFrame showHintsFrame = new("Show hints");
-            showHintsFrame.FirstClicked += (sender, args) => { showHints[Player.One] = showHintsFrame.FirstActive; };
-            showHintsFrame.SecondClicked += (sender, args) => { showHints[Player.Two] = showHintsFrame.SecondActive; };
-            showHintsFrame.Show();
-
-            StopConditionFrame stopConditionFrame = new(stopConditions);
-            stopConditionFrame.Changed += (sender, args) => { currentStopConditionFactory = stopConditionFrame.Active; };
+            StopConditionFrame stopConditionFrame = new(stopConditions, currentStopConditionFactory);
             stopConditionFrame.ParamChanged += (sender, args) => { stopConditionParam = stopConditionFrame.Param; };
             stopConditionFrame.Show();
 
@@ -92,8 +82,7 @@ namespace BoardGameTrainer
             };
             contentVbox.PackStart(gameFrame, false, false, 3);
             contentVbox.PackStart(aiFrame, false, false, 3);
-            contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
-            contentVbox.PackStart(showHintsFrame, false, false, 3);
+            contentVbox.PackStart(playersBox, false, false, 3);
             contentVbox.PackStart(stopConditionFrame, false, false, 3);
             contentVbox.PackStart(newGameButton, false, false, 3);
             contentVbox.Show();
