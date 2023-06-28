@@ -28,7 +28,7 @@ namespace BoardGameTrainer
         private double y;
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
         {
-            DefaultSize = new Gdk.Size(700, 500);
+            DefaultSize = new Size(700, 500);
 
             handleEventThread = new Thread(new ThreadStart(ThreadHandleEvents));
             handleEventThread.Start();
@@ -183,7 +183,7 @@ namespace BoardGameTrainer
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if (windowState != WindowState.ProcessMovement)
+            if (windowState != WindowState.ProcessMovement && GameManager is not null)
             {
                 windowState = WindowState.ProcessMovement;
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
