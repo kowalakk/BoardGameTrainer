@@ -17,51 +17,15 @@ namespace Game.Checkers
         public static int BoardSize { get; } = 8;
         public static int FieldCount { get; } = BoardSize * BoardSize / 2;
         public static int InsignificantActionsToDraw { get; } = 15;
-
-        public static int?[][] Neighbours { get; } = new int?[][]
+        public static Func<int, int?>[] Neighbours { get; } = new Func<int, int?>[]
         {
-            new int?[] { null, null,    5,    4 },
-            new int?[] { null, null,    6,    5 },
-            new int?[] { null, null,    7,    6 },
-            new int?[] { null, null, null,    7 },
-
-            new int?[] { null,    0,    8, null },
-            new int?[] {    0,    1,    9,    8 },
-            new int?[] {    1,    2,   10,    9 },
-            new int?[] {    2,    3,   11,   10 },
-
-            new int?[] {    4,    5,   13,   12 },
-            new int?[] {    5,    6,   14,   13 },
-            new int?[] {    6,    7,   15,   14 },
-            new int?[] {    7, null, null,   15 },
-
-            new int?[] { null,    8,   16, null },
-            new int?[] {    8,    9,   17,   16 },
-            new int?[] {    9,   10,   18,   17 },
-            new int?[] {   10,   11,   19,   18 },
-
-            new int?[] {   12,   13,   21,   20 },
-            new int?[] {   13,   14,   22,   21 },
-            new int?[] {   14,   15,   23,   22 },
-            new int?[] {   15, null, null,   23 },
-
-            new int?[] { null,   16,   24, null },
-            new int?[] {   16,   17,   25,   24 },
-            new int?[] {   17,   18,   26,   25 },
-            new int?[] {   18,   19,   27,   26 },
-
-            new int?[] {   20,   21,   29,   28 },
-            new int?[] {   21,   22,   30,   29 },
-            new int?[] {   22,   23,   31,   30 },
-            new int?[] {   23, null, null,   31 },
-
-            new int?[] { null,   24, null, null },
-            new int?[] {   24,   25, null, null },
-            new int?[] {   25,   26, null, null },
-            new int?[] {   26,   27, null, null },
+            field => field > 4 && (field - 4) % 8 != 0 ? field - 5 : null, // upLeft
+            field => field > 3 && (field - 3) % 8 != 0 ? field - 4 : null, // upRight
+            field => field < 28 && (field - 4) % 8 != 0 ? field + 3 : null, // downLeft
+            field => field < 27 && (field - 3) % 8 != 0 ? field + 4 : null, // downRight
         };
         public Player CurrentPlayer { get; set; }
-        public Player CurrentOpponent => CurrentPlayer == Player.One? Player.Two : Player.One;
+        public Player CurrentOpponent => CurrentPlayer == Player.One ? Player.Two : Player.One;
         public int InsignificantActions { get; set; }
         public ICheckersAction? LastAction { get; set; } // for drawing purposes
 
