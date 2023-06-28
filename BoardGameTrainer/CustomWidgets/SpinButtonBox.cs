@@ -33,8 +33,8 @@ namespace BoardGameTrainer
             Label textLabel = new(text);
             textLabel.Show();
 
-            PackStart(spinButton, true, true, 3);
-            PackStart(textLabel, false, false, 3);
+            PackStart(spinButton, true, true, MainWindow.CustomMargin);
+            PackStart(textLabel, false, false, MainWindow.CustomMargin);
         }
     }
 }

@@ -15,8 +15,8 @@ namespace BoardGameTrainer
             showHintsFrame = new("Show hints", showHints);
             showHintsFrame.Show();
 
-            PackStart(numOfPlayersFrame, false, false, 3);
-            PackStart(showHintsFrame, false, false, 3);
+            PackStart(numOfPlayersFrame, false, false, MainWindow.CustomMargin);
+            PackStart(showHintsFrame, false, false, MainWindow.CustomMargin);
 
             numOfPlayersFrame.FirstCheckbox.Clicked += (sender, args) =>
             {

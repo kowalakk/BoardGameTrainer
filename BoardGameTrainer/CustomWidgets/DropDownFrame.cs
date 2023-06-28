@@ -21,8 +21,8 @@ namespace BoardGameTrainer
             this.entries = entries;
             DropDown = new()
             {
-                MarginStart = 3,
-                MarginEnd = 3
+                MarginStart = MainWindow.CustomMargin,
+                MarginEnd = MainWindow.CustomMargin
             };
             foreach (string entry in entries.Keys)
             {
@@ -32,7 +32,7 @@ namespace BoardGameTrainer
             DropDown.Show();
 
             Box = new();
-            Box.PackStart(DropDown, true, true, 3);
+            Box.PackStart(DropDown, true, true, MainWindow.CustomMargin);
             Box.Show();
 
             Add(Box);

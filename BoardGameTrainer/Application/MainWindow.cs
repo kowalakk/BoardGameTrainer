@@ -15,6 +15,7 @@ namespace BoardGameTrainer
     }
     internal class MainWindow : Gtk.Window
     {
+        public const int CustomMargin = 3;
         private readonly DrawingArea boardImage = new();
         private readonly ConfigWindow configWindow;
         private readonly Thread handleEventThread;
@@ -187,11 +188,10 @@ namespace BoardGameTrainer
             addGameButton.Show();
 
             HBox navHBox = new();
-            navHBox.PackStart(newGameButton, false, false, 3);
+            navHBox.PackStart(newGameButton, false, false, CustomMargin);
             navHBox.PackStart(restartButton, false, false, 0);
-            navHBox.PackStart(new Label("Shown hints:"), false, false, 0);
             navHBox.PackStart(hintsBox, true, false, 0);
-            navHBox.PackEnd(addGameButton, false, false, 3);
+            navHBox.PackEnd(addGameButton, false, false, CustomMargin);
 
             return navHBox;
         }

@@ -80,14 +80,14 @@ namespace BoardGameTrainer
 
             VBox contentVbox = new()
             {
-                MarginStart = 3,
-                MarginEnd = 3
+                MarginStart = MainWindow.CustomMargin,
+                MarginEnd = MainWindow.CustomMargin
             };
-            contentVbox.PackStart(gameFrame, false, false, 3);
-            contentVbox.PackStart(aiFrame, false, false, 3);
-            contentVbox.PackStart(playersBox, false, false, 3);
-            contentVbox.PackStart(stopConditionFrame, false, false, 3);
-            contentVbox.PackStart(newGameButton, false, false, 3);
+            contentVbox.PackStart(gameFrame, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(aiFrame, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(playersBox, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(stopConditionFrame, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(newGameButton, false, false, MainWindow.CustomMargin);
             contentVbox.Show();
             Add(contentVbox);
 
