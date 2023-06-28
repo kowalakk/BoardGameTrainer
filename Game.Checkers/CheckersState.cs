@@ -74,12 +74,12 @@ namespace Game.Checkers
         }
         public static CheckersState GetInitialState()
         {
-            Piece[] board = new Piece[32];
-            for (int i = 0; i < 12; i++)
+            Piece[] board = new Piece[FieldCount];
+            for (int i = 0; i < 3 * BoardSize; i++)
                 board[i] = Piece.BlackPawn;
-            for (int i = 12; i < 20; i++)
+            for (int i = (FieldCount - BoardSize) / 2; i < (FieldCount + BoardSize) / 2; i++)
                 board[i] = Piece.None;
-            for (int i = 20; i < 32; i++)
+            for (int i = (FieldCount + BoardSize) / 2; i < FieldCount; i++)
                 board[i] = Piece.WhitePawn;
 
             return new CheckersState(board, Player.One);
