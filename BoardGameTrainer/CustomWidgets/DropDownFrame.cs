@@ -4,12 +4,19 @@ namespace BoardGameTrainer
 {
     public class DropDownFrame<T> : Frame
     {
+        public T Active => entries.ElementAt(DropDown.Active).Value;
+        public event EventHandler Changed
+        {
+            add { DropDown.Changed += value; }
+            remove { DropDown.Changed -= value; }
+        }
+
         protected VBox Box { get; set; }
         protected ComboBoxText DropDown { get; }
 
         private readonly Dictionary<string, T> entries;
 
-        public DropDownFrame(string label, Dictionary<string, T> entries, T currentEntry) : base(label)
+        public DropDownFrame(string label, Dictionary<string, T> entries) : base(label)
         {
             this.entries = entries;
             DropDown = new()
@@ -21,7 +28,6 @@ namespace BoardGameTrainer
             {
                 DropDown.AppendText(entry);
             }
-            DropDown.Changed += (sender, args) => { currentEntry = entries.ElementAt(DropDown.Active).Value; };
             DropDown.Active = 0;
             DropDown.Show();
 

@@ -14,8 +14,8 @@ namespace BoardGameTrainer
             remove { Boxes[0].Changed -= value; Boxes[1].Changed -= value; DropDown.Changed -= value; }
         }
 
-        public StopConditionFrame(Dictionary<string, IStopConditionFactory> entries, IStopConditionFactory currentEntry)
-            : base("Stop condition", entries, currentEntry)
+        public StopConditionFrame(Dictionary<string, IStopConditionFactory> entries)
+            : base("Stop condition", entries)
         {
 
             Boxes[0] = new(100, 100000, 100, Param, "miliseconds");

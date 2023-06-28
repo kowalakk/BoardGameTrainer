@@ -46,16 +46,19 @@ namespace BoardGameTrainer
         {
             currentManagerFactory = GameFactories.FirstOrDefault().Value;
 
-            gameFrame = new("Game", GameFactories, currentManagerFactory);
+            gameFrame = new("Game", GameFactories);
+            gameFrame.Changed += (sender, args) => { currentManagerFactory = gameFrame.Active; };
             gameFrame.Show();
 
-            DropDownFrame<IAiFactory> aiFrame = new("AI Module", aiFactories, currentAiFactory);
+            DropDownFrame<IAiFactory> aiFrame = new("AI Module", aiFactories);
+            aiFrame.Changed += (sender, args) => { currentAiFactory = aiFrame.Active; };
             aiFrame.Show();
 
             PlayersBox playersBox = new(humanPlayers, showHints);
             playersBox.Show();
 
-            StopConditionFrame stopConditionFrame = new(stopConditions, currentStopConditionFactory);
+            StopConditionFrame stopConditionFrame = new(stopConditions);
+            stopConditionFrame.Changed += (sender, args) => { currentStopConditionFactory = stopConditionFrame.Active; };
             stopConditionFrame.ParamChanged += (sender, args) => { stopConditionParam = stopConditionFrame.Param; };
             stopConditionFrame.Show();
 
