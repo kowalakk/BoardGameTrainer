@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Checkers", "Game.Check
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Othello", "Game.Othello\Game.Othello.csproj", "{09A9C62E-CAA1-436F-AB76-2371DF7353B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGameTrainer.Tests", "BoardGameTrainerTests\BoardGameTrainer.Tests.csproj", "{31AA4FE0-59A4-4BC4-B905-38DE852B6525}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Checkers.Tests", "Game.CheckersTest\Game.Checkers.Tests.csproj", "{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Game.Othello.Tests", "Game.OthelloTests\Game.Othello.Tests.csproj", "{4F21A280-F59D-4FB7-9E1F-FB17EBA6285B}"
@@ -43,10 +41,6 @@ Global
 		{09A9C62E-CAA1-436F-AB76-2371DF7353B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A9C62E-CAA1-436F-AB76-2371DF7353B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A9C62E-CAA1-436F-AB76-2371DF7353B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31AA4FE0-59A4-4BC4-B905-38DE852B6525}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13D9F6B8-0115-4BCF-8FAF-FBC8FFBC4633}.Release|Any CPU.ActiveCfg = Release|Any CPU

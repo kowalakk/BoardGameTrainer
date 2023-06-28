@@ -19,10 +19,10 @@ namespace Game.Checkers
         public static int InsignificantActionsToDraw { get; } = 15;
         public static Func<int, int?>[] Neighbours { get; } = new Func<int, int?>[]
         {
-            field => field > 4 && (field - 4) % 8 != 0 ? field - 5 : null, // upLeft
-            field => field > 3 && (field - 3) % 8 != 0 ? field - 4 : null, // upRight
-            field => field < 28 && (field - 4) % 8 != 0 ? field + 3 : null, // downLeft
-            field => field < 27 && (field - 3) % 8 != 0 ? field + 4 : null, // downRight
+            field => field > 4 && (field - 4) % 8 != 0 ? field - 4 - (field / 4) % 2 : null, // upLeft
+            field => field > 3 && (field - 3) % 8 != 0 ? field - 3 - (field / 4) % 2 : null, // upRight
+            field => field < 28 && (field - 4) % 8 != 0 ? field + 4 - (field / 4) % 2 : null, // downLeft
+            field => field < 27 && (field - 3) % 8 != 0 ? field + 5 - (field / 4) % 2 : null, // downRight
         };
         public Player CurrentPlayer { get; set; }
         public Player CurrentOpponent => CurrentPlayer == Player.One ? Player.Two : Player.One;
@@ -74,17 +74,13 @@ namespace Game.Checkers
         }
         public static CheckersState GetInitialState()
         {
-            Piece[] board = new Piece[]
-            {
-                Piece.BlackPawn, Piece.BlackPawn, Piece.BlackPawn, Piece.BlackPawn,
-                Piece.BlackPawn, Piece.BlackPawn, Piece.BlackPawn, Piece.BlackPawn,
-                Piece.BlackPawn, Piece.BlackPawn, Piece.BlackPawn, Piece.BlackPawn,
-                Piece.None,      Piece.None,      Piece.None,      Piece.None,
-                Piece.None,      Piece.None,      Piece.None,      Piece.None,
-                Piece.WhitePawn, Piece.WhitePawn, Piece.WhitePawn, Piece.WhitePawn,
-                Piece.WhitePawn, Piece.WhitePawn, Piece.WhitePawn, Piece.WhitePawn,
-                Piece.WhitePawn, Piece.WhitePawn, Piece.WhitePawn, Piece.WhitePawn
-            };
+            Piece[] board = new Piece[32];
+            for (int i = 0; i < 12; i++)
+                board[i] = Piece.BlackPawn;
+            for (int i = 12; i < 20; i++)
+                board[i] = Piece.None;
+            for (int i = 20; i < 32; i++)
+                board[i] = Piece.WhitePawn;
 
             return new CheckersState(board, Player.One);
         }

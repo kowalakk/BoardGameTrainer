@@ -30,13 +30,11 @@ namespace Game.Checkers
                     if (piece == Piece.BlackPawn)
                         possibleActions = UpdateActions(
                             possibleActions,
-                            PossibleBlackPawnActions(state, field, possibleActions.maxCapturesCount)
-                            );
+                            PossibleBlackPawnActions(state, field, possibleActions.maxCapturesCount));
                     else if (piece == Piece.BlackCrowned)
                         possibleActions = UpdateActions(
                             possibleActions,
-                            PossibleCrownedActions(state, field, possibleActions.maxCapturesCount)
-                            );
+                            PossibleCrownedActions(state, field, possibleActions.maxCapturesCount));
                 }
             }
             return possibleActions.list;
