@@ -37,7 +37,7 @@ namespace BoardGameTrainer
             DeleteEvent += (sender, args) => configWindow.Dispose();
             application.AddWindow(configWindow);
 
-            loadDllFiles();
+            LoadDllFiles();
 
             Button newGameButton = new("New Game");
             newGameButton.Clicked += (s, e) =>
@@ -91,7 +91,7 @@ namespace BoardGameTrainer
                     {
                         if(isCorrectDll)
                         {
-                            copyDllToAppdata(assembly.GetName(), dialog.Filename);
+                            CopyDllToAppdata(assembly.GetName(), dialog.Filename);
                         }
                         dialog.Dispose();
                     }
@@ -140,9 +140,9 @@ namespace BoardGameTrainer
             Add(mainVBox);
         }
 
-        private void copyDllToAppdata(AssemblyName assemblyName, string filename)
+        private static void CopyDllToAppdata(AssemblyName assemblyName, string filename)
         {
-            string boardGameTrainerPath = getAppdataPath();
+            string boardGameTrainerPath = GetAppdataPath();
             Directory.CreateDirectory(boardGameTrainerPath);
             StringBuilder pathBuilder = new StringBuilder(boardGameTrainerPath);
             pathBuilder.Append('\\');
@@ -151,7 +151,7 @@ namespace BoardGameTrainer
             File.Copy(filename, destinationDllPath, true);
         }
 
-        private string getAppdataPath()
+        private static string GetAppdataPath()
         {
             var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             StringBuilder pathBuilder = new StringBuilder();
@@ -160,9 +160,9 @@ namespace BoardGameTrainer
             return pathBuilder.ToString();
         }
 
-        private void loadDllFiles()
+        private void LoadDllFiles()
         {
-            string appdataPath = getAppdataPath();
+            string appdataPath = GetAppdataPath();
             if(Directory.Exists(appdataPath))
             {
                 foreach (var dll in Directory.GetFiles(appdataPath))
