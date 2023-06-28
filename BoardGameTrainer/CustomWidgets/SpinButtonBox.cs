@@ -7,12 +7,14 @@ namespace BoardGameTrainer
         private readonly SpinButton spinButton;
 
         public double Value => spinButton.Value;
+        public bool IsEditable => spinButton.IsEditable;
 
         public event EventHandler Changed
         {
             add { spinButton.Changed += value; }
             remove { spinButton.Changed -= value; }
         }
+
         public SpinButtonBox
         ( 
             double min, 

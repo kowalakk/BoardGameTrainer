@@ -10,16 +10,14 @@ namespace Game.Othello
             IAiFactory aiFactory,
             IStopCondition stopCondition,
             Dictionary<Player, bool> humanPlayers,
-            Dictionary<Player, bool> showHints,
-            int numberOfHints)
+            Dictionary<Player, bool> showHints)
         {
             return new GameManager<IOthelloAction, OthelloState, LanguageExt.Unit>(
                 new Othello(),
                 aiFactory,
                 stopCondition,
                 humanPlayers,
-                showHints,
-                numberOfHints);
+                showHints);
         }
     }
 }

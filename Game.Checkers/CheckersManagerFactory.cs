@@ -10,16 +10,14 @@ namespace Game.Checkers
             IAiFactory aiFactory,
             IStopCondition stopCondition,
             Dictionary<Player, bool> humanPlayers,
-            Dictionary<Player, bool> showHints,
-            int numberOfHints)
+            Dictionary<Player, bool> showHints)
         {
             return new GameManager<ICheckersAction, CheckersState, ICheckersInputState>(
                 new Checkers(),
                 aiFactory,
                 stopCondition,
                 humanPlayers,
-                showHints,
-                numberOfHints);
+                showHints);
         }
     }
 }

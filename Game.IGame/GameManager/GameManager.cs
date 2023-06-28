@@ -6,9 +6,11 @@ namespace Game.IGame
     {
         public Dictionary<Player, bool> HumanPlayers { get; }
         public Dictionary<Player, bool> ShowHints { get; }
-        public int NumberOfHints { get; }
+        public int NumberOfHints { get; set; } = 100;
+
         private readonly IGame<Action, State, InputState> game;
         private readonly IAi<Action, State, InputState> ai;
+
         private State currentState;
         private InputState currentInputState;
         private GameTree<Action, State> gameTree;
@@ -20,13 +22,11 @@ namespace Game.IGame
             IAiFactory aiFactory,
             IStopCondition stopCondition,
             Dictionary<Player, bool> humanPlayers,
-            Dictionary<Player, bool> showHints,
-            int numberOfHints
+            Dictionary<Player, bool> showHints
         )
         {
             HumanPlayers = humanPlayers;
             ShowHints = showHints;
-            NumberOfHints = numberOfHints;
             this.game = game;
             ai = aiFactory.CreateAi(game, stopCondition);
             currentState = game.InitialState();

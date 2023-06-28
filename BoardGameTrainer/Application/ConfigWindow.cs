@@ -41,7 +41,6 @@ namespace BoardGameTrainer
         private IAiFactory currentAiFactory = aiFactories.FirstOrDefault().Value;
         private IStopConditionFactory currentStopConditionFactory = stopConditions.FirstOrDefault().Value;
         private int stopConditionParam = 1000;
-        private int numberOfHints = 100;
 
         public ConfigWindow(MainWindow mainWindow) : base(WindowType.Toplevel)
         {
@@ -75,15 +74,12 @@ namespace BoardGameTrainer
             {
                 if (currentManagerFactory is not null)
                 {
-                    mainWindow.GameManager = currentManagerFactory
-                        .Create(
-                            currentAiFactory,
-                            currentStopConditionFactory.Create(stopConditionParam),
-                            new Dictionary<Player, bool>(humanPlayers),
-                            new Dictionary<Player, bool>(showHints),
-                            numberOfHints);
-                    mainWindow.GameTitle.Text = currentManagerFactory.Name;
-                    mainWindow.StartGame();
+                    mainWindow.CreateGameManager(
+                        currentManagerFactory, 
+                        currentAiFactory, 
+                        currentStopConditionFactory.Create(stopConditionParam),
+                        new Dictionary<Player, bool>(humanPlayers),
+                        new Dictionary<Player, bool>(showHints));
                     Hide();
                 }
             };
