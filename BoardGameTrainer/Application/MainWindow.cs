@@ -20,7 +20,7 @@ namespace BoardGameTrainer
         private readonly Thread handleEventThread;
         private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
         private readonly Label gameTitle = new();
-        private readonly SpinButtonBox hintsBox = new(0, 100, 1, 10, "hints shown");
+        private readonly SpinButtonBox hintsBox = new(0, 100, 1, 10, "shown hints");
 
         private IGameManager? gameManager = null;
         private CancellationTokenSource tokenSource = new();
@@ -119,6 +119,35 @@ namespace BoardGameTrainer
 
         private HBox CreateNavBox()
         {
+            Button newGameButton = new("New Game");
+            newGameButton.Clicked += (s, e) =>
+            {
+                configWindow.Show();
+            };
+            newGameButton.Show();
+
+            Button restartButton = new("Restart");
+            restartButton.Clicked += (s, e) =>
+            {
+                if (gameManager is not null)
+                {
+                    ResetToken();
+                    gameManager.Reset();
+                    StartGame();
+                }
+            };
+            restartButton.Show();
+            
+            hintsBox.Changed += (sender, args) =>
+            {
+                if (gameManager is not null)
+                {
+                    gameManager.NumberOfHints = (int)hintsBox.Value;
+                    Application.Invoke(delegate { boardImage.QueueDraw(); });
+                }
+            };
+            hintsBox.Show();
+
             Button addGameButton = new("Add Game");
             addGameButton.Clicked += (s, e) =>
             {
@@ -157,40 +186,12 @@ namespace BoardGameTrainer
             };
             addGameButton.Show();
 
-            Button newGameButton = new("New Game");
-            newGameButton.Clicked += (s, e) =>
-            {
-                configWindow.Show();
-            };
-            newGameButton.Show();
-
-            Button restartButton = new("Restart");
-            restartButton.Clicked += (s, e) =>
-            {
-                if (gameManager is not null)
-                {
-                    ResetToken();
-                    gameManager.Reset();
-                    StartGame();
-                }
-            };
-            restartButton.Show();
-            
-            hintsBox.Changed += (sender, args) =>
-            {
-                if (gameManager is not null)
-                {
-                    gameManager.NumberOfHints = (int)hintsBox.Value;
-                    Application.Invoke(delegate { boardImage.QueueDraw(); });
-                }
-            };
-            hintsBox.Show();
-
             HBox navHBox = new();
-            navHBox.PackStart(addGameButton, false, false, 0);
-            navHBox.PackStart(newGameButton, false, false, 0);
+            navHBox.PackStart(newGameButton, false, false, 3);
             navHBox.PackStart(restartButton, false, false, 0);
-            navHBox.PackEnd(hintsBox, false, false, 0);
+            navHBox.PackStart(new Label("Shown hints:"), false, false, 0);
+            navHBox.PackStart(hintsBox, true, false, 0);
+            navHBox.PackEnd(addGameButton, false, false, 3);
 
             return navHBox;
         }
