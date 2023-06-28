@@ -22,7 +22,7 @@ namespace BoardGameTrainer
         private readonly BlockingCollection<Action> eventsQueue = new(new ConcurrentQueue<Action>());
 
         private CancellationTokenSource tokenSource = new();
-        private WindowState windowState = WindowState.ProcessMovement;
+        private WindowState windowState = WindowState.Idle;
         private double x;
         private double y;
         public MainWindow(GameTrainerApplication application) : base(Gtk.WindowType.Toplevel)
@@ -130,7 +130,7 @@ namespace BoardGameTrainer
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if (windowState != WindowState.ProcessMovement)
+            if (windowState != WindowState.ProcessMovement && GameManager is not null)
             {
                 windowState = WindowState.ProcessMovement;
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
