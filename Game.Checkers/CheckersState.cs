@@ -19,10 +19,10 @@ namespace Game.Checkers
         public static int InsignificantActionsToDraw { get; } = 15;
         public static Func<int, int?>[] Neighbours { get; } = new Func<int, int?>[]
         {
-            field => field > 4 && (field - 4) % 8 != 0 ? field - 4 - (field / 4) % 2 : null, // upLeft
-            field => field > 3 && (field - 3) % 8 != 0 ? field - 3 - (field / 4) % 2 : null, // upRight
-            field => field < 28 && (field - 4) % 8 != 0 ? field + 4 - (field / 4) % 2 : null, // downLeft
-            field => field < 27 && (field - 3) % 8 != 0 ? field + 5 - (field / 4) % 2 : null, // downRight
+            field => field > 4 && (field - 4) % BoardSize != 0 ? field - 4 - (field / (BoardSize / 2)) % 2 : null, // upLeft
+            field => field > 3 && (field - 3) % BoardSize != 0 ? field - 3 - (field / (BoardSize / 2)) % 2 : null, // upRight
+            field => field < 28 && (field - 4) % BoardSize != 0 ? field + 4 - (field / (BoardSize / 2)) % 2 : null, // downLeft
+            field => field < 27 && (field - 3) % BoardSize != 0 ? field + 5 - (field / (BoardSize / 2)) % 2 : null, // downRight
         };
         public Player CurrentPlayer { get; set; }
         public Player CurrentOpponent => CurrentPlayer == Player.One ? Player.Two : Player.One;
