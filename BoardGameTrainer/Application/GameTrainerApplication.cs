@@ -1,5 +1,4 @@
-﻿using Game.IGame;
-using Gtk;
+﻿using Gtk;
 
 namespace BoardGameTrainer
 {

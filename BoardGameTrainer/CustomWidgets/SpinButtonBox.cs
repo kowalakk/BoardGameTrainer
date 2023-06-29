@@ -7,12 +7,14 @@ namespace BoardGameTrainer
         private readonly SpinButton spinButton;
 
         public double Value => spinButton.Value;
+        public bool IsEditable => spinButton.IsEditable;
 
         public event EventHandler Changed
         {
             add { spinButton.Changed += value; }
             remove { spinButton.Changed -= value; }
         }
+
         public SpinButtonBox
         ( 
             double min, 
@@ -31,8 +33,8 @@ namespace BoardGameTrainer
             Label textLabel = new(text);
             textLabel.Show();
 
-            PackStart(spinButton, true, true, 5);
-            PackStart(textLabel, false, false, 5);
+            PackStart(spinButton, true, true, MainWindow.CustomMargin);
+            PackStart(textLabel, false, false, MainWindow.CustomMargin);
         }
     }
 }

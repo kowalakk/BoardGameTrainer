@@ -7,7 +7,6 @@
             IAiFactory aiFactory, 
             IStopCondition stopCondition, 
             Dictionary<Player, bool> humanPlayers,
-            Dictionary<Player, bool> showHints, 
-            int numberOfHints);
+            Dictionary<Player, bool> showHints);
     }
 }

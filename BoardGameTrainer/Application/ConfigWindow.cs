@@ -41,7 +41,6 @@ namespace BoardGameTrainer
         private IAiFactory currentAiFactory = aiFactories.FirstOrDefault().Value;
         private IStopConditionFactory currentStopConditionFactory = stopConditions.FirstOrDefault().Value;
         private int stopConditionParam = 1000;
-        private int numberOfHints = int.MaxValue;
 
         public ConfigWindow(MainWindow mainWindow) : base(WindowType.Toplevel)
         {
@@ -55,15 +54,8 @@ namespace BoardGameTrainer
             aiFrame.Changed += (sender, args) => { currentAiFactory = aiFrame.Active; };
             aiFrame.Show();
 
-            CheckButtonsFrame numOfPlayersFrame = new("Human players");
-            numOfPlayersFrame.FirstClicked += (sender, args) => { humanPlayers[Player.One] = numOfPlayersFrame.FirstActive; };
-            numOfPlayersFrame.SecondClicked += (sender, args) => { humanPlayers[Player.Two] = numOfPlayersFrame.SecondActive; };
-            numOfPlayersFrame.Show();
-
-            CheckButtonsFrame showHintsFrame = new("Show hints");
-            showHintsFrame.FirstClicked += (sender, args) => { showHints[Player.One] = showHintsFrame.FirstActive; };
-            showHintsFrame.SecondClicked += (sender, args) => { showHints[Player.Two] = showHintsFrame.SecondActive; };
-            showHintsFrame.Show();
+            PlayersBox playersBox = new(humanPlayers, showHints);
+            playersBox.Show();
 
             StopConditionFrame stopConditionFrame = new(stopConditions);
             stopConditionFrame.Changed += (sender, args) => { currentStopConditionFactory = stopConditionFrame.Active; };
@@ -75,27 +67,27 @@ namespace BoardGameTrainer
             {
                 if (currentManagerFactory is not null)
                 {
-                    mainWindow.GameManager = currentManagerFactory
-                        .Create(
-                            currentAiFactory,
-                            currentStopConditionFactory.Create(stopConditionParam),
-                            new Dictionary<Player, bool>(humanPlayers),
-                            new Dictionary<Player, bool>(showHints),
-                            numberOfHints);
-
-                    mainWindow.StartGame();
+                    mainWindow.InitiateNewGame(
+                        currentManagerFactory, 
+                        currentAiFactory, 
+                        currentStopConditionFactory.Create(stopConditionParam),
+                        new Dictionary<Player, bool>(humanPlayers),
+                        new Dictionary<Player, bool>(showHints));
                     Hide();
                 }
             };
             newGameButton.Show();
 
-            VBox contentVbox = new();
-            contentVbox.PackStart(gameFrame, false, false, 3);
-            contentVbox.PackStart(aiFrame, false, false, 3);
-            contentVbox.PackStart(numOfPlayersFrame, false, false, 3);
-            contentVbox.PackStart(showHintsFrame, false, false, 3);
-            contentVbox.PackStart(stopConditionFrame, false, false, 3);
-            contentVbox.PackStart(newGameButton, false, false, 3);
+            VBox contentVbox = new()
+            {
+                MarginStart = MainWindow.CustomMargin,
+                MarginEnd = MainWindow.CustomMargin
+            };
+            contentVbox.PackStart(gameFrame, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(aiFrame, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(playersBox, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(stopConditionFrame, false, false, MainWindow.CustomMargin);
+            contentVbox.PackStart(newGameButton, false, false, MainWindow.CustomMargin);
             contentVbox.Show();
             Add(contentVbox);
 

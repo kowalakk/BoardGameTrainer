@@ -19,7 +19,11 @@ namespace BoardGameTrainer
         public DropDownFrame(string label, Dictionary<string, T> entries) : base(label)
         {
             this.entries = entries;
-            DropDown = new();
+            DropDown = new()
+            {
+                MarginStart = MainWindow.CustomMargin,
+                MarginEnd = MainWindow.CustomMargin
+            };
             foreach (string entry in entries.Keys)
             {
                 DropDown.AppendText(entry);
@@ -28,10 +32,11 @@ namespace BoardGameTrainer
             DropDown.Show();
 
             Box = new();
-            Box.PackStart(DropDown, true, true, 5);
+            Box.PackStart(DropDown, true, true, MainWindow.CustomMargin);
             Box.Show();
 
             Add(Box);
+
         }
         public void AddEntry(string entry)
         {
