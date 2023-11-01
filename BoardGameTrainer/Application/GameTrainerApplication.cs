@@ -4,7 +4,7 @@ namespace BoardGameTrainer
 {
     public class GameTrainerApplication : Application
     {
-        public GameTrainerApplication() : base("x.y.z", GLib.ApplicationFlags.None)
+        public GameTrainerApplication() : base("Application.BoardGameTrainer", GLib.ApplicationFlags.None)
         {
             Register(GLib.Cancellable.Current);
 
