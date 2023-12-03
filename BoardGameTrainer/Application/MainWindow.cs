@@ -258,7 +258,7 @@ namespace BoardGameTrainer
 
         private void BoardImageClickHandler(object sender, ButtonPressEventArgs args)
         {
-            if (windowState != WindowState.ProcessMovement && GameManager is not null)
+            if (windowState != WindowState.ProcessMovement && gameManager is not null)
             {
                 windowState = WindowState.ProcessMovement;
                 int minDimention = Math.Min(boardImage.AllocatedWidth, boardImage.AllocatedHeight);
