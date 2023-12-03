@@ -41,7 +41,7 @@ namespace Game.Othello
 
         public OthelloState PerformAction(IOthelloAction action, OthelloState state)
         {
-            if (action.GetType() == typeof(OthelloEmptyAction))
+            if (action is OthelloEmptyAction)
                 return new OthelloState(state.board, state.WhiteHandCount, state.BlackHandCount, !state.BlacksTurn);
 
             var playersColor = (state.BlacksTurn) ? Field.Black : Field.White;
@@ -108,8 +108,8 @@ namespace Game.Othello
                         blackCount++;
                 }
             if (whiteCount == blackCount)
-                return IGame.GameResult.Draw;
-            return (blackCount > whiteCount) ? IGame.GameResult.PlayerOneWins : IGame.GameResult.PlayerTwoWins;
+                return GameResult.Draw;
+            return (blackCount > whiteCount) ? GameResult.PlayerOneWins : GameResult.PlayerTwoWins;
         }
 
         public (Unit, IOthelloAction?) HandleInput(double x, double y, Unit inputState, OthelloState state)
